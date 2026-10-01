@@ -1,0 +1,1000 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FocusFlow â€” Product Requirements Document</title>
+<style>
+  @page { size: A4; margin: 2.2cm 2cm; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.5; color: #1a1a1a; }
+  h1 { font-size: 20pt; color: #1a3a5c; border-bottom: 3px solid #1a3a5c; padding-bottom: 6pt; margin-top: 22pt; page-break-after: avoid; }
+  h2 { font-size: 14.5pt; color: #1a3a5c; margin-top: 16pt; page-break-after: avoid; }
+  h3 { font-size: 12pt; color: #2d5f8a; margin-top: 13pt; page-break-after: avoid; }
+  h4 { font-size: 10.5pt; color: #333; margin-top: 10pt; page-break-after: avoid; }
+  p { margin: 6pt 0; }
+  table { border-collapse: collapse; width: 100%; margin: 8pt 0 12pt 0; font-size: 9.5pt; }
+  th { background: #1a3a5c; color: #fff; text-align: left; padding: 6pt 7pt; border: 1px solid #16304c; font-weight: 600; }
+  td { border: 1px solid #b8c4d0; padding: 5pt 7pt; vertical-align: top; }
+  tr:nth-child(even) td { background: #f4f7fa; }
+  ul, ol { margin: 6pt 0 6pt 18pt; padding: 0; }
+  li { margin: 3pt 0; }
+  code { font-family: Consolas, monospace; background: #eef2f6; padding: 1pt 3pt; font-size: 9pt; }
+  .cover { text-align: center; padding-top: 120pt; page-break-after: always; }
+  .cover h1 { border: none; font-size: 30pt; margin: 0 0 6pt 0; }
+  .cover .sub { font-size: 14pt; color: #555; margin-bottom: 40pt; }
+  .cover .meta { font-size: 11pt; color: #333; }
+  .toc { page-break-after: always; }
+  .toc ol { list-style: none; margin-left: 0; }
+  .toc li { margin: 4pt 0; font-size: 10.5pt; }
+  .callout { border-left: 4px solid #2d5f8a; background: #eef4fa; padding: 8pt 12pt; margin: 10pt 0; page-break-inside: avoid; }
+  .callout.warn { border-left-color: #b8860b; background: #fdf8ec; }
+  .callout.key { border-left-color: #1a3a5c; background: #e8eef5; }
+  .pagebreak { page-break-before: always; }
+  .sig { margin-top: 8pt; }
+  .small { font-size: 9pt; color: #555; }
+  .must { color: #a32020; font-weight: 700; }
+  .should { color: #8a6d1a; font-weight: 700; }
+  .could { color: #4a6b4a; font-weight: 700; }
+  .nowrap { white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>FocusFlow</h1>
+  <div class="sub">Product Requirements Document</div>
+  <div class="meta">
+    <p><strong>Version 2.0 â€” Full Specification</strong></p>
+    <p>Status: Draft for Review</p>
+    <p>Date: 1 October 2026</p>
+    <p>Primary Audience: Busy Professionals</p>
+    <p>Document Owner: Product Owner</p>
+  </div>
+  <div style="margin-top:60pt" class="small">
+    An all-round productivity and time management application that helps people<br>
+    plan, prioritise, journal, and achieve their goals.
+  </div>
+</div>
+
+<h1>Document Control</h1>
+
+<table>
+  <tr><th style="width:26%">Field</th><th>Detail</th></tr>
+  <tr><td>Product name</td><td>FocusFlow (working name, subject to trademark review)</td></tr>
+  <tr><td>Document type</td><td>Product Requirements Document</td></tr>
+  <tr><td>Version</td><td>2.0 â€” Full Specification</td></tr>
+  <tr><td>Status</td><td>Draft for review</td></tr>
+  <tr><td>Date issued</td><td>1 October 2026</td></tr>
+  <tr><td>Product owner</td><td><i>To be assigned</i></td></tr>
+  <tr><td>Contributors</td><td>Product, Design, Engineering, User Research</td></tr>
+  <tr><td>Approvers</td><td>Product Owner, Design Lead, Engineering Lead</td></tr>
+  <tr><td>Classification</td><td>Internal â€” confidential</td></tr>
+  <tr><td>Review cycle</td><td>Monthly during build, on any material scope change</td></tr>
+</table>
+
+<h3>Revision History</h3>
+<table>
+  <tr><th style="width:10%">Version</th><th style="width:14%">Date</th><th style="width:26%">Author</th><th>Summary of Change</th></tr>
+  <tr><td>1.0</td><td>1 Oct 2026</td><td>Product</td><td>Initial draft covering problem, vision, scope, and core feature requirements</td></tr>
+  <tr><td>2.0</td><td>1 Oct 2026</td><td>Product</td><td>Full specification: personas, measurement plan, detailed acceptance criteria, UX rules, AI guardrails, privacy principles, traceability matrix, glossary</td></tr>
+</table>
+
+<h3>Purpose of This Document</h3>
+<p>This document defines what FocusFlow must do, for whom, and how success will be judged. It specifies the experience and behaviour of the product across the full user lifecycle. It is the shared contract between product, design, engineering, and quality.</p>
+<p>Technical architecture, infrastructure, data modelling, and engineering implementation are explicitly out of scope and are documented separately in the technical design specification.</p>
+
+<div class="callout key">
+<strong>How to read the requirement tables.</strong> Every functional requirement carries a unique identifier (for example <code>S4</code>) and a priority of <span class="must">Must</span>, <span class="should">Should</span>, or <span class="could">Could</span>. Must requirements define the release. Should requirements are strongly desirable and may be descoped with documented agreement. Could requirements are candidates for the next release. Identifiers are referenced by the traceability matrix in Appendix B and are used to raise defects during quality assurance.
+</div>
+
+<div class="pagebreak"></div>
+<h1>Table of Contents</h1>
+<div class="toc">
+<ol>
+  <li><strong>Executive Summary</strong></li>
+  <li><strong>Problem and Opportunity</strong> â€” the gap in the current toolset</li>
+  <li><strong>Product Vision and Positioning</strong></li>
+  <li><strong>Product Principles</strong> â€” decision criteria for trade-offs</li>
+  <li><strong>Target Users and Personas</strong></li>
+  <li><strong>Goals, Non-Goals, and Success Metrics</strong></li>
+  <li><strong>Scope</strong> â€” in scope, out of scope, and explicit rejections</li>
+  <li><strong>User Journeys</strong> â€” seven end-to-end flows</li>
+  <li><strong>Functional Requirements</strong> â€” twelve capability areas</li>
+  <li><strong>Non-Functional Requirements</strong></li>
+  <li><strong>Experience and Interaction Rules</strong></li>
+  <li><strong>Notification and Engagement Policy</strong></li>
+  <li><strong>AI Behaviour and Guardrails</strong></li>
+  <li><strong>Data and Privacy Principles</strong></li>
+  <li><strong>Measurement Plan</strong></li>
+  <li><strong>Release Success Criteria</strong></li>
+  <li><strong>Risks and Mitigations</strong></li>
+  <li><strong>Dependencies and Assumptions</strong></li>
+  <li><strong>Open Questions</strong></li>
+  <li><strong>Appendix A â€” Glossary</strong></li>
+  <li><strong>Appendix B â€” Requirement Traceability Matrix</strong></li>
+  <li><strong>Appendix C â€” Screen Inventory</strong></li>
+  <li><strong>Sign-Off</strong></li>
+</ol>
+</div>
+
+<h1>1. Executive Summary</h1>
+<p>Busy professionals do not have a planning problem. They have a coherence problem.</p>
+<p>They already own calendars, to-do lists, habit trackers, and journals. What they lack is a single system in which their ambitions, their hours, and their reflections belong to the same structure. Instead they have four disconnected tools that disagree with one another, none of which are aware of their energy levels, and none of which help them notice when they are working hard on the wrong thing.</p>
+<p>The consequence is a specific and recognisable failure pattern. A professional plans a realistic day, has it fragmented by meetings, finishes most of the important work but cannot remember which parts advanced which ambition, and closes the day with no record of what actually happened. The next morning begins with reconstruction rather than intention. Within three weeks, the tools are still installed and unused.</p>
+<p>FocusFlow is a single application that closes this loop end to end. A user defines their goals, captures everything that crosses their mind without breaking focus, and receives a realistic, energy-aware plan for each day. They work inside protected focus blocks, reflect honestly in the evening on what happened and why, and receive a revised plan that adjusts without blame. Once a week, the app tells them plainly whether they are on track and what should change.</p>
+<p>Three choices define the product:</p>
+<ul>
+  <li><strong>Goals are the spine.</strong> Every task traces to a goal. If it does not, the system asks whether it should exist.</li>
+  <li><strong>Plans account for energy, not just hours.</strong> Difficult work is placed where the user is sharp. Most competing schedulers treat a 40-minute report and a 5-minute email as equivalent.</li>
+  <li><strong>Failure is designed for.</strong> Missed days are normal input, not failure. The system replans and stays silent about streaks and shame.</li>
+</ul>
+<p>Success for V1 is measured by whether users return daily and whether their goals advance. A user who abandons the app after a bad week, or who completes tasks that do not serve their ambitions, has not been served â€” regardless of what the engagement dashboards report.</p>
+
+<h1>2. Problem and Opportunity</h1>
+
+<h2>2.1 The Five Failure Points</h2>
+<table>
+  <tr><th style="width:5%">#</th><th style="width:22%">Failure</th><th style="width:36%">Description</th><th>Consequence</th></tr>
+  <tr><td>1</td><td>Disconnected from ambition</td><td>Task lists record activity without purpose. Nothing links a 40-item list to whether a career or health ambition is moving.</td><td>Busy, exhausted, and no closer to the thing that mattered.</td></tr>
+  <tr><td>2</td><td>Time planned on a flat canvas</td><td>Calendars treat all work as equivalent regardless of cognitive demand. Energy, attention, and task type are ignored.</td><td>Deep work is scheduled at 4pm and lost to fatigue.</td></tr>
+  <tr><td>3</td><td>Planning is manual and repetitive</td><td>Rebuilding tomorrow every evening is unpaid labour. Most users abandon it within days.</td><td>Days become reactive rather than intentional.</td></tr>
+  <tr><td>4</td><td>Reflection is absent</td><td>No tool asks what worked, what blocked, or whether the plan is still right. The system collects data and never interprets it.</td><td>Repeats the same mistakes indefinitely.</td></tr>
+  <tr><td>5</td><td>Failure is punished</td><td>Streaks break, backlogs swell, overdue items accumulate in red. The app becomes a record of guilt.</td><td>One bad week triggers abandonment at the point where support is most needed.</td></tr>
+</table>
+
+<h2>2.2 Why Existing Approaches Fall Short</h2>
+<table>
+  <tr><th style="width:20%">Category</th><th style="width:32%">Strength</th><th>Structural gap</th></tr>
+  <tr><td>To-do lists</td><td>Fast capture, low friction, clear completion</td><td>No time protection, no goal linkage, no reflection. A list is a record of intention, not of achievement.</td></tr>
+  <tr><td>Calendars</td><td>Time is real and finite; meetings are unavoidable</td><td>Unaware of goals and energy. Deep and shallow work are indistinguishable to it.</td></tr>
+  <tr><td>Habit trackers</td><td>Streak mechanics drive consistency</td><td>Tracks behaviour in isolation. Creates a second parallel system competing with the planner for attention.</td></tr>
+  <tr><td>Journaling apps</td><td>Supports reflection and emotional processing</td><td>Disconnected from the day's work, so reflection rarely converts into a change in plan.</td></tr>
+  <tr><td>Task managers with goals</td><td>Link intent to activity</td><td>Goals become static labels. No scheduling intelligence, so the link changes nothing about how the day runs.</td></tr>
+</table>
+
+<div class="callout key">
+<strong>The opportunity.</strong> No incumbent spans goal definition through daily scheduling, execution protection, honest reflection, and weekly course correction in one coherent loop. Each of these exists, but on different surfaces with different assumptions. The gap is not a missing feature. It is the missing thread.
+</div>
+
+<h2>2.3 The Moment of Abandonment</h2>
+<p>Abandonment is rarely caused by lack of features. It occurs at a predictable point: the first difficult week, when the backlog grows, the daily plan slips, and the app's accumulated signals turn punitive at exactly the moment the user needs encouragement. Every requirement in Section 11 that governs failure behaviour exists to prevent this specific outcome.</p>
+
+<h1>3. Product Vision and Positioning</h1>
+
+<h2>3.1 Vision Statement</h2>
+<div class="callout">
+FocusFlow turns intention into a schedule, and a schedule into results â€” by planning around the way people actually think and work, and by treating reflection as part of the work rather than an optional extra.
+</div>
+
+<h2>3.2 Positioning</h2>
+<table>
+  <tr><th style="width:24%">Dimension</th><th>Position</th></tr>
+  <tr><td>Category</td><td>Personal productivity and time management, with integrated goal tracking and journaling</td></tr>
+  <tr><td>Core promise</td><td>You will spend your day on the things that matter, and you will know at the end of each week whether it counted.</td></tr>
+  <tr><td>Primary differentiator</td><td>Energy-aware automatic scheduling driven by a goal hierarchy, closing the loop with structured daily and weekly reflection.</td></tr>
+  <tr><td>Emotional tone</td><td>A calm, exacting, supportive coach. Never a drill sergeant, never a cheerleader.</td></tr>
+  <tr><td>Anti-positioning</td><td>Not a game. Not a social network. Not a team tool. Not a habit streak machine.</td></tr>
+  <tr><td>Win condition</td><td>The user's goals advance. Everything else in the product serves that.</td></tr>
+</table>
+
+<h1>4. Product Principles</h1>
+<p>These are decision criteria. When requirements conflict, these principles resolve the conflict without escalation.</p>
+<table>
+  <tr><th style="width:5%">#</th><th style="width:24%">Principle</th><th>Meaning and application</th></tr>
+  <tr><td>1</td><td>Goals are the spine</td><td>Nothing exists without a reason. Every task, project, and routine traces to a goal or a declared life obligation. A feature that cannot justify its existence against a goal does not ship.</td></tr>
+  <tr><td>2</td><td>Protect attention, not just time</td><td>Friction in capture and planning is the real enemy, not a shortage of hours. Any flow that takes more than a few seconds to dismiss itself as friction.</td></tr>
+  <tr><td>3</td><td>Plan for the human, not the ideal</td><td>Schedules respect energy, boundaries, and history. An impossible plan is worse than no plan, because it teaches the user the app is fiction.</td></tr>
+  <tr><td>4</td><td>Forgiving by design</td><td>Plans will break. A missed task is normal input to be re-planned, never a failure to be recorded. No red overdue walls, no streak shaming.</td></tr>
+  <tr><td>5</td><td>Reflection is part of the work</td><td>A plan without reflection produces motion, not progress. Review lives in the daily flow rather than depending on motivation.</td></tr>
+  <tr><td>6</td><td>Right or silent</td><td>The coach speaks when it has something useful to say and stays quiet otherwise. Silence is a designed feature, not a missing capability.</td></tr>
+  <tr><td>7</td><td>Show the reasoning</td><td>Every automated suggestion explains itself. Users must be able to see why, and disagree. A suggestion that cannot be justified is not made.</td></tr>
+  <tr><td>8</td><td>Small surface, deep habit</td><td>Five core surfaces used daily beat thirty features used once. Depth of use beats breadth of features.</td></tr>
+</table>
+
+<h1>5. Target Users and Personas</h1>
+
+<h2>5.1 Primary Persona â€” The Overloaded Professional</h2>
+<table>
+  <tr><th style="width:26%">Attribute</th><th>Detail</th></tr>
+  <tr><td>Role</td><td>Mid-career knowledge worker, 30â€“45, full-time employed</td></tr>
+  <tr><td>Context</td><td>Calendar dense with meetings; family obligations; three to five personal ambitions competing for attention</td></tr>
+  <tr><td>Core capability</td><td>Already knows what matters. Lacks the structure and permission to protect it.</td></tr>
+  <tr><td>Current tools</td><td>Calendar, a general to-do app, a notes app for the journal. None integrated.</td></tr>
+  <tr><td>Stated pain</td><td>"I'm busy all day and I genuinely cannot tell you what I moved forward this week."</td></tr>
+  <tr><td>Primary motivation</td><td>Career progression, health, relationships, financial security, and a persistent sense that time is slipping away</td></tr>
+  <tr><td>Willingness to invest</td><td>Under 10 minutes onboarding, 5 minutes morning, 3â€“5 minutes evening</td></tr>
+  <tr><td>Dealbreakers</td><td>Notification noise, guilt-inducing language, public exposure of personal productivity data</td></tr>
+</table>
+
+<h2>5.2 Secondary Personas</h2>
+<table>
+  <tr><th style="width:20%">Persona</th><th style="width:34%">Profile</th><th>What they need most</th></tr>
+  <tr><td>The Ambitious Planner</td><td>Experienced with productivity methods, disciplined, already using a system well</td><td>Deeper insight into behavioural patterns and honest performance feedback. Wants to be told uncomfortable truths about their follow-through.</td></tr>
+  <tr><td>The Overwhelmed Returner</td><td>Tried a productivity app previously, quit after a bad week, carries some scepticism</td><td>Proof that the app will not punish them. Re-engages when the first setback is handled gently.</td></tr>
+  <tr><td>The Interrupted Professional</td><td>Field-based or client-facing, schedule changes hourly, cannot plan in advance</td><td>Capture that works in seconds and planning that tolerates constant disruption.</td></tr>
+</table>
+
+<h2>5.3 Explicitly Out of Scope as Primary Markets</h2>
+<ul>
+  <li><strong>Students</strong> â€” the dominant pressure pattern is deadline clustering and assessment calendars, which would reshape the scheduler.</li>
+  <li><strong>Team and shared workspaces</strong> â€” a different product with different architecture, permissions, and moderation requirements.</li>
+  <li><strong>General life planning without work</strong> â€” a valuable future direction, but distinct enough to warrant separate research.</li>
+</ul>
+
+<h2>5.4 User Story Summary</h2>
+<p>The following stories are written from the user's perspective. Detailed acceptance criteria appear in Section 9.</p>
+<ul>
+  <li><em>As a busy professional, I want my tasks connected to real goals, so that I can see my effort is going somewhere.</em></li>
+  <li><em>As someone constantly interrupted, I want to capture a thought in under five seconds, so that I never lose it or lose my current focus.</em></li>
+  <li><em>As a person who is tired at 4pm, I want hard work scheduled in my sharp hours, so that I actually finish what matters.</em></li>
+  <li><em>As a user whose day fell apart, I want a new plan without a lecture, so that I start again tomorrow instead of quitting.</em></li>
+  <li><em>As a reflective person, I want prompts about what actually went well, so that I stop repeating the same mistakes.</em></li>
+  <li><em>As an ambitious professional, I want to know each week whether I'm on track, so that I can change course before months are wasted.</em></li>
+  <li><em>As someone who values privacy, I want my data to be mine, so that I can trust the app with my real goals and thoughts.</em></li>
+</ul>
+<h1>6. Goals, Non-Goals, and Success Metrics</h1>
+
+<h2>6.1 Product Objectives</h2>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:30%">Objective</th><th>Rationale</th></tr>
+  <tr><td>O1</td><td>Users connect daily work to stated goals</td><td>Ensures effort is directed rather than reactive. The foundation of everything else.</td></tr>
+  <tr><td>O2</td><td>Users stop hand-building their day</td><td>Removes the planning chore that causes abandonment in every competitor.</td></tr>
+  <tr><td>O3</td><td>Users reflect daily on what worked</td><td>Converts activity into learning. This is the loop competitors omit.</td></tr>
+  <tr><td>O4</td><td>Users persist past setbacks</td><td>Habit formation requires surviving the first difficult week intact.</td></tr>
+  <tr><td>O5</td><td>Users gain real insight into their behaviour</td><td>Delivers the "this actually understands me" feeling that no incumbent achieves.</td></tr>
+</table>
+
+<h2>6.2 North Star and Metric Framework</h2>
+<div class="callout key">
+<strong>North Star Metric â€” Meaningful Goal Progression.</strong> The number of user-days per week in which at least one task was completed that materially advanced an active goal. This single measure captures direction, effort, and reflection. Growth in task creation without growth in this number is noise, not success.
+</div>
+
+<h3>6.2.1 Activation Metrics</h3>
+<table>
+  <tr><th style="width:38%">Metric</th><th style="width:16%">Target</th><th>Why it matters</th></tr>
+  <tr><td>Onboarding completion rate</td><td class="nowrap">â‰¥ 70%</td><td>An incomplete setup produces no plan, and no plan produces no return.</td></tr>
+  <tr><td>Three or more goals defined in first session</td><td class="nowrap">â‰¥ 65%</td><td>The goal spine must exist before the product has value.</td></tr>
+  <tr><td>First day fully planned within 24 hours</td><td class="nowrap">â‰¥ 55%</td><td>The first successful plan is the moment the product proves itself.</td></tr>
+  <tr><td>Calendar connected within first week</td><td class="nowrap">â‰¥ 60%</td><td>Without calendar awareness the schedule conflicts with reality.</td></tr>
+</table>
+
+<h3>6.2.2 Engagement Metrics â€” The Daily Loop</h3>
+<table>
+  <tr><th style="width:38%">Metric</th><th style="width:16%">Target</th><th>Why it matters</th></tr>
+  <tr><td>Day 7 retention</td><td class="nowrap">â‰¥ 40%</td><td>Confirms the daily ritual has formed.</td></tr>
+  <tr><td>Day 30 retention</td><td class="nowrap">â‰¥ 25%</td><td>Confirms the product is a habit rather than a trial.</td></tr>
+  <tr><td>Daily active users, at least one open</td><td class="nowrap">â‰¥ 45% of activated</td><td>Measures genuine daily presence.</td></tr>
+  <tr><td>Morning plan completion rate</td><td class="nowrap">â‰¥ 65% of active days</td><td>The plan is what the day is built on.</td></tr>
+  <tr><td>Evening review completion rate</td><td class="nowrap">â‰¥ 55% of active days</td><td>Reflection is the differentiator; it must actually happen.</td></tr>
+  <tr><td>Days with both rituals completed</td><td class="nowrap">â‰¥ 35% of active days</td><td>The complete loop, which is where the product compounds.</td></tr>
+</table>
+
+<h3>6.2.3 Outcome Metrics</h3>
+<table>
+  <tr><th style="width:38%">Metric</th><th style="width:16%">Target</th><th>Why it matters</th></tr>
+  <tr><td>Tasks linked to a goal</td><td class="nowrap">â‰¥ 80%</td><td>Adherence to the core principle.</td></tr>
+  <tr><td>Goals reached or deliberately revised, versus abandoned</td><td class="nowrap">â‰¥ 60%</td><td>The real measure of success. A revised goal is a success; a dropped goal is not.</td></tr>
+  <tr><td>Users reporting a useful surfaced insight</td><td class="nowrap">â‰¥ 50% of WAU</td><td>Proves the insight feed is doing work, not filling space.</td></tr>
+  <tr><td>Weekly review completion rate</td><td class="nowrap">â‰¥ 50% of active users</td><td>Course correction requires the review to happen.</td></tr>
+  <tr><td>Mean active goals per user</td><td class="nowrap">3â€“5</td><td>Both fewer and more indicate a problem. Fewer means no ambition; more means goal sprawl.</td></tr>
+</table>
+
+<h3>6.2.4 Forgiveness Metrics</h3>
+<p>These measure whether the product behaves well when things go wrong. They are treated as quality indicators, not engagement indicators.</p>
+<table>
+  <tr><th style="width:38%">Metric</th><th style="width:16%">Target</th><th>Why it matters</th></tr>
+  <tr><td>Recovery within 24 hours of a missed day</td><td class="nowrap">â‰¥ 65%</td><td>Forgiveness is only real if users return.</td></tr>
+  <tr><td>Churn immediately following a broken streak</td><td class="nowrap">â‰¤ 10%</td><td>The most sensitive indicator of the abandonment failure point.</td></tr>
+  <tr><td>Accepted replans without further manual editing</td><td class="nowrap">â‰¥ 60%</td><td>Shows the recovery plan is credible, not merely offered.</td></tr>
+</table>
+
+<h3>6.2.5 Quality and Trust Metrics</h3>
+<table>
+  <tr><th style="width:38%">Metric</th><th style="width:16%">Target</th><th>Why it matters</th></tr>
+  <tr><td>Auto-scheduled blocks accepted without rearrangement</td><td class="nowrap">â‰¥ 70%</td><td>The definitive measure of scheduling quality.</td></tr>
+  <tr><td>Task estimate accuracy within 20% after four weeks</td><td class="nowrap">â‰¥ 60% of tasks</td><td>Bad estimates cascade into broken plans.</td></tr>
+  <tr><td>Reminder dismissal rate</td><td class="nowrap">â‰¤ 20%</td><td>A high dismissal rate signals a badly tuned product, not an engaged one.</td></tr>
+  <tr><td>Exports requested and completed</td><td colspan="2">Monitored â€” no target. Reflects trust, not engagement.</td></tr>
+</table>
+
+<h2>6.3 Counter-Metrics â€” Guarding Against Gaming</h2>
+<div class="callout warn">
+These are explicitly <strong>not</strong> success signals. They are monitored to detect misaligned behaviour, and a rise in them alongside flat outcome metrics indicates a product problem.
+</div>
+<table>
+  <tr><th style="width:26%">Metric</th><th>Why it is not a success signal</th></tr>
+  <tr><td>Task creation volume</td><td>A user who creates ten tasks and completes two is failing, not succeeding. Rising creation with flat completion indicates capture is producing a graveyard.</td></tr>
+  <tr><td>Session length</td><td>A user spending forty minutes managing tasks is being underserved. Short, purposeful sessions are the goal.</td></tr>
+  <tr><td>Notification open rate</td><td>High open rates on reminders suggest over-notification, not engagement. Measured inversely.</td></tr>
+  <tr><td>Journal word count</td><td>Length is not quality. A ten-word honest entry beats a thousand-word performative one.</td></tr>
+  <tr><td>Feature breadth adoption</td><td>Use of many features is not the aim. Principle 8 prefers a small surface used deeply.</td></tr>
+</table>
+
+<h2>6.4 Non-Goals</h2>
+<p>The following are things this product deliberately does not attempt in V1. They are recorded here to prevent scope drift during build.</p>
+<ul>
+  <li>Replacing a professional calendar's meeting management</li>
+  <li>Social connectivity, following, or sharing between users, beyond the optional leaderboard</li>
+  <li>Financial planning, budgeting, or expense tracking</li>
+  <li>Health tracking, fitness data, or sleep data ingestion</li>
+  <li>Email, messaging, or any communication functionality</li>
+  <li>Document storage, file management, or collaborative editing</li>
+  <li>Artificial general intelligence, autonomous decision-making on the user's behalf, or open-ended chat</li>
+</ul>
+
+<h1>7. Scope</h1>
+
+<h2>7.1 In Scope for V1</h2>
+<table>
+  <tr><th style="width:6%">Area</th><th style="width:28%">Capability</th><th>Summary</th></tr>
+  <tr><td>1</td><td>Goal hierarchy</td><td>Goals containing projects containing tasks, with progress and health checks</td></tr>
+  <tr><td>2</td><td>Smart quick capture</td><td>Voice and text capture with intelligent parsing into a single inbox</td></tr>
+  <tr><td>3</td><td>Prioritization</td><td>Customizable frameworks, automatic ranking with reasoning, Top 3, active elimination</td></tr>
+  <tr><td>4</td><td>Auto-scheduled day</td><td>Energy-aware scheduling with two-way calendar sync and editable blocks</td></tr>
+  <tr><td>5</td><td>Daily loop</td><td>Morning plan, evening review, automatic replan with consent</td></tr>
+  <tr><td>6</td><td>Focus mode</td><td>One-tap focus sessions, distraction blocking, estimate feedback</td></tr>
+  <tr><td>7</td><td>Routines</td><td>Flexible recurring work scheduled inside the planner</td></tr>
+  <tr><td>8</td><td>Journaling</td><td>Day-linked entries, guided prompts, coach interrogation, search</td></tr>
+  <tr><td>9</td><td>Progress and motivation</td><td>Progress view, insight feed, weekly review, consistency score, streaks, leaderboard</td></tr>
+  <tr><td>10</td><td>Proactive AI coach</td><td>Morning briefing, overload detection, journal interrogation, pattern recognition</td></tr>
+  <tr><td>11</td><td>Reminders</td><td>Task start, drift detection, ritual prompts, fully user-controlled</td></tr>
+  <tr><td>12</td><td>Onboarding</td><td>Guided goal setup generating a first week in under ten minutes</td></tr>
+</table>
+
+<h2>7.2 Out of Scope for V1</h2>
+<table>
+  <tr><th style="width:28%">Excluded</th><th>Rationale</th></tr>
+  <tr><td>Team workspaces and shared projects</td><td>Transforms the product from personal to collaborative. Requires different architecture, permission models, and moderation. Plan for V2 at the earliest.</td></tr>
+  <tr><td>Real-time collaboration</td><td>Premature without team features, and adds substantial conflict resolution complexity.</td></tr>
+  <tr><td>File and document management</td><td>Not a productivity gap. Mature storage tools exist and integrating them adds no differentiating value.</td></tr>
+  <tr><td>Built-in communication</td><td>Enormous scope, weak differentiation, high regulatory surface.</td></tr>
+  <tr><td>Third-party integration marketplace</td><td>Requires a mature, proven core. Two calendar integrations serve V1 adequately.</td></tr>
+  <tr><td>Standalone habit tracking</td><td>Contradicts Principle 8 and the single-system design. Routines satisfy this need inside the planner.</td></tr>
+  <tr><td>Custom automation and rule builder</td><td>Powerful but confusing for V1 users. Revisit once the core loop is understood.</td></tr>
+  <tr><td>Native desktop applications</td><td>Mobile-first and web for V1. Desktop is a later phase once behaviour is understood.</td></tr>
+  <tr><td>Offline-first full functionality</td><td>Capture, planning, and review must work offline (see Q4). Full offline replication is out of scope; conflict resolution is V2.</td></tr>
+</table>
+
+<h2>7.3 Explicit Design Rejections</h2>
+<p>These are recorded because they are common in this product category and are being deliberately declined. Each represents a tradeoff accepted in exchange for user trust.</p>
+<table>
+  <tr><th style="width:26%">Rejected</th><th>Reason</th></tr>
+  <tr><td>A separate habit tracker</td><td>Creates a second parallel system competing with the planner. The target user is time-poor; a second place to record things is a cost, not a feature.</td></tr>
+  <tr><td>Points, badges, achievement unlockables</td><td>Converts meaningful professional work into a game. It devalues the goals being pursued and attracts the wrong user.</td></tr>
+  <tr><td>Guilt-inducing language</td><td>No red overdue walls, no "you failed" messaging, no punitive streak resets, no missed-day counts. Principled rejection under Principle 4.</td></tr>
+  <tr><td>A real-name leaderboard</td><td>Public ranking of personal productivity data invites comparison that damages rather than motivates the target user. The leaderboard uses display names and is opt-in only.</td></tr>
+  <tr><td>Streak-based pressure on the daily rituals</td><td>The morning and evening rituals are the habit worth building. Attaching a streak to them punishes exactly the lapses that most need forgiveness. Streaks apply to routines only.</td></tr>
+</table>
+
+<h1>8. User Journeys</h1>
+<p>Seven end-to-end flows. Each states a measurable success condition, which becomes a quality assurance criterion.</p>
+
+<h2>8.1 First Run â€” Onboarding to First Plan</h2>
+<table>
+  <tr><th style="width:6%">Step</th><th style="width:38%">Action</th><th>Detail</th></tr>
+  <tr><td>1</td><td>Value framing</td><td>The user is shown what the product does before being asked for anything. No empty form is shown first.</td></tr>
+  <tr><td>2</td><td>Set goals</td><td>Three goals, each with a name, target date, and a sentence describing the outcome. The user may add fewer and continue.</td></tr>
+  <tr><td>3</td><td>Set schedule</td><td>Working hours, commute, protected personal time, and a simple energy pattern across the day.</td></tr>
+  <tr><td>4</td><td>Choose framework</td><td>A prioritisation framework is selected, with a plain-language explanation of each option.</td></tr>
+  <tr><td>5</td><td>Connect calendar</td><td>Optional, clearly marked as skippable, with a statement of exactly what is accessed and why.</td></tr>
+  <tr><td>6</td><td>First plan generated</td><td>The system builds the first week and the user lands on today's plan, already populated.</td></tr>
+</table>
+<div class="callout"><strong>Success condition:</strong> The user is looking at a populated, believable day within ten minutes of opening the app for the first time.</div>
+
+<h2>8.2 Capture During Work</h2>
+<table>
+  <tr><th style="width:6%">Step</th><th style="width:38%">Action</th><th>Detail</th></tr>
+  <tr><td>1</td><td>Interruption occurs</td><td>The user is mid-task and something enters their mind.</td></tr>
+  <tr><td>2</td><td>Capture invoked</td><td>One interaction from anywhere. The user speaks or types a fragment: "Email Sarah about the contract tomorrow at 3pm, urgent."</td></tr>
+  <tr><td>3</td><td>Parsing</td><td>The system extracts action, time, date, priority, and suggests a goal context.</td></tr>
+  <tr><td>4</td><td>Filed</td><td>The item lands in the inbox. The user returns to work with no further decision required.</td></tr>
+  <tr><td>5</td><td>Optional clarification</td><td>Only if genuinely ambiguous, the system asks exactly one short question.</td></tr>
+</table>
+<div class="callout"><strong>Success condition:</strong> Capture completes in under five seconds from one interaction, and the user never loses their place in the current task.</div>
+
+<h2>8.3 Morning Plan</h2>
+<table>
+  <tr><th style="width:6%">Step</th><th style="width:38%">Action</th><th>Detail</th></tr>
+  <tr><td>1</td><td>Prompt received</td><td>At the user's chosen time, with a brief summary rather than a bare notification.</td></tr>
+  <tr><td>2</td><td>Plan presented</td><td>Today's schedule with the Top 3 highlighted and the reasoning for each visible.</td></tr>
+  <tr><td>3</td><td>Adjustment</td><td>The user accepts, or makes a small number of quick changes.</td></tr>
+  <tr><td>4</td><td>Energy logged</td><td>One tap on current energy. This calibrates the day's schedule.</td></tr>
+  <tr><td>5</td><td>Day confirmed</td><td>The plan is set and the user proceeds.</td></tr>
+</table>
+<div class="callout"><strong>Success condition:</strong> Under five minutes, ending with clear and specific intent for the day.</div>
+
+<h2>8.4 Executing with Focus</h2>
+<table>
+  <tr><th style="width:6%">Step</th><th style="width:38%">Action</th><th>Detail</th></tr>
+  <tr><td>1</td><td>Session started</td><td>One action from a scheduled block opens focus mode.</td></tr>
+  <tr><td>2</td><td>Environment sealed</td><td>Notifications silenced and configured distracting apps blocked for the session duration.</td></tr>
+  <tr><td>3</td><td>Work proceeds</td><td>Breaks are suggested based on the user's energy curve rather than fixed intervals.</td></tr>
+  <tr><td>4</td><td>Outcome logged</td><td>The user records what was accomplished and whether the time estimate was accurate.</td></tr>
+  <tr><td>5</td><td>Future improved</td><td>The estimate feeds future scheduling for this task type.</td></tr>
+</table>
+<div class="callout"><strong>Success condition:</strong> A genuinely uninterrupted block, and a measurable improvement in estimate accuracy over successive sessions.</div>
+
+<h2>8.5 Evening Review</h2>
+<table>
+  <tr><th style="width:6%">Step</th><th style="width:38%">Action</th><th>Detail</th></tr>
+  <tr><td>1</td><td>Prompt received</td><td>At the user's chosen time, framed as reflection rather than reporting.</td></tr>
+  <tr><td>2</td><td>Answered</td><td>Three to five questions: completed, not completed, what worked, what blocked, energy, mood, one win, one lesson.</td></tr>
+  <tr><td>3</td><td>Reflected</td><td>Optional journal entry, prompted by the coach and connected to the day's actual work.</td></tr>
+  <tr><td>4</td><td>Observed</td><td>The coach offers one observation or one probing question, based on the answers.</td></tr>
+  <tr><td>5</td><td>Tomorrow prepared</td><td>A plan for the next day is proposed.</td></tr>
+</table>
+<div class="callout"><strong>Success condition:</strong> Under five minutes, ending with a lesson recorded and a plan accepted.</div>
+
+<h2>8.6 Recovery from a Missed Day</h2>
+<table>
+  <tr><th style="width:6%">Step</th><th style="width:38%">Action</th><th>Detail</th></tr>
+  <tr><td>1</td><td>User returns</td><td>After an absent day or a failed plan. This is the highest-risk moment in the product lifecycle.</td></tr>
+  <tr><td>2</td><td>No accusation</td><td>No streak warnings, no backlog wall, no missed-day counter, no red.</td></tr>
+  <tr><td>3</td><td>Clear explanation</td><td>The app explains what shifted in one or two sentences.</td></tr>
+  <tr><td>4</td><td>Proposal</td><td>A realistic new plan, with a clear statement of what was cut, what was pushed, and why.</td></tr>
+  <tr><td>5</td><td>One-tap acceptance</td><td>Or adjust before accepting. The user is back in the loop the same day.</td></tr>
+</table>
+<div class="callout warn"><strong>Success condition:</strong> The user is back in the loop the same day, working from a plan they believe is achievable.</div>
+
+<h2>8.7 Weekly Review and Course Correction</h2>
+<table>
+  <tr><th style="width:6%">Step</th><th style="width:38%">Action</th><th>Detail</th></tr>
+  <tr><td>1</td><td>Summary presented</td><td>What advanced, what stalled, the consistency score, and the insight feed.</td></tr>
+  <tr><td>2</td><td>Honest assessment</td><td>Strengths and weaknesses, stated plainly without softening.</td></tr>
+  <tr><td>3</td><td>Recommendation</td><td>The coach proposes specific actions: continue, adjust, or drop.</td></tr>
+  <tr><td>4</td><td>Decision</td><td>The user revises, drops, or adds goals.</td></tr>
+  <tr><td>5</td><td>Regeneration</td><td>The coming week is rebuilt around the revised direction.</td></tr>
+</table>
+<div class="callout"><strong>Success condition:</strong> The user makes at least one deliberate decision about direction that they would not otherwise have made.</div>
+<div class="pagebreak"></div>
+<h1>9. Functional Requirements</h1>
+<p>Requirements are grouped into twelve capability areas. Priorities are defined in Section 1: <span class="must">Must</span> requirements define V1, <span class="should">Should</span> requirements are strongly desirable and descopable with documented agreement, <span class="could">Could</span> requirements are candidates for V2. Each requirement includes an acceptance criterion used for verification.</p>
+
+<h2>9.1 Goals, Projects and Tasks</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>G1</td><td>Users can create a goal with a title, target date, and target outcome statement</td><td><span class="must">Must</span></td><td>A goal can be saved with all three fields populated. The target outcome is a free-text sentence, and the field is optional if the user prefers not to write it.</td></tr>
+  <tr><td>G2</td><td>The system advises a maximum of five active goals and warns above it</td><td><span class="must">Must</span></td><td>On attempting a sixth active goal, the user sees a clear explanation that fewer active goals get completed, and is offered to pause an existing goal instead.</td></tr>
+  <tr><td>G3</td><td>Users can create a project nested under a goal</td><td><span class="must">Must</span></td><td>A project can only exist within a goal. The parent goal is visible and changeable on the project.</td></tr>
+  <tr><td>G4</td><td>Users can create a task under a project with estimated duration, difficulty, optional deadline, and priority</td><td><span class="must">Must</span></td><td>All four attributes can be set. Duration accepts minutes to hours. Difficulty is a three-level scale that the scheduler interprets.</td></tr>
+  <tr><td>G5</td><td>Tasks can be created without a project where the user has not decided where it belongs</td><td><span class="should">Should</span></td><td>An unfiled task is fully functional and schedulable, and is visibly marked as needing filing rather than hidden.</td></tr>
+  <tr><td>G6</td><td>The goal progress view shows completion percentage, next actions, and current blockers</td><td><span class="must">Must</span></td><td>Opening a goal shows progress, its next three actions, and any task explicitly marked as blocked. The screen is readable in under five seconds.</td></tr>
+  <tr><td>G7</td><td>The system flags goals with no recent activity and prompts the user to act or cut them</td><td><span class="must">Must</span></td><td>A goal untouched for a defined period is surfaced in the weekly review with a neutral prompt offering to reschedule, rewrite, or drop it.</td></tr>
+  <tr><td>G8</td><td>The system warns when multiple goals compete for the same limited time in a period</td><td><span class="should">Should</span></td><td>When the days before a deadline are oversubscribed, the user is told which goals are in contention and is asked which takes precedence.</td></tr>
+  <tr><td>G9</td><td>Users can complete, delete, or archive any goal, project, or task</td><td><span class="must">Must</span></td><td>All three actions are available on all three object types. Deletion requires confirmation and states the consequence. Archive preserves history.</td></tr>
+  <tr><td>G10</td><td>Every task is traceable to a goal through its project</td><td><span class="must">Must</span></td><td>From any task, the system can display the goal it serves. Unfiled tasks are the only exception and are counted in the linkage metric.</td></tr>
+  <tr><td>G11</td><td>Users can see every task belonging to a goal across all its projects</td><td><span class="should">Should</span></td><td>Opening a goal lists all its projects and their tasks in one view, with completable items.</td></tr>
+  <tr><td>G12</td><td>Users can declare life obligations outside the goal system as fixed time commitments</td><td><span class="could">Could</span></td><td>A user can add a recurring commitment such as childcare that reserves time but carries no completion target.</td></tr>
+</table>
+
+<h2>9.2 Smart Quick Capture</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>C1</td><td>Users can capture by voice without leaving the current screen</td><td><span class="must">Must</span></td><td>Capture is reachable in one interaction from every screen, and recording begins immediately on invoking it.</td></tr>
+  <tr><td>C2</td><td>Voice is transcribed and converted into a task, note, or journal line</td><td><span class="must">Must</span></td><td>The user can choose the destination before or after speaking. The transcript is shown for correction before filing.</td></tr>
+  <tr><td>C3</td><td>Natural text input has action, date, time, priority, and goal context extracted</td><td><span class="must">Must</span></td><td>Inputting "Call the dentist tomorrow at 3pm, urgent" produces a task with the date, time, and priority populated and correctly interpreted.</td></tr>
+  <tr><td>C4</td><td>All captured items land in a single inbox for later triage</td><td><span class="must">Must</span></td><td>Every capture appears in the inbox regardless of source. The inbox shows count and oldest item first.</td></tr>
+  <tr><td>C5</td><td>Where parsing is ambiguous, the system asks exactly one short clarifying question</td><td><span class="must">Must</span></td><td>Ambiguity produces a single question, not a form. More than one question is never asked for a single capture.</td></tr>
+  <tr><td>C6</td><td>Capture is reachable from anywhere in the app in at most one interaction</td><td><span class="must">Must</span></td><td>Verified on every screen. No screen requires navigating to a capture surface first.</td></tr>
+  <tr><td>C7</td><td>The system prompts the user to clear the inbox daily</td><td><span class="should">Should</span></td><td>A single prompt appears when the inbox is non-empty at the user's chosen time. Inbox length is never shown as a negative score.</td></tr>
+  <tr><td>C8</td><td>Inbox items can be filed, merged, or discarded in bulk</td><td><span class="should">Should</span></td><td>Multiple selection is supported. Merging combines two similar items into one task.</td></tr>
+  <tr><td>C9</td><td>The same capture surface can produce a journal entry rather than a task</td><td><span class="should">Should</span></td><td>The user selects destination before or after capture. Journal entries route to that day's entry.</td></tr>
+  <tr><td>C10</td><td>A rough captured idea can be broken into concrete next actions</td><td><span class="could">Could</span></td><td>Selecting an idea and requesting breakdown produces discrete, actionable tasks with suggested estimates.</td></tr>
+</table>
+
+<h2>9.3 Prioritization</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>P1</td><td>Users can select from at least three frameworks: Eisenhower matrix, Impact versus Effort, and a custom model</td><td><span class="must">Must</span></td><td>Three options are available at onboarding and changeable later. Each is explained in plain language before selection.</td></tr>
+  <tr><td>P2</td><td>The selected framework scores every task and produces a ranked order</td><td><span class="must">Must</span></td><td>Every task receives a position in the order. The order is stable within a day unless inputs change.</td></tr>
+  <tr><td>P3</td><td>Every ranking displays the reasoning that produced it</td><td><span class="must">Must</span></td><td>Selecting any ranked task reveals why it holds that position in terms the user set, such as "high impact, low effort, due Friday."</td></tr>
+  <tr><td>P4</td><td>The system identifies the Top 3 priorities for the day</td><td><span class="must">Must</span></td><td>Three tasks are highlighted each morning, drawn from the ranking and the weighting of their goals.</td></tr>
+  <tr><td>P5</td><td>The system actively suggests what to drop, defer, or delegate</td><td><span class="must">Must</span></td><td>When the day cannot hold all committed work, the system names specific tasks to remove and states the consequence of each choice.</td></tr>
+  <tr><td>P6</td><td>Users can weight goals so the system can arbitrate between them</td><td><span class="should">Should</span></td><td>Each goal carries a weight the user sets. Ranking visibly reflects a high-weight goal outranking a low-weight one.</td></tr>
+  <tr><td>P7</td><td>Users can define custom prioritisation criteria beyond the built-in frameworks</td><td><span class="should">Should</span></td><td>Custom criteria can be defined without technical knowledge and take effect on the next ranking.</td></tr>
+  <tr><td>P8</td><td>Users can override any ranking and the system respects that choice going forward</td><td><span class="must">Must</span></td><td>A manual reordering is honoured and does not revert on the next automated ranking without the user being told.</td></tr>
+</table>
+
+<h2>9.4 Auto-Scheduled Day</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>S1</td><td>The system builds a day plan automatically from prioritised tasks, routines, and fixed commitments</td><td><span class="must">Must</span></td><td>A complete day plan is produced without user input beyond confirming the inputs. No planning effort is required from the user.</td></tr>
+  <tr><td>S2</td><td>Task difficulty is matched to time of day using the user's defined energy pattern</td><td><span class="must">Must</span></td><td>High-difficulty work lands in high-energy windows and low-difficulty work in low-energy windows. The match is visible in the plan and stated in the explanation.</td></tr>
+  <tr><td>S3</td><td>Deadline-critical and high-impact work occupies the most favourable available slots first</td><td><span class="must">Must</span></td><td>When two tasks compete for the best slot, the more critical one receives it and the user is told why.</td></tr>
+  <tr><td>S4</td><td>Planning respects working hours, commute, and protected personal time</td><td><span class="must">Must</span></td><td>No task is placed outside defined working hours, during the commute, or in protected personal time. These periods are visible on the day view as fixed.</td></tr>
+  <tr><td>S5</td><td>Focus sessions and recovery breaks are included in the generated plan</td><td><span class="must">Must</span></td><td>Each work block is accompanied by a break. Breaks are positioned to sustain energy rather than inserted at fixed intervals.</td></tr>
+  <tr><td>S6</td><td>Users can drag, resize, move, or reject any block, and the system absorbs the change and re-plans the remainder</td><td><span class="must">Must</span></td><td>Any manual change is retained. The rest of the day reorganises around it automatically, and the user is shown what moved and why.</td></tr>
+  <tr><td>S7</td><td>The system explains why each block was placed where it was</td><td><span class="must">Must</span></td><td>Every block on the day view offers an explanation referencing energy, deadline, priority, or a user constraint.</td></tr>
+  <tr><td>S8</td><td>Two-way calendar sync with Google, Outlook, and Apple Calendar, with external events blocking time</td><td><span class="must">Must</span></td><td>All three providers connect. Events appear on the day view and are treated as immovable. Changes made externally are reflected.</td></tr>
+  <tr><td>S9</td><td>The system never schedules a task in conflict with a synced calendar event</td><td><span class="must">Must</span></td><td>Verified across a full week of realistic meeting density. A conflict never occurs without being flagged.</td></tr>
+  <tr><td>S10</td><td>The user can regenerate a day's plan without losing completed work</td><td><span class="should">Should</span></td><td>Regeneration preserves all completed work and the user's manual changes are offered for reapplication.</td></tr>
+  <tr><td>S11</td><td>The system keeps a buffer for overruns and unexpected work</td><td><span class="should">Should</span></td><td>The generated day is not filled to capacity. Unallocated time is visible and labelled as buffer.</td></tr>
+  <tr><td>S12</td><td>The system accounts for historical actual time against estimated time</td><td><span class="should">Should</span></td><td>After sufficient history, estimates for recurring task types adjust toward observed reality and the user is told when this occurs.</td></tr>
+  <tr><td>S13</td><td>Plans can be generated several days ahead</td><td><span class="could">Could</span></td><td>The user can view and edit tomorrow and later days. Beyond the next day, plans are provisional and labelled as such.</td></tr>
+</table>
+
+<h2>9.5 The Daily Loop</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>D1</td><td>A morning plan prompt appears at a user-chosen time</td><td><span class="must">Must</span></td><td>The prompt appears at the set time on chosen days. The time is configurable and can be set separately for weekdays and weekends.</td></tr>
+  <tr><td>D2</td><td>The morning plan presents the schedule, the Top 3, and a one-tap energy log</td><td><span class="must">Must</span></td><td>All three are visible without scrolling on the primary device. Energy is recorded in one tap.</td></tr>
+  <tr><td>D3</td><td>The user can accept or adjust the morning plan quickly</td><td><span class="must">Must</span></td><td>The full accept and adjust flow completes within five minutes. The most common adjustment, removing a task, is one action.</td></tr>
+  <tr><td>D4</td><td>An evening review prompt appears at a user-chosen time</td><td><span class="must">Must</span></td><td>The prompt appears at the set time. Snoozing moves it without losing the day's answers.</td></tr>
+  <tr><td>D5</td><td>The evening review asks three to five questions covering completion, obstacles, energy, mood, one win, and one lesson</td><td><span class="must">Must</span></td><td>Question count is between three and five. Completion status is pre-filled from actual day data. Content adapts to what actually happened that day.</td></tr>
+  <tr><td>D6</td><td>The evening review is completable in under five minutes</td><td><span class="must">Must</span></td><td>Median completion time across users is under five minutes. All questions are answerable in one tap or one line.</td></tr>
+  <tr><td>D7</td><td>The system proposes a revised plan when the day is not completed, showing what was cut, what was pushed, and why</td><td><span class="must">Must</span></td><td>The proposal explicitly states each change. The user is never shown a new plan without an explanation of what happened to their previous one.</td></tr>
+  <tr><td>D8</td><td>The proposed replan is accepted with one tap, or adjusted before acceptance</td><td><span class="must">Must</span></td><td>A single action accepts. Adjustment is available without leaving the proposal.</td></tr>
+  <tr><td>D9</td><td>Missed work never produces punishment, warnings, or streak loss on unrelated items</td><td><span class="must">Must</span></td><td>No guilt-indicating language, no red, no count of missed days anywhere in the product. Verified by full copy review.</td></tr>
+  <tr><td>D10</td><td>The rituals can be scheduled, snoozed, or skipped without penalty</td><td><span class="should">Should</span></td><td>Skipping produces no consequence and no subsequent reminder that references the skip.</td></tr>
+  <tr><td>D11</td><td>The evening review feeds the next day's scheduling and prioritisation</td><td><span class="must">Must</span></td><td>Reported energy, obstacles, and lessons demonstrably affect the next generated plan.</td></tr>
+</table>
+
+<h2>9.6 Focus Mode</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>F1</td><td>A focus session can be started from any scheduled block with one action</td><td><span class="must">Must</span></td><td>One action from the day view starts focus mode on that block. No confirmation step between the tap and session start.</td></tr>
+  <tr><td>F2</td><td>Focus mode silences notifications for the session duration</td><td><span class="must">Must</span></td><td>No notification interrupts an active session. Urgent contacts can optionally be permitted by explicit user choice.</td></tr>
+  <tr><td>F3</td><td>Focus mode can block user-configured distracting applications</td><td><span class="must">Must</span></td><td>The user selects which applications to block. Blocking activates on session start and releases on session end, including after an abnormal termination.</td></tr>
+  <tr><td>F4</td><td>Breaks are suggested based on the user's energy curve rather than fixed intervals</td><td><span class="should">Should</span></td><td>Break length and timing vary with time of day and session length rather than following a fixed cycle.</td></tr>
+  <tr><td>F5</td><td>On completion the user logs what was accomplished and whether the estimate was accurate</td><td><span class="must">Must</span></td><td>Two inputs are captured. The estimate feedback is a simple accurate or not judgement, not a time-entry form.</td></tr>
+  <tr><td>F6</td><td>Focus session data improves future task estimates</td><td><span class="must">Must</span></td><td>After four weeks, estimate accuracy improves measurably. The user is informed when an estimate has been adjusted and why.</td></tr>
+  <tr><td>F7</td><td>Users can choose a session length or let the system pick from the estimate</td><td><span class="should">Should</span></td><td>Default is the task estimate. Manual override is available and respected.</td></tr>
+  <tr><td>F8</td><td>An ambient session mode with a focus sound is available</td><td><span class="could">Could</span></td><td>Optional, off by default, and does not affect any other feature.</td></tr>
+</table>
+
+<h2>9.7 Routines</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>R1</td><td>Users can create a routine with a name, cadence, and preferred time</td><td><span class="must">Must</span></td><td>All three attributes are set at creation. A routine can be created in under thirty seconds.</td></tr>
+  <tr><td>R2</td><td>Cadence options include daily, weekdays, a selected set of days, and a custom weekly count</td><td><span class="must">Must</span></td><td>All four options are available and produce the correct occurrence pattern.</td></tr>
+  <tr><td>R3</td><td>Routines are scheduled into the day plan like any other task</td><td><span class="must">Must</span></td><td>Routines appear as blocks on the day view and respect working hours, energy matching, and buffers exactly as tasks do.</td></tr>
+  <tr><td>R4</td><td>Consistency is tracked per routine</td><td><span class="must">Must</span></td><td>Each routine shows its completion rate over a defined period.</td></tr>
+  <tr><td>R5</td><td>Slippage is surfaced gently, without shaming</td><td><span class="must">Must</span></td><td>Slippage is shown as a neutral observation such as "three skipped this month" with an offer to adjust the routine, never as failure.</td></tr>
+  <tr><td>R6</td><td>Routines can be paused without losing history</td><td><span class="must">Must</span></td><td>Pausing stops future occurrences. Prior completion history remains visible and resumable.</td></tr>
+  <tr><td>R7</td><td>Routines can be linked to a goal</td><td><span class="should">Should</span></td><td>A routine can be attached to any goal, and its completion contributes to that goal's progress.</td></tr>
+  <tr><td>R8</td><td>A streak can be suggested after consistent completion and adopted only with consent</td><td><span class="should">Should</span></td><td>Streaks are offered, never imposed. Declining produces no repeat offer and no consequence.</td></tr>
+</table>
+
+<h2>9.8 Journaling</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>J1</td><td>Every journal entry is attached to a specific date</td><td><span class="must">Must</span></td><td>Entries are filed under a date automatically. Multiple entries on one day are permitted and merged for display.</td></tr>
+  <tr><td>J2</td><td>Entries can reference the tasks and goals of that day</td><td><span class="must">Must</span></td><td>From an entry the user can see what they worked on. From a task the user can see related entries.</td></tr>
+  <tr><td>J3</td><td>The coach offers guided prompts relevant to that day's work</td><td><span class="must">Must</span></td><td>Prompts reference actual events, such as a task that slipped or a meeting that ran long, rather than being generic.</td></tr>
+  <tr><td>J4</td><td>Users can write free-form entries with mood and gratitude capture</td><td><span class="must">Must</span></td><td>Free writing is always available with no prompt required. Mood is optional. Gratitude is optional and not scored.</td></tr>
+  <tr><td>J5</td><td>Entries are searchable and filterable by date, mood, goal, and text</td><td><span class="must">Must</span></td><td>Search returns relevant results within one second. Filtering by goal returns all entries referencing that goal.</td></tr>
+  <tr><td>J6</td><td>Entries are grouped into weeks and months to reveal patterns</td><td><span class="should">Should</span></td><td>Week and month views exist and support scrolling back through history without loading delay.</td></tr>
+  <tr><td>J7</td><td>The coach asks follow-up questions that probe the user's reasoning</td><td><span class="must">Must</span></td><td>Given a shallow answer, the coach asks one genuine follow-up. Given a complete answer, it does not interrogate further.</td></tr>
+  <tr><td>J8</td><td>Users can export their journal entries</td><td><span class="should">Should</span></td><td>Export produces a complete, readable, dated file including mood and linked tasks. Export is not gated behind payment.</td></tr>
+  <tr><td>J9</td><td>Users can attach images to entries</td><td><span class="could">Could</span></td><td>Images attach to a date and render in week and month views.</td></tr>
+</table>
+
+<h2>9.9 Progress, Insights and Motivation</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>I1</td><td>A goal progress view shows how far along each goal is, simply and scannably</td><td><span class="must">Must</span></td><td>All active goals are visible on one screen with progress readable at a glance. No interaction is required to understand overall status.</td></tr>
+  <tr><td>I2</td><td>An insight feed surfaces patterns automatically without user effort</td><td><span class="must">Must</span></td><td>Insights appear in the weekly review and progress screens. Users never have to request or generate them.</td></tr>
+  <tr><td>I3</td><td>Every insight cites the behaviour it is based on</td><td><span class="must">Must</span></td><td>Each insight states the observable data behind it, such as "across 12 days you completed 3x more when you planned the night before."</td></tr>
+  <tr><td>I4</td><td>A weekly review shows what advanced, what stalled, and the consistency score</td><td><span class="must">Must</span></td><td>All three are presented in one view, with stalled items named specifically rather than shown as a count.</td></tr>
+  <tr><td>I5</td><td>The weekly review supports course correction: continue, adjust, or drop</td><td><span class="must">Must</span></td><td>Each goal in the review carries an explicit action. Dropping requires confirmation and states what history is preserved.</td></tr>
+  <tr><td>I6</td><td>A consistency score is calculated weekly from completed against uncompleted tasks</td><td><span class="must">Must</span></td><td>The score is defined, stated in plain language, and reproducible from the underlying task data. It is not compared to other users in any way that implies worth.</td></tr>
+  <tr><td>I7</td><td>A strengths and weaknesses breakdown shows where the user excels and where they fall short</td><td><span class="must">Must</span></td><td>Both are presented with equal prominence. Weaknesses are stated factually without hedging and without judgemental language.</td></tr>
+  <tr><td>I8</td><td>Streaks exist for routines, offered with consent</td><td><span class="should">Should</span></td><td>Streaks apply to routines only, never to the daily rituals. See Principle 4 and Section 7.3.</td></tr>
+  <tr><td>I9</td><td>Streak framing is compassionate and does not punish a single break</td><td><span class="must">Must</span></td><td>A missed day pauses the streak rather than destroying it. Copy contains no language implying failure or loss.</td></tr>
+  <tr><td>I10</td><td>An optional weekly leaderboard ranks the twenty most consistent users by display name only</td><td><span class="should">Should</span></td><td>Exactly twenty entries. Real names and email addresses are never shown. Users who have opted out are never listed. See Open Question 1 regarding launch timing.</td></tr>
+  <tr><td>I11</td><td>Users can opt out of the leaderboard and remain fully functional</td><td><span class="must">Must</span></td><td>Opting out is a single action available at any time. Opted-out users retain their own consistency score and all other features.</td></tr>
+  <tr><td>I12</td><td>The user can see their own rank even when opted out</td><td><span class="could">Could</span></td><td>Rank is computed identically and shown only to the user, with no indication of who else is listed.</td></tr>
+  <tr><td>I13</td><td>Users can view their history across any past week</td><td><span class="should">Should</span></td><td>Any past week's review, score, and insight set is retrievable.</td></tr>
+</table>
+
+<h2>9.10 Proactive AI Coach</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>A1</td><td>The coach delivers a short morning briefing on the day ahead</td><td><span class="must">Must</span></td><td>A briefing of under 150 words summarises the day, the Top 3, and anything requiring a decision. It is available in spoken form.</td></tr>
+  <tr><td>A2</td><td>The coach detects over-committed days and recommends specific removals</td><td><span class="must">Must</span></td><td>Overload is detected before the user commits to the day. Recommendations name specific tasks, never categories such as "some work."</td></tr>
+  <tr><td>A3</td><td>The coach asks probing follow-up questions during journaling</td><td><span class="must">Must</span></td><td>Follow-ups are asked when an answer is superficial and withheld when it is complete. See J7.</td></tr>
+  <tr><td>A4</td><td>The coach recognises patterns across weeks, such as task types that consistently slip</td><td><span class="must">Must</span></td><td>Patterns require a minimum data threshold before being stated, and the threshold is disclosed in the insight.</td></tr>
+  <tr><td>A5</td><td>The coach recommends dropping or rewriting goals that no longer serve the user</td><td><span class="must">Must</span></td><td>Recommendations are made in the weekly review, cite the inactivity, and leave the decision entirely with the user.</td></tr>
+  <tr><td>A6</td><td>The coach breaks vague captured ideas into concrete next actions</td><td><span class="should">Should</span></td><td>Produced tasks have suggested durations and difficulty. The user can accept all, some, or none.</td></tr>
+  <tr><td>A7</td><td>The coach stays silent when it has nothing useful to contribute</td><td><span class="must">Must</span></td><td>On a well-functioning day with nothing notable, the coach produces no commentary. Silence is the expected default.</td></tr>
+  <tr><td>A8</td><td>All coach output can be dismissed or acted upon</td><td><span class="must">Must</span></td><td>Every coach message offers at least two responses including dismissal. Dismissed suggestions do not reappear.</td></tr>
+  <tr><td>A9</td><td>The coach can be muted except for essential alerts</td><td><span class="should">Should</span></td><td>Muting silences briefings, observations, and questions. Overload warnings and goal health flags remain, as they prevent harm.</td></tr>
+  <tr><td>A10</td><td>The coach explains the basis for every recommendation</td><td><span class="must">Must</span></td><td>Every recommendation is traceable to observable user data or a stated user preference. See Section 12.</td></tr>
+</table>
+
+<h2>9.11 Reminders</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>N1</td><td>A nudge when a scheduled block begins</td><td><span class="must">Must</span></td><td>Fires at block start. Suppressed if the user is already in a focus session or has started the task manually.</td></tr>
+  <tr><td>N2</td><td>A gentle alert when the day is falling significantly behind</td><td><span class="must">Must</span></td><td>Fires only when the divergence is material, at most once per day. Wording is neutral and offers a replan rather than reporting failure.</td></tr>
+  <tr><td>N3</td><td>Prompts for the morning plan and evening review at chosen times</td><td><span class="must">Must</span></td><td>Both are individually configurable with weekday and weekend variants.</td></tr>
+  <tr><td>N4</td><td>Every reminder category can be adjusted, snoozed, or silenced</td><td><span class="must">Must</span></td><td>All categories are individually controllable. Changes take effect without requiring the user to find a settings screen first.</td></tr>
+  <tr><td>N5</td><td>Default notification volume is low</td><td><span class="must">Must</span></td><td>A new user receives no more than the three essential prompts on a typical day.</td></tr>
+  <tr><td>N6</td><td>No notification uses guilt-inducing or shame-based language</td><td><span class="must">Must</span></td><td>All notification copy reviewed against Section 4, Principle 4. No instance of failure framing.</td></tr>
+  <tr><td>N7</td><td>Reminder timing adapts to observed user behaviour</td><td><span class="should">Should</span></td><td>Prompt times shift toward when the user actually completes rituals, with the change disclosed and reversible.</td></tr>
+</table>
+
+<h2>9.12 Onboarding</h2>
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:30%">Requirement</th><th style="width:9%">Priority</th><th>Acceptance Criterion</th></tr>
+  <tr><td>B1</td><td>The user sets up to three goals with target dates</td><td><span class="must">Must</span></td><td>Each goal requires a name and target date. Fewer than three may be entered and onboarding may continue.</td></tr>
+  <tr><td>B2</td><td>The user defines working hours, boundaries, and an energy pattern</td><td><span class="must">Must</span></td><td>All three are captured with sensible defaults. The energy pattern is expressed as a simple visual the user adjusts rather than a form.</td></tr>
+  <tr><td>B3</td><td>The user selects a prioritisation framework</td><td><span class="must">Must</span></td><td>One of at least three is selected, each explained in plain language. The default is pre-selected and changeable later.</td></tr>
+  <tr><td>B4</td><td>The user can connect a calendar and can skip this step</td><td><span class="must">Must</span></td><td>All three providers offered. The screen states exactly what is accessed and why. Skipping does not block onboarding.</td></tr>
+  <tr><td>B5</td><td>The app generates the first week automatically</td><td><span class="must">Must</span></td><td>On completion, a full week is available and today's plan is populated.</td></tr>
+  <tr><td>B6</td><td>Onboarding completes in under ten minutes</td><td><span class="must">Must</span></td><td>Median time across users is under ten minutes, verified by measurement.</td></tr>
+  <tr><td>B7</td><td>Onboarding can be skipped and resumed later, retaining partial setup</td><td><span class="should">Should</span></td><td>All partially entered data is retained. The user lands on a usable empty state rather than a blocked wall.</td></tr>
+  <tr><td>B8</td><td>Users can import existing goals and tasks from another service</td><td><span class="could">Could</span></td><td>Import maps items into the goal structure and preserves due dates. Unmapped items are placed in the inbox rather than discarded.</td></tr>
+</table>
+
+<div class="callout key">
+<strong>Requirement totals.</strong> Twelve areas, 122 requirements: 82 <span class="must">Must</span>, 32 <span class="should">Should</span>, 8 <span class="could">Could</span>. The Must set defines the V1 release boundary. No Must requirement may be descoped without product owner approval and a documented change to this document.
+</div>
+<div class="pagebreak"></div>
+<h1>10. Non-Functional Requirements</h1>
+<p>These describe quality expectations for the experience. They are written as observable product behaviours, not technical specifications. Implementation detail is out of scope and lives in the technical design specification.</p>
+
+<table>
+  <tr><th style="width:7%">ID</th><th style="width:24%">Quality Attribute</th><th style="width:9%">Priority</th><th>Requirement and Acceptance Criterion</th></tr>
+  <tr><td>Q1</td><td>Responsiveness</td><td><span class="must">Must</span></td><td>The app opens to usable state immediately. Every core action completes without perceptible delay. Any operation exceeding one second communicates meaningful progress rather than appearing frozen. Verified on the oldest supported device in the target range.</td></tr>
+  <tr><td>Q2</td><td>Interruption safety</td><td><span class="must">Must</span></td><td>No user input is ever lost. A user interrupted during capture or mid-journal returns to exactly where they were, with the text intact. Verified by interrupting every input flow and returning.</td></tr>
+  <tr><td>Q3</td><td>Accessibility</td><td><span class="must">Must</span></td><td>Full support for screen readers, complete keyboard-only navigation, adjustable text size, and colour choices that never rely on colour alone. Meets WCAG 2.1 AA throughout. No core flow is excluded.</td></tr>
+  <tr><td>Q4</td><td>Offline availability</td><td><span class="must">Must</span></td><td>Capture, day planning, focus sessions, and the evening review are fully usable without a connection, and reconcile when connectivity returns. This covers the most common real-world scenario: commuting and travel.</td></tr>
+  <tr><td>Q5</td><td>Low cognitive load</td><td><span class="must">Must</span></td><td>Every screen presents one clear primary next action. No screen requires more than a short paragraph to understand. A user completing their first day requires no instruction. Validated with five first-time users unassisted.</td></tr>
+  <tr><td>Q6</td><td>Data ownership and export</td><td><span class="must">Must</span></td><td>Users can export everything: goals, projects, tasks, routines, journal entries, and insights. The export is complete, readable, and human-formatted. Export is never gated behind payment. No account deletion is obstructed.</td></tr>
+  <tr><td>Q7</td><td>Privacy by default</td><td><span class="must">Must</span></td><td>Journal content is private unless the user explicitly shares it. Leaderboard participation is opt-in and revocable. No personal productivity data is sold or used for advertising. Every permission is justified at the point of request.</td></tr>
+  <tr><td>Q8</td><td>Transparent AI</td><td><span class="must">Must</span></td><td>Users are told when AI is involved, can correct its output, and can disable AI features that are not essential to core function. No AI output appears without attribution. The coach never presents inference as fact.</td></tr>
+  <tr><td>Q9</td><td>Durability</td><td><span class="must">Must</span></td><td>Work is saved continuously, not on demand. A sudden termination never loses more than the current keystroke. Verified across all input surfaces.</td></tr>
+  <tr><td>Q10</td><td>Learnability</td><td><span class="must">Must</span></td><td>A first-time user completes their first full day without external instruction or documentation. No feature requires a manual to discover.</td></tr>
+  <tr><td>Q11</td><td>Cross-device consistency</td><td><span class="must">Must</span></td><td>Data and progress are consistent across every device the user owns. A change made on one device is visible on another without a manual refresh.</td></tr>
+  <tr><td>Q12</td><td>Resource proportionality</td><td><span class="should">Should</span></td><td>Background activity is proportionate to use. A focus session does not drain the device faster than its length justifies. A full day of normal use does not meaningfully impact battery.</td></tr>
+  <tr><td>Q13</td><td>Tone consistency</td><td><span class="must">Must</span></td><td>All product language is calm, direct, and non-judgemental. No copy implies the user has failed, is behind, or is disappointing anyone. Reviewed at every release against Section 4, Principle 4.</td></tr>
+  <tr><td>Q14</td><td>Graceful degradation</td><td><span class="should">Should</span></td><td>If a connected service becomes unavailable, the product remains fully usable and states plainly what is not syncing. No feature becomes silently wrong.</td></tr>
+</table>
+
+<h1>11. Experience and Interaction Rules</h1>
+<p>These rules apply across all surfaces and resolve design questions that would otherwise be answered inconsistently.</p>
+
+<h2>11.1 Tone and Language</h2>
+<table>
+  <tr><th style="width:34%">Do</th><th>Do not</th></tr>
+  <tr><td>State facts plainly: "Three tasks were not completed."</td><td>Not: "You failed to complete three tasks."</td></tr>
+  <tr><td>Present unfinished work as pending, never as failed.</td><td>Not: show overdue counts, red totals, or missed-day counters.</td></tr>
+  <tr><td>Use the user's own words for their goals and tasks.</td><td>Not: substitute system terminology for user language.</td></tr>
+  <tr><td>Suggest one next step when uncertain.</td><td>Not: present menus of equally weighted options.</td></tr>
+  <tr><td>Acknowledge difficulty plainly: "Three heavy days in a row is a lot."</td><td>Not: congratulate reflexively or use cheerleading language.</td></tr>
+  <tr><td>Report weak performance directly and without softening.</td><td>Not: use euphemism that obscures a real problem.</td></tr>
+</table>
+
+<h2>11.2 Interaction Principles</h2>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:28%">Rule</th><th>Rationale</th></tr>
+  <tr><td>1</td><td>Capture before organise</td><td>Recording a thought takes priority over deciding where it belongs. Filing happens later, in bulk.</td></tr>
+  <tr><td>2</td><td>One primary action per screen</td><td>Reduces decision cost for a user who is already cognitively loaded.</td></tr>
+  <tr><td>3</td><td>Defaults are decisions, not blanks</td><td>Empty fields transfer the decision to the user. A sensible default, which is editable, does not.</td></tr>
+  <tr><td>4</td><td>Never lose a destructive action silently</td><td>Deletion confirms and states the consequence. Archive is offered as the reversible option.</td></tr>
+  <tr><td>5</td><td>Every automated decision is inspectable</td><td>Tapping any suggestion reveals why it was made, in the user's own stated terms.</td></tr>
+  <tr><td>6</td><td>Replanning is proposed, never imposed</td><td>The system drafts; the user authorises. This is the mechanism behind Principle 4.</td></tr>
+  <tr><td>7</td><td>No confirmation dialogs for reversible actions</td><td>Undo replaces confirmation. Dialogs are reserved for genuinely irreversible operations.</td></tr>
+  <tr><td>8</td><td>Progressive disclosure for detail</td><td>Summary first, reasoning and detail on demand. The day view stays scannable.</td></tr>
+  <tr><td>9</td><td>Consistency over novelty</td><td>The same action behaves identically everywhere, so the product becomes learnable and then predictable.</td></tr>
+  <tr><td>10</td><td>Respect the user's time budget</td><td>If a flow exceeds its stated duration, it is shortened. The morning and evening rituals are hard limits.</td></tr>
+</table>
+
+<h2>11.3 Empty, Error and Edge States</h2>
+<table>
+  <tr><th style="width:20%">State</th><th>Required Behaviour</th></tr>
+  <tr><td>First launch</td><td>Value framing, not an empty form. The user sees what the product does before being asked to supply anything.</td></tr>
+  <tr><td>No tasks today</td><td>Offer capture, routine suggestions, or a lighter plan. Never a blank grid.</td></tr>
+  <tr><td>Empty inbox</td><td>Confirmed as success, not presented as absence of content.</td></tr>
+  <tr><td>Unfiled tasks present</td><td>Prompts filing with a suggested goal, never leaves them invisible.</td></tr>
+  <tr><td>Calendar not connected</td><td>Explains the reduced accuracy plainly and offers connection, without blocking use.</td></tr>
+  <tr><td>Calendar unavailable</td><td>States what is not syncing. Planning continues from the last known state, marked as such.</td></tr>
+  <tr><td>AI unavailable</td><td>Core function continues without AI. The affected feature states the limitation without alarm.</td></tr>
+  <tr><td>No patterns yet</td><td>Insights state how much data is needed and what will be detected. No fabrication.</td></tr>
+  <tr><td>All goals stalled</td><td>Offer to drop, rewrite, or narrow goals. Frame as a decision point, not a failure.</td></tr>
+  <tr><td>Return after long absence</td><td>Welcome without reference to the gap. Present today only. The backlog is summarised, never displayed as a wall.</td></tr>
+  <tr><td>First focus session</td><td>Explains what will be blocked and silenced before it happens, and how to undo.</td></tr>
+</table>
+
+<h1>12. Notification and Engagement Policy</h1>
+<p>Notifications are the most common cause of abandonment in this product category. The following policy is binding.</p>
+
+<h2>12.1 Permitted Notification Types</h2>
+<table>
+  <tr><th style="width:24%">Type</th><th style="width:12%">Default</th><th>Conditions</th></tr>
+  <tr><td>Scheduled block starting</td><td>On</td><td>Suppressed if the user is already focused or has started the task.</td></tr>
+  <tr><td>Day falling behind</td><td>On</td><td>Maximum once per day. Only on material divergence. Offers a replan.</td></tr>
+  <tr><td>Morning plan prompt</td><td>On</td><td>At the user's chosen time. Includes a brief summary, not a bare alert.</td></tr>
+  <tr><td>Evening review prompt</td><td>On</td><td>At the user's chosen time. Snoozable without losing answers.</td></tr>
+  <tr><td>Overload warning</td><td>On</td><td>Retained even when the coach is muted, as it prevents an unachievable day.</td></tr>
+  <tr><td>Goal health flag</td><td>On</td><td>Retained even when the coach is muted, as it addresses long-term neglect.</td></tr>
+  <tr><td>Weekly review available</td><td>On</td><td>Once per week at a chosen time.</td></tr>
+  <tr><td>Streak at risk</td><td>Off by default</td><td>Never enabled by default. When enabled, phrased as opportunity, never as loss.</td></tr>
+  <tr><td>Anything task-specific</td><td>Off</td><td>Deadlines are visible in the plan. Additional deadline reminders are explicitly declined under Principle 4.</td></tr>
+</table>
+
+<h2>12.2 Hard Constraints</h2>
+<ul>
+  <li><strong>Maximum three notifications on a typical day by default.</strong> Exceeding this is a design defect, not a configuration choice.</li>
+  <li><strong>No notification between 22:00 and 07:30</strong> by default, with a user override.</li>
+  <li><strong>No streak-loss notifications</strong> under any circumstance. See Section 7.3.</li>
+  <li><strong>No notification references a user's inconsistency</strong>, including cumulative miss counts.</li>
+  <li><strong>Dismissal rate above 20% triggers review</strong> of that notification type, not an increase in frequency.</li>
+</ul>
+
+<h1>13. AI Behaviour and Guardrails</h1>
+<p>AI is used for parsing, scheduling, and coaching. Because incorrect output would erode trust faster than no output at all, the following constraints are binding.</p>
+
+<h2>13.1 Permitted Uses</h2>
+<table>
+  <tr><th style="width:30%">Use</th><th>Scope and Constraint</th></tr>
+  <tr><td>Capture parsing</td><td>Extracting action, time, date, and priority from natural input. Low stakes, fully user-correctable before filing.</td></tr>
+  <tr><td>Scheduling</td><td>Arranging existing user-approved tasks. Operates only on data the user has supplied and constraints the user has set.</td></tr>
+  <tr><td>Journal prompts</td><td>Asking questions about the user's own stated experience.</td></tr>
+  <tr><td>Pattern detection</td><td>Identifying statistical tendencies in the user's own recorded behaviour, with thresholds disclosed.</td></tr>
+  <tr><td>Task breakdown</td><td>Proposing next actions, always presented for approval and never created automatically.</td></tr>
+</table>
+
+<h2>13.2 Prohibited Uses</h2>
+<ul>
+  <li><strong>No diagnosis.</strong> The product does not assess mental health, diagnose conditions, or present itself as a wellbeing authority. It records what users report and reflects patterns back.</li>
+  <li><strong>No manipulation.</strong> No emotional pressure, guilt framing, or urgency manufactured to drive engagement.</li>
+  <li><strong>No fabricated data.</strong> Insights require real observations. Where data is insufficient, the product says so and states what is needed.</li>
+  <li><strong>No unrequested generation.</strong> The coach does not create goals, tasks, or commitments without explicit user action.</li>
+  <li><strong>No inference stated as fact.</strong> "You seem to avoid this project" is acceptable. "You are avoiding this project" is not.</li>
+  <li><strong>No decisions on the user's behalf.</strong> The system proposes; the user disposes.</li>
+  <li><strong>No manipulation of the leaderboard.</strong> The coach may suggest resting, but never suggests increasing activity to improve a rank.</li>
+</ul>
+
+<h2>13.3 Disclosure Requirements</h2>
+<ul>
+  <li>Every AI-generated element is visibly attributable.</li>
+  <li>The basis for any inference is stated alongside it.</li>
+  <li>Users can correct any AI output, and the correction is retained for future output.</li>
+  <li>AI features not essential to core function can be disabled without degrading the daily loop.</li>
+  <li>Data used for AI processing is disclosed in plain language at the point of use, not buried in terms.</li>
+</ul>
+
+<h2>13.4 Coach Guardrails</h2>
+<table>
+  <tr><th style="width:34%">The coach will</th><th>The coach will not</th></tr>
+  <tr><td>Point out a pattern the user has not noticed</td><td>Tell the user what they already know repeatedly</td></tr>
+  <tr><td>Name a specific task or goal in every observation</td><td>Give generic advice unattached to their actual data</td></tr>
+  <tr><td>State when it is unsure or when data is thin</td><td>Fill silence with speculation</td></tr>
+  <tr><td>Report uncomfortable truths plainly</td><td>Soften a difficult finding to be agreeable</td></tr>
+  <tr><td>Stay silent on a good day</td><td>Manufacture something to say to appear useful</td></tr>
+  <tr><td>Celebrate a genuine, specific win once</td><td>Praise generically or repeatedly</td></tr>
+</table>
+
+<h1>14. Data and Privacy Principles</h1>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:28%">Principle</th><th>Commitment</th></tr>
+  <tr><td>1</td><td>The user owns their data</td><td>Complete export of all content at any time, free, in a readable format. Account deletion is unobstructed.</td></tr>
+  <tr><td>2</td><td>Journal content is private</td><td>Never surfaced to other users, never used for any purpose, never visible in any shared context by default.</td></tr>
+  <tr><td>3</td><td>No advertising use</td><td>Personal productivity and journal data is never sold, traded, or used for advertising targeting.</td></tr>
+  <tr><td>4</td><td>Least privilege on connections</td><td>Calendar access is read and write for events only. Each permission is justified at the moment of request.</td></tr>
+  <tr><td>5</td><td>Opt-in social features</td><td>Leaderboard participation is off by default, uses display names, and is revocable in one action.</td></tr>
+  <tr><td>6</td><td>Transparent retention</td><td>Retention periods are stated in plain language. Deletion is real deletion, not soft deletion.</td></tr>
+  <tr><td>7</td><td>Data minimisation</td><td>Only data necessary for the product's function is collected. Nothing is gathered speculatively for future use.</td></tr>
+  <tr><td>8</td><td>Plain-language disclosure</td><td>Every permission request states what is accessed, why, and what happens if it is declined.</td></tr>
+  <tr><td>9</td><td>No dark patterns</td><td>No pre-ticked consent, no disguised decline buttons, no friction on cancellation or export.</td></tr>
+</table>
+
+<h1>15. Measurement Plan</h1>
+<p>This section defines what is measured and why. It does not specify instrumentation, which is a technical concern.</p>
+
+<h2>15.1 Measurement Principles</h2>
+<ul>
+  <li><strong>Outcomes over activity.</strong> Goal progression and retention are primary. Task counts and session lengths are diagnostic only.</li>
+  <li><strong>Every metric has a decision attached.</strong> A metric nobody acts on is not worth collecting.</li>
+  <li><strong>Guardrails are monitored as carefully as goals.</strong> A rising abandonment signal triggers work, not celebration.</li>
+  <li><strong>Qualitative complements quantitative.</strong> After meaningful behaviour change, user interviews validate interpretation.</li>
+</ul>
+
+<h2>15.2 Funnel</h2>
+<table>
+  <tr><th style="width:22%">Stage</th><th style="width:34%">Definition</th><th>Diagnostic question</th></tr>
+  <tr><td>Install</td><td>App opened for the first time</td><td>Is the value proposition clear in the first screen?</td></tr>
+  <tr><td>Onboarding complete</td><td>First plan generated</td><td>Did the user reach a usable state, or abandon mid-setup?</td></tr>
+  <tr><td>Activated</td><td>Three goals, one planned day, first ritual completed</td><td>Did they experience the loop, or only set it up?</td></tr>
+  <tr><td>Habit formed</td><td>Both rituals completed on five or more days in one week</td><td>Which step breaks first in practice?</td></tr>
+  <tr><td>Retained</td><td>Active in week four or beyond</td><td>What do retained users do that churned users never did?</td></tr>
+  <tr><td>Advancing</td><td>At least one meaningful goal progression in a week</td><td>Is the product producing results or just activity?</td></tr>
+</table>
+
+<h2>15.3 Required Qualitative Research</h2>
+<table>
+  <tr><th style="width:26%">Research</th><th style="width:16%">Timing</th><th>Purpose</th></tr>
+  <tr><td>Onboarding usability</td><td>Pre-launch</td><td>Five unassisted first-time users. Validates Q5 and Q10.</td></tr>
+  <tr><td>First-week diary study</td><td>Launch</td><td>Daily check-ins for seven days. Finds where the loop breaks in reality.</td></tr>
+  <tr><td>Missed-day recovery interview</td><td>Launch + 4 weeks</td><td>Users who returned after a lapse. Tests whether forgiveness is genuinely felt.</td></tr>
+  <tr><td>Insight feed comprehension</td><td>Launch + 6 weeks</td><td>Whether surfaced patterns are understood, trusted, and acted on.</td></tr>
+  <tr><td>Coach tone assessment</td><td>Ongoing</td><td>Whether the coach reads as supportive or as a critic.</td></tr>
+  <tr><td>30-day goal outcome review</td><td>Launch + 30 days</td><td>Did goals actually advance? The only measurement that validates the premise.</td></tr>
+</table>
+
+<h2>15.4 Instrumentation Principles</h2>
+<ul>
+  <li>Capture events in a way that avoids recording the content of journal entries, task titles, or goal names.</li>
+  <li>Behavioural data used for pattern detection is visible to the user in their own insight feed.</li>
+  <li>Any use of personal content for AI processing is disclosed at the point of use.</li>
+  <li>Aggregate reporting must not allow an individual user to be identified, particularly in leaderboard-adjacent reporting.</li>
+</ul>
+
+<div class="pagebreak"></div>
+<h1>16. Release Success Criteria</h1>
+<p>V1 is considered successful when all of the following hold. These are evaluated against users who completed onboarding.</p>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:44%">Criterion</th><th style="width:14%">Threshold</th><th>Why it is a release gate</th></tr>
+  <tr><td>1</td><td>Onboarding completion rate</td><td class="nowrap">â‰¥ 70%</td><td>Below this, the product never delivers its value and the funnel leaks at the top.</td></tr>
+  <tr><td>2</td><td>First day planned within 24 hours</td><td class="nowrap">â‰¥ 55%</td><td>The first successful plan is when belief in the product forms.</td></tr>
+  <tr><td>3</td><td>Day 7 retention</td><td class="nowrap">â‰¥ 40%</td><td>Confirms the daily ritual is forming rather than merely tried.</td></tr>
+  <tr><td>4</td><td>Day 30 retention</td><td class="nowrap">â‰¥ 25%</td><td>Confirms a durable habit rather than novelty appeal.</td></tr>
+  <tr><td>5</td><td>Morning plan completion rate</td><td class="nowrap">â‰¥ 65%</td><td>The plan underpins every day's execution.</td></tr>
+  <tr><td>6</td><td>Evening review completion rate</td><td class="nowrap">â‰¥ 55%</td><td>Reflection is the differentiator; without it this is another to-do list.</td></tr>
+  <tr><td>7</td><td>Auto-scheduled blocks accepted unchanged</td><td class="nowrap">â‰¥ 70%</td><td>The definitive measure of scheduling quality and of the energy-matching thesis.</td></tr>
+  <tr><td>8</td><td>Tasks linked to a goal</td><td class="nowrap">â‰¥ 80%</td><td>Verifies the spine principle is actually followed in practice.</td></tr>
+  <tr><td>9</td><td>Goals reached or deliberately revised</td><td class="nowrap">â‰¥ 60%</td><td>The only measure of genuine goal achievement.</td></tr>
+  <tr><td>10</td><td>Recovery within 24 hours of a missed day</td><td class="nowrap">â‰¥ 65%</td><td>Validates forgiveness as a working mechanism, not an intention.</td></tr>
+  <tr><td>11</td><td>Churn following a broken streak</td><td class="nowrap">â‰¤ 10%</td><td>Guards the highest-risk abandonment moment.</td></tr>
+  <tr><td>12</td><td>Reminder dismissal rate</td><td class="nowrap">â‰¤ 20%</td><td>A proxy for whether the notification policy is being honoured.</td></tr>
+  <tr><td>13</td><td>Users reporting a useful insight</td><td class="nowrap">â‰¥ 50% of WAU</td><td>Proves the insight feed does work rather than filling space.</td></tr>
+  <tr><td>14</td><td>No data loss or lost entries</td><td class="nowrap">Zero incidents</td><td>An absolute gate. Journals hold people's real thoughts.</td></tr>
+  <tr><td>15</td><td>WCAG 2.1 AA met throughout</td><td class="nowrap">Full conformance</td><td>An absolute gate. Excluding anyone defeats the product's purpose.</td></tr>
+  <tr><td>16</td><td>Complete export available and ungated</td><td class="nowrap">Verified</td><td>Data ownership is a product promise, not a feature.</td></tr>
+</table>
+
+<div class="callout warn">
+<strong>Failure interpretation.</strong> If criteria 7, 8, 9, or 13 fail while engagement metrics hold, the product is busy but not helping. This is a design failure of the core thesis, not a marketing problem, and requires a product change rather than a growth push.
+</div>
+
+<h1>17. Risks and Mitigations</h1>
+<table>
+  <tr><th style="width:5%">#</th><th style="width:20%">Risk</th><th style="width:9%">Severity</th><th style="width:30%">Mitigation</th><th>Early Warning Signal</th></tr>
+  <tr><td>1</td><td>The daily loop feels like homework</td><td>High</td><td>Morning under 5 minutes, evening under 5, hard limits. Progression is the reward, not feature accumulation. Both rituals are skippable without penalty.</td><td>Ritual completion rate below 50% within two weeks of launch</td></tr>
+  <tr><td>2</td><td>Auto-scheduling feels wrong on first contact</td><td>High</td><td>Every block explains its placement. The first week is deliberately easy to correct. Every acceptance and rejection is learned from.</td><td>Block acceptance rate below 50% in week one</td></tr>
+  <tr><td>3</td><td>Capture friction loses the user mid-thought</td><td>High</td><td>One interaction from anywhere. Capture is treated as the highest-polished flow in the product. Interruption safety is an absolute requirement.</td><td>Inbox abandonment after capture exceeds 15%</td></tr>
+  <tr><td>4</td><td>The leaderboard backfires</td><td>High</td><td>Opt-in only, display names, one-action opt-out, no listing of opted-out users. See Open Question 1 on launch timing.</td><td>Opt-out rate above 20%, or qualitative reports of feeling judged</td></tr>
+  <tr><td>5</td><td>AI output undermines credibility</td><td>High</td><td>Every suggestion explains itself and is correctable. The coach stays silent rather than speculative. Disclosure and pattern thresholds are enforced.</td><td>Coach suggestion dismissal rate above 40%</td></tr>
+  <tr><td>6</td><td>Energy patterns do not generalise</td><td>High</td><td>Treated as a starting assumption the user revises, never a fact. Adapts from observed data. Users can override any placement.</td><td>High manual rescheduling of blocks placed for energy reasons</td></tr>
+  <tr><td>7</td><td>Goal sprawl</td><td>Medium</td><td>Recommended maximum of five, warning on time contention, and mandatory course correction in the weekly review.</td><td>Mean active goals above seven, or below two</td></tr>
+  <tr><td>8</td><td>Journaling abandoned in week two</td><td>Medium</td><td>Entries are tied to real work, prompts stay at three to five, and past entries resurface in the insight feed.</td><td>Journal entry rate declining steadily from week one</td></tr>
+  <tr><td>9</td><td>Reminder fatigue</td><td>Medium</td><td>Low default volume, three-per-day ceiling, dismissal rate treated as a quality signal.</td><td>Any notification type exceeding 20% dismissal</td></tr>
+  <tr><td>10</td><td>Scope dilution</td><td>High</td><td>The Must requirements are protected. The daily loop, auto-scheduling, and reflection are non-negotiable. Everything else can follow.</td><td>Must requirements descoped during build</td></tr>
+  <tr><td>11</td><td>Energy-aware scheduling fails to feel different</td><td>High</td><td>Validate the thesis in usability testing before full build. If the benefit is not perceptible within one session, the differentiator does not exist.</td><td>Users unable to articulate why the schedule differs from a manual one</td></tr>
+  <tr><td>12</td><td>Weekly review is skipped as low-value</td><td>Medium</td><td>The review leads with course correction decisions, not statistics. The coach states one specific recommendation.</td><td>Weekly review completion below 40% while daily rituals hold</td></tr>
+  <tr><td>13</td><td>Competitor ships the same thesis</td><td>Medium</td><td>Depth of the daily and weekly loop as defensible advantage, plus the user data that accumulates over time.</td><td>Feature parity announcements in category</td></tr>
+  <tr><td>14</td><td>Over-committed onboarding produces unrealistic first week</td><td>Medium</td><td>The first week is deliberately conservative. Demonstrating achievable completion is more valuable than demonstrating ambition.</td><td>High first-day abandonment despite a generated plan</td></tr>
+</table>
+
+<h1>18. Dependencies and Assumptions</h1>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:26%">Type</th><th>Statement</th></tr>
+  <tr><td>1</td><td>Dependency</td><td>Google, Outlook, and Apple calendar providers permit the access required for two-way event sync.</td></tr>
+  <tr><td>2</td><td>Dependency</td><td>Device notification controls permit programmatic silencing for the duration of a focus session.</td></tr>
+  <tr><td>3</td><td>Dependency</td><td>Operating system capabilities permit blocking user-selected applications during a focus session on supported devices.</td></tr>
+  <tr><td>4</td><td>Dependency</td><td>Voice transcription is available in supported languages and performs accurately enough to be the primary capture method.</td></tr>
+  <tr><td>5</td><td>Assumption</td><td>Busy professionals will spend under ten minutes on onboarding if the value is framed before any input is requested.</td></tr>
+  <tr><td>6</td><td>Assumption</td><td>Users will accept the product proposing a plan they did not build themselves, provided the reasoning is visible.</td></tr>
+  <tr><td>7</td><td>Assumption</td><td>A daily energy pattern can be established accurately enough by user description in onboarding, without requiring weeks of learning.</td></tr>
+  <tr><td>8</td><td>Assumption</td><td>Users will reflect honestly in the evening review when the questions are specific to their actual day rather than generic.</td></tr>
+  <tr><td>9</td><td>Assumption</td><td>Opt-in social comparison motivates rather than demotivates this audience.</td></tr>
+  <tr><td>10</td><td>Assumption</td><td>Goal-linked tasks are the single strongest predictor of retention in this category. <em>To be validated in the first release; if false, the spine principle requires reconsideration.</em></td></tr>
+  <tr><td>11</td><td>Risk</td><td>Users with irregular or shift-based working hours are poorly served by a day-planning model. <em>See Open Question 7.</em></td></tr>
+  <tr><td>12</td><td>Risk</td><td>Marketplace-style distribution is assumed available. Without it, the leaderboard has no population and should not ship.</td></tr>
+</table>
+
+<h1>19. Open Questions</h1>
+<table>
+  <tr><th style="width:5%">#</th><th style="width:44%">Question</th><th style="width:16%">Owner</th><th style="width:14%">Needed By</th><th>Impact if unresolved</th></tr>
+  <tr><td>1</td><td>Should the leaderboard launch with V1, or follow once retention is proven? Risk 4 argues for deferral.</td><td>Product</td><td>Before build</td><td>Low. Feature is independently severable.</td></tr>
+  <tr><td>2</td><td>How should the consistency score be weighted: task completion, goal progress, or ritual adherence?</td><td>Product + User Research</td><td>Before build</td><td><strong>High.</strong> A leaderboard ranking on a contested metric is unfair.</td></tr>
+  <tr><td>3</td><td>What is the minimum viable set of energy signals, and can it be learned without explicit user input?</td><td>Product</td><td>Before build</td><td><strong>High.</strong> This is the core differentiator.</td></tr>
+  <tr><td>4</td><td>Should long-term goals be annual or quarterly by default?</td><td>Product</td><td>Before design</td><td>Medium. Affects progress view and review cadence.</td></tr>
+  <tr><td>5</td><td>How are AI features communicated to users who are sceptical of AI?</td><td>Product + Design</td><td>Before design</td><td>Medium. Affects trust and perceived honesty.</td></tr>
+  <tr><td>6</td><td>Does distraction blocking require full native capability, or is user-side assistance acceptable at launch?</td><td>Product + Engineering</td><td>Before build</td><td>Medium. Determines whether F3 is Must or Should.</td></tr>
+  <tr><td>7</td><td>How are users with irregular or shift-based working hours served?</td><td>Product</td><td>Before design</td><td>Medium. Risk of excluding a meaningful segment.</td></tr>
+  <tr><td>8</td><td>Is there a free tier, and which features gate access? Export must remain ungated per Q6.</td><td>Business</td><td>Before build</td><td>Medium. Affects onboarding flow design.</td></tr>
+  <tr><td>9</td><td>Should the AI coach be a distinct surface, or woven into the daily loop?</td><td>Design</td><td>Before design</td><td>Medium. Materially affects the screen inventory.</td></tr>
+  <tr><td>10</td><td>What is the manual intervention path if a user disagrees with a plan and nothing editable works?</td><td>Product + Support</td><td>Before launch</td><td>Low. Operational.</td></tr>
+</table>
+
+<div class="pagebreak"></div>
+<h1>Appendix A â€” Glossary</h1>
+<table>
+  <tr><th style="width:26%">Term</th><th>Definition</th></tr>
+  <tr><td>Goal</td><td>An outcome the user is working toward, with a target date. The top level of the hierarchy and the reason any work exists.</td></tr>
+  <tr><td>Project</td><td>A meaningful chunk of work that moves a goal forward. Exists only within a goal.</td></tr>
+  <tr><td>Task</td><td>A concrete action with an estimated duration and difficulty. The unit the scheduler places into a day.</td></tr>
+  <tr><td>Routine</td><td>Recurring work scheduled inside the day plan like a task, distinguished by its repetition.</td></tr>
+  <tr><td>Block</td><td>A scheduled period of time on the day view assigned to a task or routine.</td></tr>
+  <tr><td>Inbox</td><td>The single holding area for everything captured, awaiting filing.</td></tr>
+  <tr><td>Energy pattern</td><td>A user's definition of how their alertness varies across the day, used to place demanding work favourably.</td></tr>
+  <tr><td>Framework</td><td>The chosen prioritisation method that determines the ranking of tasks.</td></tr>
+  <tr><td>Top 3</td><td>The three highest-ranked tasks highlighted each morning as the day's primary commitments.</td></tr>
+  <tr><td>Daily loop</td><td>The repeating cycle of morning plan, execution, and evening review.</td></tr>
+  <tr><td>Evening review</td><td>The structured three-to-five question reflection completed at the end of a day.</td></tr>
+  <tr><td>Weekly review</td><td>The once-weekly assessment of progress, patterns, and direction, ending in course-correction decisions.</td></tr>
+  <tr><td>Course correction</td><td>The explicit decision to continue, adjust, or drop a goal based on evidence.</td></tr>
+  <tr><td>Replan</td><td>A proposed revised plan following incomplete work, presented for user acceptance rather than imposed.</td></tr>
+  <tr><td>Focus session</td><td>A protected period of work with notifications silenced and distracting applications blocked.</td></tr>
+  <tr><td>Consistency score</td><td>A weekly measure derived from completed against uncompleted tasks. Defined in Section 9.9, I6.</td></tr>
+  <tr><td>Insight</td><td>A pattern the system surfaces from the user's own recorded behaviour, with its basis stated.</td></tr>
+  <tr><td>Coach</td><td>The product's proactive assistant. Speaks only when it has something useful to say.</td></tr>
+  <tr><td>Meaningful goal progression</td><td>The North Star measure: completing work that materially advances an active goal.</td></tr>
+  <tr><td>Must / Should / Could</td><td>Requirement priorities. Must defines V1, Should is desirable and descopable, Could is a V2 candidate.</td></tr>
+</table>
+
+<h1>Appendix B â€” Requirement Traceability Matrix</h1>
+<p>Each objective traces to the requirements that deliver it, and the success metric that verifies delivery.</p>
+<table>
+  <tr><th style="width:6%">Objective</th><th style="width:38%">Delivering Requirements</th><th style="width:26%">Verification Metric</th><th>Journey</th></tr>
+  <tr><td>O1 â€” Work connects to goals</td><td>G1â€“G12, C3, P4, P6, I1, I4, I5</td><td>Tasks linked to a goal â‰¥ 80%</td><td>8.1, 8.7</td></tr>
+  <tr><td>O2 â€” Users stop hand-building their day</td><td>S1â€“S13, P1â€“P8, D1â€“D3, C1â€“C6</td><td>Blocks accepted unchanged â‰¥ 70%</td><td>8.2, 8.3</td></tr>
+  <tr><td>O3 â€” Users reflect daily</td><td>D4â€“D6, D11, J1â€“J7, A1, A3, A10</td><td>Evening review completion â‰¥ 55%</td><td>8.5</td></tr>
+  <tr><td>O4 â€” Users persist past setbacks</td><td>D7â€“D10, N2, N4, N6, I9, A7, Section 7.3</td><td>Recovery within 24h â‰¥ 65%; streak churn â‰¤ 10%</td><td>8.6</td></tr>
+  <tr><td>O5 â€” Users gain real insight</td><td>I2â€“I7, I10â€“I13, A4, A5, A8, S12, F6, Q8</td><td>Useful insight reported â‰¥ 50% WAU</td><td>8.7</td></tr>
+</table>
+
+<h3>Principle Traceability</h3>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:26%">Principle</th><th style="width:40%">Enforcing Requirements</th><th>Enforcing Policies</th></tr>
+  <tr><td>1</td><td>Goals are the spine</td><td>G1â€“G12, G10, C3, P4, P6, I1, I5</td><td>Section 6.3 counter-metrics</td></tr>
+  <tr><td>2</td><td>Protect attention</td><td>C1, C2, C3, C6, Q2, Q5</td><td>Section 11.2 rules 1, 2</td></tr>
+  <tr><td>3</td><td>Plan for the human</td><td>S1â€“S7, S11, S12, F4, R3, B2</td><td>Section 13.4 guardrails</td></tr>
+  <tr><td>4</td><td>Forgiving by design</td><td>D7, D8, D9, D10, I9, N2, N6, R5, R6</td><td>Sections 7.3, 11.1, 12.2</td></tr>
+  <tr><td>5</td><td>Reflection is part of the work</td><td>D4, D5, D6, D11, J1â€“J7, I4, I5</td><td>Section 9.5 acceptance</td></tr>
+  <tr><td>6</td><td>Right or silent</td><td>A7, A8, J7, I3, I8</td><td>Section 13.4 guardrails</td></tr>
+  <tr><td>7</td><td>Show the reasoning</td><td>P3, S7, I3, A10, Q8</td><td>Section 11.2 rule 5</td></tr>
+  <tr><td>8</td><td>Small surface, deep habit</td><td>Q5, Q10, C6, D3, D6</td><td>Sections 6.3, 7.2</td></tr>
+</table>
+
+<h1>Appendix C â€” Screen Inventory</h1>
+<p>The complete surface area of the product. Principle 8 requires this list remain short. Any new screen requires justification against an existing requirement.</p>
+<table>
+  <tr><th style="width:6%">#</th><th style="width:26%">Screen</th><th>Purpose</th><th style="width:12%">Daily Use</th></tr>
+  <tr><td>1</td><td>Onboarding flow</td><td>Goals, schedule, energy pattern, framework, calendar connection</td><td>Once</td></tr>
+  <tr><td>2</td><td>Today</td><td>The day plan, Top 3, energy log, current block, focus entry</td><td><strong>Every day</strong></td></tr>
+  <tr><td>3</td><td>Morning plan</td><td>Confirm or adjust the day, lock the Top 3, log energy</td><td>Daily</td></tr>
+  <tr><td>4</td><td>Evening review</td><td>Three to five questions, optional journal entry, tomorrow's proposal</td><td>Daily</td></tr>
+  <tr><td>5</td><td>Focus session</td><td>Active session, breaks, completion log</td><td>Daily</td></tr>
+  <tr><td>6</td><td>Capture sheet</td><td>Voice or text capture, reachable from anywhere in one interaction</td><td>Many times daily</td></tr>
+  <tr><td>7</td><td>Inbox</td><td>Triage captured items, file, merge, discard</td><td>Daily</td></tr>
+  <tr><td>8</td><td>Goals and progress</td><td>Goal list with progress, next actions, blockers, health flags</td><td>Weekly</td></tr>
+  <tr><td>9</td><td>Goal detail</td><td>Projects, tasks, progress history, related journal entries</td><td>Weekly</td></tr>
+  <tr><td>10</td><td>Weekly review</td><td>What advanced, what stalled, consistency score, insights, course correction</td><td>Weekly</td></tr>
+  <tr><td>11</td><td>Insight feed</td><td>Surfaced patterns with their supporting evidence</td><td>Weekly</td></tr>
+  <tr><td>12</td><td>Journal history</td><td>Search and browse entries by date, week, month, goal, mood</td><td>As needed</td></tr>
+  <tr><td>13</td><td>Routines</td><td>Create, edit, pause routines; view consistency</td><td>As needed</td></tr>
+  <tr><td>14</td><td>Leaderboard</td><td>Optional weekly top 20 by display name</td><td>Optional</td></tr>
+  <tr><td>15</td><td>Settings</td><td>Working hours, energy, framework, goals, notifications, privacy, export, data deletion</td><td>As needed</td></tr>
+</table>
+
+<div class="callout key">
+<strong>Deliberately absent.</strong> There is no separate coach chat screen. Coaching occurs in context â€” in the morning plan, the day view, the evening review, and the weekly review. A chat interface would contradict Principle 8 and encourage users to ask the product questions it should already be answering proactively. See Open Question 9.
+</div>
+
+<h1>Related Documents</h1>
+<ul>
+  <li><code>FEATURES.md</code> â€” feature inventory derived from user interviews</li>
+  <li>Product design specification â€” not yet written</li>
+  <li>Screen-by-screen application structure â€” not yet written</li>
+  <li>Prioritised build roadmap and phasing â€” not yet written</li>
+  <li>Technical architecture and implementation design â€” out of scope for this document</li>
+  <li>User research findings and interview transcripts â€” held separately</li>
+</ul>
+
+<h1>Sign-Off</h1>
+<table>
+  <tr><th style="width:24%">Role</th><th style="width:24%">Name</th><th style="width:16%">Date</th><th>Status</th></tr>
+  <tr><td>Product Owner</td><td></td><td></td><td>Pending</td></tr>
+  <tr><td>Design Lead</td><td></td><td></td><td>Pending</td></tr>
+  <tr><td>Engineering Lead</td><td></td><td></td><td>Pending</td></tr>
+  <tr><td>User Research</td><td></td><td></td><td>Pending</td></tr>
+  <tr><td>Data and Privacy Review</td><td></td><td></td><td>Pending</td></tr>
+</table>
+
+<p class="small" style="margin-top:24pt">End of document. FocusFlow Product Requirements Document, Version 2.0. 122 requirements across 12 capability areas, 14 non-functional requirements, 16 release gates.</p>
+
+</body>
+</html>

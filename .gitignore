@@ -1,0 +1,42 @@
+# Operating system
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor and IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build and dependency directories
+node_modules/
+dist/
+build/
+target/
+*.tmp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Environment and secrets
+.env
+.env.local
+*.pem
+*.key
+
+# OS and application caches
+.cache/
+__pycache__/
+*.pyc
+Thumbs.db
+
+# Local working files
+*.bak
+*.tmp
+~$*
+
+# Unrelated local project, not part of this repository
+career-compass/
