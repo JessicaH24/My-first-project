@@ -66,6 +66,7 @@ These are the decision criteria. When requirements conflict, these resolve them.
 
 | File | Description |
 |---|---|
+| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | **Start here to build** — 13 phased plan with check-ins, architecture decisions, and exit criteria |
 | [FocusFlow_PRD_v2.pdf](FocusFlow_PRD_v2.pdf) | Product Requirements Document, 38 pages — the full specification |
 | [FocusFlow_PRD_v2.docx](FocusFlow_PRD_v2.docx) | Same document, editable in Word |
 | [FocusFlow_PRD_v2.html](FocusFlow_PRD_v2.html) | Same document, viewable in a browser |
@@ -87,12 +88,46 @@ The PRD contains 19 sections and 3 appendices, covering:
 - 14 risks with early warning signals, 10 open questions
 - Requirement traceability matrix and screen inventory
 
+### Implementation plan at a glance
+
+The [implementation plan](IMPLEMENTATION_PLAN.md) converts the PRD into 13 sequential phases, sized for a solo developer. Roughly 22 to 27 weeks to launch, excluding the 4-week beta.
+
+| Phase | Name | Est. | Delivers |
+|---|---|---|---|
+| 0 | Resolve Blockers | 3–5d | Decisions that prevent building from starting |
+| 1 | Thesis Validation | 5–7d | Manual test of whether energy-aware scheduling is perceptible |
+| 2 | Design System | 10–15d | Tokens, components, accessibility baseline |
+| 3 | Architecture | 5–8d | 11 decisions with consequences and revisit triggers |
+| 4 | Foundations | 15–20d | Data model, capture, goals, projects, tasks |
+| 5 | Prioritisation + Scheduling | 15–20d | Ranking, energy-aware day plan, reasoning |
+| 6 | The Daily Loop | 15–20d | Morning plan, focus mode, evening review, replan |
+| 7 | Routines + Reflection | 10–12d | Routines, journal, week continuity |
+| 8 | Progress + Insights | 12–15d | Progress view, insight feed, weekly review |
+| 9 | Coaching Layer | 10–12d | Morning briefing, overload, journal interrogation |
+| 10 | Onboarding + Launch Readiness | 12–15d | Guided setup, notification policy, export, hardening |
+| 11 | Beta | 4wk | Real users, measurement, iteration |
+| 12 | Post-Launch | ongoing | Leaderboard decision, V2 candidates |
+
+**Every phase ends with the same check-in:** run the exit criteria, live one real day, write friction notes before discussing them, then fix, defer, or reverse. Defects are never carried forward, and reversal is always a valid outcome.
+
+### Where the plan is opinionated
+
+Three positions worth knowing before you read it, because they shape everything downstream:
+
+1. **Phase 1 tests the core thesis before automating it.** If users cannot articulate why an energy-ordered day differs from a clock-ordered one, the differentiator is decorative. Finding that out costs a week instead of a scheduler rebuild.
+2. **The design system bans red entirely** — reserved for genuine input errors where the user must fix something. Overdue work reads neutral. This is a constraint that will be debated by designers, recorded here as a decision rather than a suggestion.
+3. **The coach is the first thing to cut** if time runs short. Everything it does is an enhancement to work the product already does.
+
+The plan also records three requirement discrepancies between PRD v1 and v2, with v2 marked authoritative.
+
 ## Status
 
-Pre-build. The following open questions block development start:
+Pre-build, awaiting Phase 0. Two decisions block all development:
 
-1. **Consistency score weighting** — task completion, goal progress, or ritual adherence? A leaderboard ranked on a contested metric is unfair.
-2. **Energy signal sourcing** — what is the minimum viable set, and can it be learned without explicit user input? This is the core differentiator.
+1. **Consistency score weighting** — task completion, goal progress, or ritual adherence? A leaderboard ranked on a contested metric is unfair. The plan recommends goal progression, with ritual adherence tracked separately as a private retention metric.
+2. **Energy signal sourcing** — what is the minimum viable set, and can it be learned without explicit user input? This is the core differentiator. The plan recommends declared-plus-observed: onboarding collects an energy curve to unblock the cold start, then observed completion data refines it and every adjustment is disclosed.
+
+Both can be decided in an afternoon. Until they are, no code should be written — the scheduling engine and the score formula would both need rebuilding.
 
 ## License
 
