@@ -66,7 +66,10 @@ These are the decision criteria. When requirements conflict, these resolve them.
 
 | File | Description |
 |---|---|
-| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | **Start here to build** — begin with **Section 1A: Fast Track**, a 10-day prototype. Then Section 1B for the roadmap, and the 13 detailed phases after that |
+| [TECHNICAL_DESIGN.md](TECHNICAL_DESIGN.md) | **Start here to build** — the tech stack, the database design, the folder structure, where every dropped feature plugs in later, and the day-by-day build order for the 10-day prototype |
+| [FocusFlow_Technical_Design_v1.0.pdf](FocusFlow_Technical_Design_v1.0.pdf) | Technical Design, formatted — 20 pages, read offline or on a phone |
+| [FocusFlow_Technical_Design_v1.0.docx](FocusFlow_Technical_Design_v1.0.docx) | Same document, editable in Word |
+| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | The wider roadmap — **Section 1A: Fast Track** overview, **Section 1B** for what was dropped and why, then the 13 detailed phases |
 | [FocusFlow_Implementation_Plan_v1.1.pdf](FocusFlow_Implementation_Plan_v1.1.pdf) | Implementation Plan, formatted — read offline or on a phone |
 | [FocusFlow_Implementation_Plan_v1.1.docx](FocusFlow_Implementation_Plan_v1.1.docx) | Same document, editable in Word |
 | [FocusFlow_Implementation_Plan_v1.1.html](FocusFlow_Implementation_Plan_v1.1.html) | Same document, viewable in a browser |
@@ -146,14 +149,32 @@ Three positions worth knowing before you read it, because they shape everything 
 
 The plan also records three requirement discrepancies between PRD v1 and v2, with v2 marked authoritative.
 
+### Technical design at a glance
+
+The design document answers "what do we actually build, and what happens to everything we cut?" before a single line of code exists.
+
+**Stack:** a browser app — Next.js, TypeScript, Prisma, PostgreSQL, Vercel. No app store, no install, no build step, and testable by sending someone a link.
+
+**Ten tables,** of which `Goal` and `Project` are deliberately built now and left empty, because `Task` carries an optional `goalId` and `projectId` from day one. Switching goals on later is then new screens rather than a data migration.
+
+**Three structural guarantees,** enforced by the schema rather than by discipline:
+
+| Guarantee | Enforced by |
+|---|---|
+| A fixed meeting can never become a task | `Block` has no task column — there is nowhere to put the link |
+| Typed and synced meetings behave identically | `source` is history only; the scheduler never reads it |
+| Explanations never go stale | Reasons are stored as facts; sentences are assembled at display time |
+
+**Every dropped feature has a named landing place.** Eight of the nine need no change to the existing design — goals, capture, focus mode, journal, routines, onboarding, calendar sync, and insights. Offline support needs one new folder, which is why every read and write routes through `src/data/`.
+
 ## Status
 
-Pre-build, awaiting Phase 0. Two decisions block all development:
+Pre-build. The two Phase 0 decisions are set out in Section 7 of the technical design and need confirming before Day 3:
 
 1. **Consistency score weighting** — task completion, goal progress, or ritual adherence? A leaderboard ranked on a contested metric is unfair. The plan recommends goal progression, with ritual adherence tracked separately as a private retention metric.
-2. **Energy signal sourcing** — what is the minimum viable set, and can it be learned without explicit user input? This is the core differentiator. The plan recommends declared-plus-observed: onboarding collects an energy curve to unblock the cold start, then observed completion data refines it and every adjustment is disclosed.
+2. **Energy signal sourcing** — what is the minimum viable set, and can it be learned without explicit user input? This is the core differentiator. For the prototype the recommendation is **declared only**: the person draws their curve in setup, and observed learning arrives later as new rows rather than a restructure. When it does, it must be disclosed and reversible.
 
-Both can be decided in an afternoon. Until they are, no code should be written — the scheduling engine and the score formula would both need rebuilding.
+Both can be decided in an afternoon. Once confirmed, **Day 1 starts**: the project runs, the database exists, and the setup screen still remembers your settings after you close the browser.
 
 ## License
 
