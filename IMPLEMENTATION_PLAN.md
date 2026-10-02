@@ -3,12 +3,283 @@
 | Field | Value |
 |---|---|
 | Product | FocusFlow |
-| Document | Phased Implementation Plan, v1.0 |
+| Document | Phased Implementation Plan, v1.1 — includes Fast Track |
 | Status | Draft for review |
 | Date | 1 October 2026 |
 | Source | `FocusFlow_PRD_v2.pdf` (Version 2.0) |
-| Team | Solo or 1–2 people |
-| Strategy | Complete daily loop first, with a testing check-in after every phase |
+| Team | Solo or 1–2 people, building with AI assistance |
+| Strategy | **Fast Track first** — 10-day prototype, then add features over ~20 weeks |
+
+> **New here? Start with Section 1A below.** It is a 10-day prototype you can build immediately, written in plain language with no assumed experience. It is designed to become the foundation of the full app rather than being thrown away. Once you have read it, Section 1B explains why the remaining phases are arranged the way they are.
+
+---
+
+## 1A. Fast Track — Your First 10 Days
+
+### What this is
+
+A working version of the core idea: **the app builds your day and tells you why.** That is the whole product in miniature. You can build it in 10 days, show it to a few people, and keep building from there without starting over.
+
+This section assumes you are learning to build with AI and have no prior experience with this kind of app. Everything is explained. Terms are defined when first used.
+
+### Words you will meet
+
+| Word | What it means here |
+|---|---|
+| **Data** | The information your app stores. A task, a time, a note. |
+| **Data model** | The shape of that information. Which pieces belong together, and what each one is called. |
+| **Screen** | One page or view the user looks at. |
+| **Function** | A named piece of work your app can do. You can think of it as a machine with an input and an output. |
+| **Field** | One piece of information inside a record. A task has a name, a length, a difficulty. |
+| **Timezone** | The region your time belongs to. London, New York, Lagos. Matters more than you would expect. |
+| **Scheduler** | The part of the app that decides what goes when. The heart of the product. |
+| **Block** | A piece of time on the day. "09:30 to 10:15, write the report." |
+| **Fixed block** | Time that cannot move. A meeting. |
+| **Reasoning** | Why the scheduler put something where it put it. "This is hard work, you do your best thinking at 09:00." |
+| **Refactor** | Rearranging code without changing what it does. Safe when code is tidy, risky when it is tangled. |
+| **Dead end** | Code you will have to throw away and rebuild. The thing we are trying to avoid. |
+| **Retrofit** | Add something to something that already exists. Usually easy if prepared for, expensive if not. |
+
+### The three rules that make this reversible
+
+Here is the important part, and it is short. Most of what you are skipping now is cheap to add later — **if** you do three things properly. Each costs about a day now and saves weeks later.
+
+**Rule 1 — Every task can belong to a goal, even if goals do not exist yet.**
+
+Right now you are not building goals. You are only building tasks. But when you create a task, give it an empty slot where a goal would go. Leave it empty. Ignore it.
+
+That empty slot is the whole difference between adding goals in two days and adding them in three weeks. If the slot is not there from the start, you have to change every screen, every query, and every export to add it later.
+
+The rule is simple: **leave room for the future, and do not build the future yet.**
+
+**Rule 2 — Meetings and blocks are the same thing, with a label.**
+
+Right now there are no calendar connections. Someone typing in "Standup, 09:30 to 10:00" is a fixed block.
+
+Store it as a fixed block with a small note saying where it came from: `"typed by hand"`. Later, when you connect a real calendar, meetings get stored the same way with a note saying `"from calendar"`.
+
+The scheduler should never care which. It only knows that time is taken. This single decision turns calendar sync from a rebuild into an addition, and it costs about an hour.
+
+**Rule 3 — Save the reasoning as pieces, not as a finished sentence.**
+
+This one is the most important and the easiest to get wrong.
+
+**The wrong way:** the scheduler decides a task goes at 09:30, then writes the sentence *"Placed at 09:30 because your energy is high in the morning."* You store the sentence.
+
+**The right way:** the scheduler decides a task goes at 09:30, and stores the facts separately:
+
+```
+Placed at:      09:30
+Your energy at 09:30: high
+Task difficulty: high
+Competing with: "Reply to contractor" (shorter, less important)
+Blocked by:     "Fixed block, 10:00 to 11:00, typed by hand"
+```
+
+Then the app writes the sentence from those facts, whenever it needs to.
+
+Why this matters: the weekly review and the insights features need the same explanations six months from now. If you stored finished sentences, the facts are gone and you cannot rebuild the explanation. You would have to re-derive it from data you no longer have.
+
+Storing facts costs nothing today. Storing sentences costs weeks later.
+
+**One more, smaller:** keep all your data access in one place. Every screen reads and writes data through the same few functions, rather than each screen doing its own thing.
+
+This sounds like tidiness for its own sake. It is not. It means that later, when you want the app to work without internet, you change one place instead of rewriting everything. That is the difference between one day of work and one month.
+
+### The 10 days
+
+Work roughly one task per day. Some days will run long; that is normal.
+
+#### Day 1 — The shape of your data
+
+Decide what a piece of information looks like. Write it down before you write any code.
+
+You need five things:
+
+**A task.** What the person wants to do.
+- Name — what it is
+- Length — roughly how many minutes it will take
+- Difficulty — easy, medium, or hard
+- Which goal it belongs to — **leave this empty** (Rule 1)
+- Whether it's done
+
+**A block.** A piece of time on the day.
+- Start time
+- End time
+- What it is for
+- Where it came from — hand-typed or calendar (Rule 2)
+- Whether it can move or is fixed
+
+**Working hours.** When the person is available to work. Start time, end time.
+
+**An energy curve.** How alert the person is across the day. Three or four rough levels is enough: high, medium, low. They will draw it. It does not need to be accurate — it is a starting guess the app improves later.
+
+**A day.** One day's plan, made up of blocks.
+
+Keep this written down somewhere permanent. You will refer to it constantly and it is what you build against.
+
+Also today: build the setup screen. The person enters their working hours and draws their energy curve. You need this before anything else can work.
+
+#### Days 2 to 4 — The scheduler
+
+This is the heart. Three days.
+
+**Day 2** — List everything that takes time out of the day. Meetings, breaks, anything fixed. Then list the tasks that want to go in.
+
+**Day 3** — Sort. Walk through the available time and place work. Your rule: **hard work goes where energy is high, easy work goes where energy is low.**
+
+You do not need the cleverest possible algorithm. You need one that is predictable, always gives the same answer for the same input, and can explain itself. Predictable matters more than optimal, because a user who moves something once and has it snap back tomorrow will stop trusting the whole thing.
+
+**Day 4** — Make it explain itself, and give it somewhere to say what did not fit.
+
+Two things matter here:
+
+- **Every placement has a reason**, using Rule 3
+- **If everything does not fit, say so.** Name the specific tasks that did not get a slot. Never quietly drop something.
+
+That second one is not a nice-to-have. If the app silently loses work, the person stops trusting it completely.
+
+#### Days 5 and 6 — The day view
+
+The screen people look at every morning. A timeline for the day, with blocks laid out on it.
+
+- Show the blocks
+- Let each block be tapped to show its reason (Rule 3)
+- Let each block be marked done
+- Show blocks that did not fit, separately and neutrally
+
+Keep this screen simple. It is the one you will look at most, so it is worth doing properly rather than doing everything.
+
+#### Day 7 — Letting people move things
+
+When someone drags a block to a different time, the rest of the day has to be rearranged around it.
+
+**Expect this to take longer than you think.** It is not snapping to a grid — it is running the whole placement again while treating the moved block as fixed. If you did Days 2 to 4 properly and kept the placement logic in one function, this is easy. If the logic is spread through your screens, this is painful.
+
+This is why the plan insists the scheduler lives in one place, separate from the screens that use it.
+
+#### Day 8 — Replanning
+
+When the day is not finished, the app proposes a new one.
+
+This matters more than it looks. It is the moment a person decides whether to come back tomorrow or give up.
+
+Three rules:
+- No guilt. No red. No "you failed." No count of missed days.
+- Say what happened plainly: three tasks moved to tomorrow, here is why.
+- Accept with one tap.
+
+Read the PRD's tone section before writing these words. This screen carries the emotional weight of the entire product.
+
+#### Day 9 — Making it not fall over
+
+The unglamorous day that prevents bad days later.
+
+- **Timezones and daylight saving.** Do not skip this. Almost every scheduler bug you will ever chase comes back to time handling. Store the actual timezone, convert deliberately, never store a bare time like "09:30" without saying what timezone it is in.
+- Empty states — what the screen shows when there is nothing to show
+- What happens if the app closes mid-save
+- The words on every screen, checked against the PRD's tone rules
+
+#### Day 10 — Get it in front of someone
+
+Prepare three realistic test days with different shapes:
+
+1. A normal day with meetings scattered through it
+2. A day with three tasks due on the same day — where they compete
+4. A day with more work than fits
+
+Write a short script of what to ask. The most important question is on Day 4 of the plan: **"When you looked at this schedule, did you notice anything different about when the work sits? Tell me about it."**
+
+If they cannot tell, the core idea is not landing. That is worth knowing now, after 10 days, rather than after six months.
+
+### What you have after 10 days
+
+| Working | Not working yet |
+|---|---|
+| The app builds a day from your tasks | Goals — tasks have an empty slot waiting |
+| Work is placed by energy, not just order | Quick capture — tasks are typed in |
+| Every placement explains itself | Focus mode — no protection from distractions |
+| You can move things and it rearranges | Evening review, journal, routines |
+| Replans without making you feel bad | Calendar sync — meetings typed by hand |
+| | Progress, insights, offline |
+
+### What you can and cannot learn from this
+
+**You can learn:** Does arranging work by energy feel different from putting it in order? Do people believe a day they did not build themselves? Does showing the reason make the plan trustworthy? Does replanning without guilt bring people back? Do people move fewer than 30% of blocks?
+
+**You cannot learn:** anything about habits, keeping people, goals, or reflection. You have half the product. This tests the idea, not the product.
+
+### Before the test, one instruction
+
+Ask each person to type in tomorrow's meetings the night before. Without that, the app will schedule over their real calendar and they will blame the app for a problem you already knew about. This will produce a false result.
+
+### On the 30% number
+
+**Fewer than 30% of blocks moved** is the signal that the scheduler is working. More than that and people do not believe it. If they are moving half the blocks, do not add features — fix the placement.
+
+This number matters more than any feature you could add next.
+
+---
+
+## 1B. What Comes After the Prototype
+
+The rest of this plan covers the full build. If you start with the Fast Track above, use this section as your roadmap for what follows.
+
+### How hard is each dropped feature to add later
+
+| Feature | Difficulty | Time | Why |
+|---|---|---|---|
+| Goals and Projects | Easy | 1–2 days | Only easy if Rule 1 was followed. Otherwise 2–3 weeks |
+| Quick capture and inbox | Medium | 4–6 days | The capture parsing is the work, not the storage |
+| Focus mode | Medium | 4–6 days | Mostly independent. App blocking is limited by the phone |
+| Evening review and journal | Medium | 6–8 days | New screens, but everything they reference exists |
+| Routines | Medium | 4–5 days | Needs a repeat rule on tasks |
+| Onboarding | Easy | 3–4 days | Just a flow writing into structures you have |
+| Calendar sync | Medium-hard | 8–12 days | Real work, but cheap architecturally if Rule 2 was followed |
+| Progress and insights | Medium | 8–10 days | Needs weeks of data to be honest |
+| **Offline support** | **Hard** | **3–4 weeks** | The one genuinely expensive addition |
+
+**About offline.** Adding offline support to an app that was built online-only is close to rewriting the data layer. You can reduce the cost to about a day by keeping all data access in one place, then later adding a local copy behind it. Whether you need offline at all is a real product decision — many useful apps launch online-only and add it after they see demand.
+
+### The order to add them
+
+Build the prototype first (days 1 to 10). Then:
+
+| Weeks | Add | Why here |
+|---|---|---|
+| 3–4 | Goals and Projects | The spine. Everything makes more sense once tasks point somewhere |
+| 5–6 | Quick capture and inbox | Removes the biggest friction cost. This is what users feel first |
+| 7 | Onboarding | Cheap, and you want it before strangers rather than friends |
+| 8–9 | Evening review | Completes the loop. Without it you have planning but no habit |
+| 10–11 | Calendar sync | Real days are flowing now, so real calendars matter |
+| 12–13 | Journal and routines | Build on the daily loop |
+| 14–16 | Focus mode | Execution support. Harder than it looks because of phone limits |
+| 17–19 | Progress and insights | Needs accumulated data to be honest |
+| 20+ | Offline, if still wanted | Decide deliberately, not by default |
+
+Roughly 20 weeks to a complete product on top of the prototype. Slower than the full plan's 22 to 27 weeks, because this route pays two small taxes — you are rebuilding goals and capture that the full plan had in week 4.
+
+### Dead ends — four things that would cost a rebuild
+
+**Scheduling logic written inside the screens.** It tangles into components within days. Keep it in one function that takes your tasks and constraints and returns the day. When you add calendar sync later, you change what goes in, not the thing that works it out.
+
+**Reasoning saved as finished sentences.** Covered in Rule 3. The one most people get wrong, and the only one that cannot be undone by effort.
+
+**Time stored without a timezone.** Every scheduler bug traces back to this. Store real timezones and convert deliberately.
+
+**A meeting modelled as "a task that cannot move."** This feels efficient and it is a trap. Meetings and time blocks are different things, and treating them as the same makes calendar sync a rebuild.
+
+### Building with AI — the honest version
+
+**What AI is genuinely good at:** the repetitive work. Forms, screens, lists, saving data, the boring 60% of any feature. This is real leverage, and it is part of why 10 days is realistic.
+
+**What AI is bad at:** deciding whether the product works. It will not tell you the day planner produces plans nobody trusts, that the energy curve is backwards, or that you have quietly dropped something you needed. It builds what you ask for and stays quiet about what you did not.
+
+Two habits that follow from that:
+
+**Keep a decision log.** A plain text file. Every choice worth remembering, one line, with the date. Three months from now you will have forgotten why reasoning is saved as pieces, and you will be tempted to tidy it into sentences. A written note is what stops that.
+
+**Only keep code you can explain.** If you cannot explain a line, you cannot fix it when it breaks at 11pm. A 10-day build is small enough that you can genuinely understand all of it. That is an advantage — do not spend it.
 
 ---
 
