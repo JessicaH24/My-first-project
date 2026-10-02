@@ -66,7 +66,10 @@ These are the decision criteria. When requirements conflict, these resolve them.
 
 | File | Description |
 |---|---|
-| [TECHNICAL_DESIGN.md](TECHNICAL_DESIGN.md) | **Start here to build** — the tech stack, the database design, the folder structure, where every dropped feature plugs in later, and the day-by-day build order for the 10-day prototype |
+| [STACK_AUDIT.md](STACK_AUDIT.md) | What everything costs, what could charge you, whether a card is needed, and how to move away later — the price and lock-in check before any code is written |
+| [FocusFlow_Stack_Audit_v1.0.pdf](FocusFlow_Stack_Audit_v1.0.pdf) | Stack Audit, formatted — 16 pages, read offline or on a phone |
+| [FocusFlow_Stack_Audit_v1.0.docx](FocusFlow_Stack_Audit_v1.0.docx) | Same document, editable in Word |
+| [TECHNICAL_DESIGN.md](TECHNICAL_DESIGN.md) | The tech stack, the database design, the folder structure, where every dropped feature plugs in later, and the day-by-day build order for the 10-day prototype |
 | [FocusFlow_Technical_Design_v1.0.pdf](FocusFlow_Technical_Design_v1.0.pdf) | Technical Design, formatted — 20 pages, read offline or on a phone |
 | [FocusFlow_Technical_Design_v1.0.docx](FocusFlow_Technical_Design_v1.0.docx) | Same document, editable in Word |
 | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | The wider roadmap — **Section 1A: Fast Track** overview, **Section 1B** for what was dropped and why, then the 13 detailed phases |
@@ -148,6 +151,29 @@ Three positions worth knowing before you read it, because they shape everything 
 3. **The coach is the first thing to cut** if time runs short. Everything it does is an enhancement to work the product already does.
 
 The plan also records three requirement discrepancies between PRD v1 and v2, with v2 marked authoritative.
+
+### Cost at a glance
+
+**The prototype costs $0, and no payment card is required on any service.** Verified 2 October 2026.
+
+| | Tool | Free tier | Could you be charged? |
+|---|---|---|---|
+| Language | TypeScript | Unlimited | No — open source |
+| Framework | Next.js | Unlimited | No — open source |
+| Database | PostgreSQL on Neon | 1 GB, 100 projects | Only if you upgrade |
+| Data access | Prisma (pinned to v7) | Unlimited | No — Apache 2.0 |
+| Styling | Tailwind CSS | Unlimited | No — MIT |
+| Hosting | Vercel | 100 GB/mo, 1M calls | Only if you upgrade |
+| Dates | date-fns + date-fns-tz | Unlimited | No — MIT |
+| Login | Built in, users in your own database | Unlimited | No — Better Auth, MIT |
+| Files, email, notifications, analytics | **Not added yet** | — | Nothing to charge |
+
+**The first bill you will ever see is $20/month on Vercel**, and it is triggered by earning money rather than by having users. Vercel's free plan is non-commercial by their terms, so the moment FocusFlow takes payment it must move to Pro.
+
+Two findings worth knowing before Day 1:
+
+- **Supabase's free tier pauses your database after a week of low activity and has no backups.** Neon sleeps after five minutes and wakes automatically, and keeps six hours of restore history free. That is why the database recommendation stayed with Neon.
+- **Auth.js is in security-patch-only maintenance** and its maintainers point new projects at Better Auth. An AI assistant may still suggest the older library.
 
 ### Technical design at a glance
 
