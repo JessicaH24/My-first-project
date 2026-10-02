@@ -1,0 +1,898 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FocusFlow - Implementation Plan</title>
+<style>
+  @page { size: A4; margin: 2.2cm 2cm; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.5; color: #1a1a1a; }
+  h1 { font-size: 19pt; color: #1a3a5c; border-bottom: 3px solid #1a3a5c; padding-bottom: 6pt; margin-top: 20pt; page-break-after: avoid; }
+  h2 { font-size: 14.5pt; color: #1a3a5c; margin-top: 16pt; page-break-after: avoid; }
+  h3 { font-size: 12pt; color: #2d5f8a; margin-top: 13pt; page-break-after: avoid; }
+  h4 { font-size: 10.5pt; color: #333; margin-top: 10pt; page-break-after: avoid; }
+  p { margin: 6pt 0; }
+  table { border-collapse: collapse; width: 100%; margin: 8pt 0 12pt 0; font-size: 9pt; }
+  th { background: #1a3a5c; color: #fff; text-align: left; padding: 5pt 6pt; border: 1px solid #16304c; font-weight: 600; }
+  td { border: 1px solid #b8c4d0; padding: 4pt 6pt; vertical-align: top; }
+  tr { page-break-inside: avoid; }
+  ul, ol { margin: 5pt 0 5pt 20pt; padding: 0; }
+  li { margin: 2.5pt 0; }
+  code { font-family: Consolas, monospace; background: #eef2f6; padding: 1pt 3pt; font-size: 8.5pt; }
+  pre { background: #f4f7fa; border-left: 3px solid #2d5f8a; padding: 8pt 10pt; margin: 8pt 0; page-break-inside: avoid; }
+  pre code { background: none; padding: 0; }
+  blockquote { border-left: 4px solid #2d5f8a; background: #eef4fa; padding: 7pt 11pt; margin: 9pt 0; page-break-inside: avoid; font-style: italic; }
+  hr { border: none; border-top: 1px solid #ccc; margin: 14pt 0; }
+  a { color: #2d5f8a; }
+  strong { color: #0f2438; }
+</style>
+</head>
+<body>
+<h1>FocusFlow â€” Implementation Plan</h1>
+<table>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Product</td><td>FocusFlow</td></tr>
+<tr><td>Document</td><td>Phased Implementation Plan, v1.1 â€” includes Fast Track</td></tr>
+<tr><td>Status</td><td>Draft for review</td></tr>
+<tr><td>Date</td><td>1 October 2026</td></tr>
+<tr><td>Source</td><td><code>FocusFlow_PRD_v2.pdf</code> (Version 2.0)</td></tr>
+<tr><td>Team</td><td>Solo or 1â€“2 people, building with AI assistance</td></tr>
+<tr><td>Strategy</td><td><strong>Fast Track first</strong> â€” 10-day prototype, then add features over ~20 weeks</td></tr>
+</table>
+<blockquote><strong>New here? Start with Section 1A below.</strong> It is a 10-day prototype you can build immediately, written in plain language with no assumed experience. It is designed to become the foundation of the full app rather than being thrown away. Once you have read it, Section 1B explains why the remaining phases are arranged the way they are.</blockquote>
+<hr />
+<h2>1A. Fast Track â€” Your First 10 Days</h2>
+<h3>What this is</h3>
+<p>A working version of the core idea: <strong>the app builds your day and tells you why.</strong> That is the whole product in miniature. You can build it in 10 days, show it to a few people, and keep building from there without starting over.</p>
+<p>This section assumes you are learning to build with AI and have no prior experience with this kind of app. Everything is explained. Terms are defined when first used.</p>
+<h3>Words you will meet</h3>
+<table>
+<tr><th>Word</th><th>What it means here</th></tr>
+<tr><td><strong>Data</strong></td><td>The information your app stores. A task, a time, a note.</td></tr>
+<tr><td><strong>Data model</strong></td><td>The shape of that information. Which pieces belong together, and what each one is called.</td></tr>
+<tr><td><strong>Screen</strong></td><td>One page or view the user looks at.</td></tr>
+<tr><td><strong>Function</strong></td><td>A named piece of work your app can do. You can think of it as a machine with an input and an output.</td></tr>
+<tr><td><strong>Field</strong></td><td>One piece of information inside a record. A task has a name, a length, a difficulty.</td></tr>
+<tr><td><strong>Timezone</strong></td><td>The region your time belongs to. London, New York, Lagos. Matters more than you would expect.</td></tr>
+<tr><td><strong>Scheduler</strong></td><td>The part of the app that decides what goes when. The heart of the product.</td></tr>
+<tr><td><strong>Block</strong></td><td>A piece of time on the day. "09:30 to 10:15, write the report."</td></tr>
+<tr><td><strong>Fixed block</strong></td><td>Time that cannot move. A meeting.</td></tr>
+<tr><td><strong>Reasoning</strong></td><td>Why the scheduler put something where it put it. "This is hard work, you do your best thinking at 09:00."</td></tr>
+<tr><td><strong>Refactor</strong></td><td>Rearranging code without changing what it does. Safe when code is tidy, risky when it is tangled.</td></tr>
+<tr><td><strong>Dead end</strong></td><td>Code you will have to throw away and rebuild. The thing we are trying to avoid.</td></tr>
+<tr><td><strong>Retrofit</strong></td><td>Add something to something that already exists. Usually easy if prepared for, expensive if not.</td></tr>
+</table>
+<h3>The three rules that make this reversible</h3>
+<p>Here is the important part, and it is short. Most of what you are skipping now is cheap to add later â€” <strong>if</strong> you do three things properly. Each costs about a day now and saves weeks later.</p>
+<p><strong>Rule 1 â€” Every task can belong to a goal, even if goals do not exist yet.</strong></p>
+<p>Right now you are not building goals. You are only building tasks. But when you create a task, give it an empty slot where a goal would go. Leave it empty. Ignore it.</p>
+<p>That empty slot is the whole difference between adding goals in two days and adding them in three weeks. If the slot is not there from the start, you have to change every screen, every query, and every export to add it later.</p>
+<p>The rule is simple: <strong>leave room for the future, and do not build the future yet.</strong></p>
+<p><strong>Rule 2 â€” Meetings and blocks are the same thing, with a label.</strong></p>
+<p>Right now there are no calendar connections. Someone typing in "Standup, 09:30 to 10:00" is a fixed block.</p>
+<p>Store it as a fixed block with a small note saying where it came from: <code>"typed by hand"</code>. Later, when you connect a real calendar, meetings get stored the same way with a note saying <code>"from calendar"</code>.</p>
+<p>The scheduler should never care which. It only knows that time is taken. This single decision turns calendar sync from a rebuild into an addition, and it costs about an hour.</p>
+<p><strong>Rule 3 â€” Save the reasoning as pieces, not as a finished sentence.</strong></p>
+<p>This one is the most important and the easiest to get wrong.</p>
+<p><strong>The wrong way:</strong> the scheduler decides a task goes at 09:30, then writes the sentence <em>"Placed at 09:30 because your energy is high in the morning."</em> You store the sentence.</p>
+<p><strong>The right way:</strong> the scheduler decides a task goes at 09:30, and stores the facts separately:</p>
+<pre><code>Placed at:      09:30
+Your energy at 09:30: high
+Task difficulty: high
+Competing with: "Reply to contractor" (shorter, less important)
+Blocked by:     "Fixed block, 10:00 to 11:00, typed by hand"</code></pre>
+<p>Then the app writes the sentence from those facts, whenever it needs to.</p>
+<p>Why this matters: the weekly review and the insights features need the same explanations six months from now. If you stored finished sentences, the facts are gone and you cannot rebuild the explanation. You would have to re-derive it from data you no longer have.</p>
+<p>Storing facts costs nothing today. Storing sentences costs weeks later.</p>
+<p><strong>One more, smaller:</strong> keep all your data access in one place. Every screen reads and writes data through the same few functions, rather than each screen doing its own thing.</p>
+<p>This sounds like tidiness for its own sake. It is not. It means that later, when you want the app to work without internet, you change one place instead of rewriting everything. That is the difference between one day of work and one month.</p>
+<h3>The 10 days</h3>
+<p>Work roughly one task per day. Some days will run long; that is normal.</p>
+<h4>Day 1 â€” The shape of your data</h4>
+<p>Decide what a piece of information looks like. Write it down before you write any code.</p>
+<p>You need five things:</p>
+<p><strong>A task.</strong> What the person wants to do.</p>
+<ul><li>Name â€” what it is</li><li>Length â€” roughly how many minutes it will take</li><li>Difficulty â€” easy, medium, or hard</li><li>Which goal it belongs to â€” <strong>leave this empty</strong> (Rule 1)</li><li>Whether it's done</li></ul>
+<p><strong>A block.</strong> A piece of time on the day.</p>
+<ul><li>Start time</li><li>End time</li><li>What it is for</li><li>Where it came from â€” hand-typed or calendar (Rule 2)</li><li>Whether it can move or is fixed</li></ul>
+<p><strong>Working hours.</strong> When the person is available to work. Start time, end time.</p>
+<p><strong>An energy curve.</strong> How alert the person is across the day. Three or four rough levels is enough: high, medium, low. They will draw it. It does not need to be accurate â€” it is a starting guess the app improves later.</p>
+<p><strong>A day.</strong> One day's plan, made up of blocks.</p>
+<p>Keep this written down somewhere permanent. You will refer to it constantly and it is what you build against.</p>
+<p>Also today: build the setup screen. The person enters their working hours and draws their energy curve. You need this before anything else can work.</p>
+<h4>Days 2 to 4 â€” The scheduler</h4>
+<p>This is the heart. Three days.</p>
+<p><strong>Day 2</strong> â€” List everything that takes time out of the day. Meetings, breaks, anything fixed. Then list the tasks that want to go in.</p>
+<p><strong>Day 3</strong> â€” Sort. Walk through the available time and place work. Your rule: <strong>hard work goes where energy is high, easy work goes where energy is low.</strong></p>
+<p>You do not need the cleverest possible algorithm. You need one that is predictable, always gives the same answer for the same input, and can explain itself. Predictable matters more than optimal, because a user who moves something once and has it snap back tomorrow will stop trusting the whole thing.</p>
+<p><strong>Day 4</strong> â€” Make it explain itself, and give it somewhere to say what did not fit.</p>
+<p>Two things matter here:</p>
+<ul><li><strong>Every placement has a reason</strong>, using Rule 3</li><li><strong>If everything does not fit, say so.</strong> Name the specific tasks that did not get a slot. Never quietly drop something.</li></ul>
+<p>That second one is not a nice-to-have. If the app silently loses work, the person stops trusting it completely.</p>
+<h4>Days 5 and 6 â€” The day view</h4>
+<p>The screen people look at every morning. A timeline for the day, with blocks laid out on it.</p>
+<ul><li>Show the blocks</li><li>Let each block be tapped to show its reason (Rule 3)</li><li>Let each block be marked done</li><li>Show blocks that did not fit, separately and neutrally</li></ul>
+<p>Keep this screen simple. It is the one you will look at most, so it is worth doing properly rather than doing everything.</p>
+<h4>Day 7 â€” Letting people move things</h4>
+<p>When someone drags a block to a different time, the rest of the day has to be rearranged around it.</p>
+<p><strong>Expect this to take longer than you think.</strong> It is not snapping to a grid â€” it is running the whole placement again while treating the moved block as fixed. If you did Days 2 to 4 properly and kept the placement logic in one function, this is easy. If the logic is spread through your screens, this is painful.</p>
+<p>This is why the plan insists the scheduler lives in one place, separate from the screens that use it.</p>
+<h4>Day 8 â€” Replanning</h4>
+<p>When the day is not finished, the app proposes a new one.</p>
+<p>This matters more than it looks. It is the moment a person decides whether to come back tomorrow or give up.</p>
+<p>Three rules:</p>
+<ul><li>No guilt. No red. No "you failed." No count of missed days.</li><li>Say what happened plainly: three tasks moved to tomorrow, here is why.</li><li>Accept with one tap.</li></ul>
+<p>Read the PRD's tone section before writing these words. This screen carries the emotional weight of the entire product.</p>
+<h4>Day 9 â€” Making it not fall over</h4>
+<p>The unglamorous day that prevents bad days later.</p>
+<ul><li><strong>Timezones and daylight saving.</strong> Do not skip this. Almost every scheduler bug you will ever chase comes back to time handling. Store the actual timezone, convert deliberately, never store a bare time like "09:30" without saying what timezone it is in.</li><li>Empty states â€” what the screen shows when there is nothing to show</li><li>What happens if the app closes mid-save</li><li>The words on every screen, checked against the PRD's tone rules</li></ul>
+<h4>Day 10 â€” Get it in front of someone</h4>
+<p>Prepare three realistic test days with different shapes:</p>
+<ol><li></li><li></li><li></li></ol>
+<p>Write a short script of what to ask. The most important question is on Day 4 of the plan: <strong>"When you looked at this schedule, did you notice anything different about when the work sits? Tell me about it."</strong></p>
+<p>If they cannot tell, the core idea is not landing. That is worth knowing now, after 10 days, rather than after six months.</p>
+<h3>What you have after 10 days</h3>
+<table>
+<tr><th>Working</th><th>Not working yet</th></tr>
+<tr><td>The app builds a day from your tasks</td><td>Goals â€” tasks have an empty slot waiting</td></tr>
+<tr><td>Work is placed by energy, not just order</td><td>Quick capture â€” tasks are typed in</td></tr>
+<tr><td>Every placement explains itself</td><td>Focus mode â€” no protection from distractions</td></tr>
+<tr><td>You can move things and it rearranges</td><td>Evening review, journal, routines</td></tr>
+<tr><td>Replans without making you feel bad</td><td>Calendar sync â€” meetings typed by hand</td></tr>
+<tr><td></td><td>Progress, insights, offline</td></tr>
+</table>
+<h3>What you can and cannot learn from this</h3>
+<p><strong>You can learn:</strong> Does arranging work by energy feel different from putting it in order? Do people believe a day they did not build themselves? Does showing the reason make the plan trustworthy? Does replanning without guilt bring people back? Do people move fewer than 30% of blocks?</p>
+<p><strong>You cannot learn:</strong> anything about habits, keeping people, goals, or reflection. You have half the product. This tests the idea, not the product.</p>
+<h3>Before the test, one instruction</h3>
+<p>Ask each person to type in tomorrow's meetings the night before. Without that, the app will schedule over their real calendar and they will blame the app for a problem you already knew about. This will produce a false result.</p>
+<h3>On the 30% number</h3>
+<p><strong>Fewer than 30% of blocks moved</strong> is the signal that the scheduler is working. More than that and people do not believe it. If they are moving half the blocks, do not add features â€” fix the placement.</p>
+<p>This number matters more than any feature you could add next.</p>
+<hr />
+<h2>1B. What Comes After the Prototype</h2>
+<p>The rest of this plan covers the full build. If you start with the Fast Track above, use this section as your roadmap for what follows.</p>
+<h3>How hard is each dropped feature to add later</h3>
+<table>
+<tr><th>Feature</th><th>Difficulty</th><th>Time</th><th>Why</th></tr>
+<tr><td>Goals and Projects</td><td>Easy</td><td>1â€“2 days</td><td>Only easy if Rule 1 was followed. Otherwise 2â€“3 weeks</td></tr>
+<tr><td>Quick capture and inbox</td><td>Medium</td><td>4â€“6 days</td><td>The capture parsing is the work, not the storage</td></tr>
+<tr><td>Focus mode</td><td>Medium</td><td>4â€“6 days</td><td>Mostly independent. App blocking is limited by the phone</td></tr>
+<tr><td>Evening review and journal</td><td>Medium</td><td>6â€“8 days</td><td>New screens, but everything they reference exists</td></tr>
+<tr><td>Routines</td><td>Medium</td><td>4â€“5 days</td><td>Needs a repeat rule on tasks</td></tr>
+<tr><td>Onboarding</td><td>Easy</td><td>3â€“4 days</td><td>Just a flow writing into structures you have</td></tr>
+<tr><td>Calendar sync</td><td>Medium-hard</td><td>8â€“12 days</td><td>Real work, but cheap architecturally if Rule 2 was followed</td></tr>
+<tr><td>Progress and insights</td><td>Medium</td><td>8â€“10 days</td><td>Needs weeks of data to be honest</td></tr>
+<tr><td><strong>Offline support</strong></td><td><strong>Hard</strong></td><td><strong>3â€“4 weeks</strong></td><td>The one genuinely expensive addition</td></tr>
+</table>
+<p><strong>About offline.</strong> Adding offline support to an app that was built online-only is close to rewriting the data layer. You can reduce the cost to about a day by keeping all data access in one place, then later adding a local copy behind it. Whether you need offline at all is a real product decision â€” many useful apps launch online-only and add it after they see demand.</p>
+<h3>The order to add them</h3>
+<p>Build the prototype first (days 1 to 10). Then:</p>
+<table>
+<tr><th>Weeks</th><th>Add</th><th>Why here</th></tr>
+<tr><td>3â€“4</td><td>Goals and Projects</td><td>The spine. Everything makes more sense once tasks point somewhere</td></tr>
+<tr><td>5â€“6</td><td>Quick capture and inbox</td><td>Removes the biggest friction cost. This is what users feel first</td></tr>
+<tr><td>7</td><td>Onboarding</td><td>Cheap, and you want it before strangers rather than friends</td></tr>
+<tr><td>8â€“9</td><td>Evening review</td><td>Completes the loop. Without it you have planning but no habit</td></tr>
+<tr><td>10â€“11</td><td>Calendar sync</td><td>Real days are flowing now, so real calendars matter</td></tr>
+<tr><td>12â€“13</td><td>Journal and routines</td><td>Build on the daily loop</td></tr>
+<tr><td>14â€“16</td><td>Focus mode</td><td>Execution support. Harder than it looks because of phone limits</td></tr>
+<tr><td>17â€“19</td><td>Progress and insights</td><td>Needs accumulated data to be honest</td></tr>
+<tr><td>20+</td><td>Offline, if still wanted</td><td>Decide deliberately, not by default</td></tr>
+</table>
+<p>Roughly 20 weeks to a complete product on top of the prototype. Slower than the full plan's 22 to 27 weeks, because this route pays two small taxes â€” you are rebuilding goals and capture that the full plan had in week 4.</p>
+<h3>Dead ends â€” four things that would cost a rebuild</h3>
+<p><strong>Scheduling logic written inside the screens.</strong> It tangles into components within days. Keep it in one function that takes your tasks and constraints and returns the day. When you add calendar sync later, you change what goes in, not the thing that works it out.</p>
+<p><strong>Reasoning saved as finished sentences.</strong> Covered in Rule 3. The one most people get wrong, and the only one that cannot be undone by effort.</p>
+<p><strong>Time stored without a timezone.</strong> Every scheduler bug traces back to this. Store real timezones and convert deliberately.</p>
+<p><strong>A meeting modelled as "a task that cannot move."</strong> This feels efficient and it is a trap. Meetings and time blocks are different things, and treating them as the same makes calendar sync a rebuild.</p>
+<h3>Building with AI â€” the honest version</h3>
+<p><strong>What AI is genuinely good at:</strong> the repetitive work. Forms, screens, lists, saving data, the boring 60% of any feature. This is real leverage, and it is part of why 10 days is realistic.</p>
+<p><strong>What AI is bad at:</strong> deciding whether the product works. It will not tell you the day planner produces plans nobody trusts, that the energy curve is backwards, or that you have quietly dropped something you needed. It builds what you ask for and stays quiet about what you did not.</p>
+<p>Two habits that follow from that:</p>
+<p><strong>Keep a decision log.</strong> A plain text file. Every choice worth remembering, one line, with the date. Three months from now you will have forgotten why reasoning is saved as pieces, and you will be tempted to tidy it into sentences. A written note is what stops that.</p>
+<p><strong>Only keep code you can explain.</strong> If you cannot explain a line, you cannot fix it when it breaks at 11pm. A 10-day build is small enough that you can genuinely understand all of it. That is an advantage â€” do not spend it.</p>
+<hr />
+<h2>1. How to Use This Plan</h2>
+<p>This plan converts the PRD into an ordered sequence of phases. Each phase answers four questions:</p>
+<ul><li><strong>What are we building?</strong> â€” the scope, and which requirement IDs it delivers</li><li><strong>Why now?</strong> â€” why this phase sits before the next one</li><li><strong>How do we know it works?</strong> â€” exit criteria that are verifiable, not subjective</li><li><strong>What do we check?</strong> â€” the check-in ritual before moving on</li></ul>
+<h3>1.1 The Check-In Ritual</h3>
+<p>You asked for a check-in after every phase so problems surface before they compound. This is the single most valuable habit in the plan, because the failure mode of this product is subtle: things work, but do not feel right, and the defect compounds silently through later phases.</p>
+<p>Every phase ends with a check-in that takes 30 to 60 minutes. It has four parts, performed in order:</p>
+<table>
+<tr><th>#</th><th>Step</th><th>Duration</th><th>What you do</th></tr>
+<tr><td>1</td><td><strong>Run the exit criteria</strong></td><td>10 min</td><td>Verify every exit criterion objectively. A criterion you cannot verify does not pass.</td></tr>
+<tr><td>2</td><td><strong>Live the day</strong></td><td>15 min</td><td>Use the product as a real user for one full day. Plan in the morning, work, review in the evening. Not a test â€” a day.</td></tr>
+<tr><td>3</td><td><strong>Note friction</strong></td><td>10 min</td><td>Write down every point where you hesitated, wanted to go back, or felt stupid. Raw observations only, no fixing yet.</td></tr>
+<tr><td>4</td><td><strong>Decide</strong></td><td>15 min</td><td>Fix, defer, or reverse. Reversing is a valid outcome and should be cheap to choose.</td></tr>
+</table>
+<p>Three rules make this work:</p>
+<ul><li><strong>Fix before proceeding.</strong> Do not carry a known defect into the next phase. It will be built around and become expensive to remove.</li><li><strong>Reversal is cheap.</strong> Every phase should produce something standalone enough to abandon without wasting later work. If a phase cannot be abandoned cheaply, it is scoped wrong.</li><li><strong>Notes are evidence.</strong> Write observations down during step 3 before discussing them. Discussion before writing produces rationalisations.</li></ul>
+<h3>1.2 What Each Phase Produces</h3>
+<p>Every phase delivers four artefacts, not just working software:</p>
+<table>
+<tr><th>Artefact</th><th>Purpose</th></tr>
+<tr><td>Working software</td><td>The feature itself</td></tr>
+<tr><td>Requirement coverage note</td><td>Which requirement IDs are now satisfied, and which were cut</td></tr>
+<tr><td>Friction log</td><td>Accumulated observations from check-ins, carried forward</td></tr>
+<tr><td>Decision record</td><td>Any choice made that a future reader would question</td></tr>
+</table>
+<h3>1.3 Phase Overview</h3>
+<table>
+<tr><th>Phase</th><th>Name</th><th>Delivers</th><th>Est.</th><th>Gate</th></tr>
+<tr><td>0</td><td>Resolve Blockers</td><td>Answers to the questions that prevent any building</td><td>3â€“5 days</td><td>All blockers answered</td></tr>
+<tr><td>1</td><td>Product Thesis Validation</td><td>Proof that energy-aware scheduling is worth building</td><td>5â€“7 days</td><td>Thesis confirmed or pivoted</td></tr>
+<tr><td>2</td><td>Design System</td><td>Tokens, components, patterns, accessibility baseline</td><td>10â€“15 days</td><td>WCAG AA foundation verified</td></tr>
+<tr><td>3</td><td>Architecture</td><td>Platform, sync, data, AI boundaries, privacy decisions</td><td>5â€“8 days</td><td>All ADRs accepted</td></tr>
+<tr><td>4</td><td>Foundations</td><td>Data model, capture, goals, projects, tasks</td><td>15â€“20 days</td><td>Core objects usable</td></tr>
+<tr><td>5</td><td>Prioritisation &amp; Scheduling</td><td>Ranking, energy-aware day plan, reasoning</td><td>15â€“20 days</td><td>70% block acceptance in testing</td></tr>
+<tr><td>6</td><td>The Daily Loop</td><td>Morning plan, focus mode, evening review, replan</td><td>15â€“20 days</td><td>Full day works end to end</td></tr>
+<tr><td>7</td><td>Routines &amp; Reflection</td><td>Routines, journal, week continuity</td><td>10â€“12 days</td><td>Journal tied to real work</td></tr>
+<tr><td>8</td><td>Progress &amp; Insights</td><td>Progress view, insight feed, weekly review, score</td><td>12â€“15 days</td><td>Course correction works</td></tr>
+<tr><td>9</td><td>Coaching Layer</td><td>Morning briefing, overload, journal interrogation</td><td>10â€“12 days</td><td>Coach silent when nothing to say</td></tr>
+<tr><td>10</td><td>Onboarding &amp; Launch Readiness</td><td>Guided setup, notification policy, export, hardening</td><td>12â€“15 days</td><td>All 16 release gates verifiable</td></tr>
+<tr><td>11</td><td>Beta &amp; Validation</td><td>Real users, measurement, iteration</td><td>4 weeks</td><td>Retention thresholds approaching</td></tr>
+<tr><td>12</td><td>Post-Launch</td><td>Leaderboard decision, V2 candidates</td><td>ongoing</td><td>Defer by default</td></tr>
+</table>
+<p><strong>Total estimate: roughly 22 to 27 weeks</strong> for a solo developer, excluding Phase 11 beta duration.</p>
+<p>Two honest notes on these estimates. A solo developer with a day job typically produces 15 to 20 productive hours per week, which is why Phase 11 shows as calendar weeks rather than effort weeks. And Phase 1 is deliberately small â€” it exists to avoid the most expensive mistake in this plan, which is building a scheduling engine that nobody values.</p>
+<hr />
+<h2>2. Critical Path</h2>
+<p>Not all work is equally important. This is the sequence that determines whether the product works at all.</p>
+<pre><code>Phase 0  Blockers
+    â”‚
+    â–¼
+Phase 1  Thesis validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚                                    â”‚ if thesis fails, pivot here
+    â–¼                                    â”‚
+Phase 2  Design system                  â”‚
+    â”‚                                    â”‚
+    â–¼                                    â”‚
+Phase 3  Architecture â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+    â”‚
+    â–¼
+Phase 4  Foundations (capture + goals)
+    â”‚
+    â–¼
+Phase 5  Prioritisation + scheduling  â—„â”€â”€ THE PRODUCT. If this is wrong,
+    â”‚                                       nothing else rescues it.
+    â–¼
+Phase 6  The daily loop  â—„â”€â”€ THE HABIT. If this is not enjoyed daily,
+    â”‚                            nothing else matters.
+    â–¼
+    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â–¼               â–¼               â–¼
+Phase 7        Phase 8         Phase 9
+Reflection     Progress        Coaching
+    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                    â–¼
+             Phase 10  Launch</code></pre>
+<p><strong>Phases 4 and 5 are load-bearing.</strong> Every later phase depends on the scheduling output being believable. If you run short on time, cut Phase 9 (coaching) to a thin version before touching Phase 5. A product without an intelligent coach is a lesser product. A product with an unintelligible schedule is nothing.</p>
+<hr />
+<h2>3. Phase 0 â€” Resolve Blockers</h2>
+<p><strong>Duration:</strong> 3 to 5 days</p>
+<p><strong>Requirements delivered:</strong> None. This phase removes the reasons building cannot start.</p>
+<p><strong>Depends on:</strong> Nothing</p>
+<h3>3.1 Why This Is First</h3>
+<p>Open Questions 2 and 3 from the PRD are not merely unanswered â€” they are structurally blocking. The consistency score cannot be computed without deciding what it measures. The scheduling engine cannot be designed without knowing what signals place work in time. Building first and deciding later means rebuilding the scheduler, which is the most expensive code in the product.</p>
+<h3>3.2 Blocker 1 â€” Consistency Score Weighting (PRD Q2)</h3>
+<p>The score drives the weekly review, the strengths and weaknesses breakdown, and the leaderboard. A score that ranks users on a contested metric is unfair, and the leaderboard makes unfairness visible.</p>
+<table>
+<tr><th>Option</th><th>Definition</th><th>Advantage</th><th>Problem</th></tr>
+<tr><td><strong>A. Task completion ratio</strong></td><td>Completed Ã· scheduled in the week</td><td>Simple, immediately understood</td><td>Measures busyness, not progress. Rewards users who schedule trivial tasks</td></tr>
+<tr><td><strong>B. Goal progression</strong></td><td>Tasks completed that advance an active goal</td><td>Measures what matters</td><td>Cold start problem â€” no history early on</td></tr>
+<tr><td><strong>C. Ritual adherence</strong></td><td>Morning plan and evening review completion</td><td>Directly predicts retention</td><td>Rewards showing up rather than accomplishing</td></tr>
+<tr><td><strong>D. Weighted blend</strong></td><td>Combination of the three</td><td>Balanced</td><td>Weights are arbitrary and hard to explain to users</td></tr>
+</table>
+<p><strong>Recommendation: option B, with a transparent formula, and option C tracked separately as a distinct private metric.</strong></p>
+<p>Reasoning: the product's entire thesis is that effort should serve goals. A score measuring task completion measures busyness, which is the exact failure mode the product exists to correct. A user scoring well on task completion while none of their goals advance has been underserved, and a score that says otherwise teaches the wrong lesson.</p>
+<p>The blend problem is real, so the formula must be explainable in one sentence shown to the user:</p>
+<blockquote><em>Your consistency is the share of your scheduled work you completed that moved one of your active goals forward.</em></blockquote>
+<p>This satisfies requirement I3, that insights cite the behaviour they are based on. Ritual adherence should be measured privately for retention analysis, but must not appear in a user-facing score, because it invites gaming and does not reflect achievement.</p>
+<p><strong>Action required from you:</strong> confirm or override this recommendation. Then write the exact formula down, because requirement I6 requires the score to be reproducible from underlying task data.</p>
+<h3>3.3 Blocker 2 â€” Energy Signal Sourcing (PRD Q3)</h3>
+<p>The energy-aware scheduler is the core differentiator (Risk 11). This decision determines its architecture.</p>
+<table>
+<tr><th>Approach</th><th>Signal source</th><th>Advantage</th><th>Problem</th></tr>
+<tr><td><strong>A. User-declared only</strong></td><td>Energy curve entered in onboarding, manually adjustable</td><td>Zero cold start, immediately available, fully explainable</td><td>Static. Energy shifts week to week (Risk 6)</td></tr>
+<tr><td><strong>B. Observed from behaviour</strong></td><td>Inferred from completion rates by time of day</td><td>Accurate over time</td><td>No data for new users. Requires 3 to 4 weeks before it works</td></tr>
+<tr><td><strong>C. Hybrid</strong></td><td>Declared pattern, refined by observed data</td><td>Best of both; declared unblocks cold start</td><td>Most complex to build and to explain</td></tr>
+</table>
+<p><strong>Recommendation: option C, and this is the one place the added complexity is justified.</strong></p>
+<p>Cold start is the killer for pure observation. A new user has no history, and the first generated day is the moment belief forms (Success Criterion 2). If that first day is bad because we have no data, the user never reaches the point where data would help.</p>
+<p>Declared data gives the first week something to work with. Observed data makes the fourth week noticeably better than the first. The user can feel this improving, which is itself motivating â€” the product visibly learns them.</p>
+<p>Concretely:</p>
+<ul><li>Onboarding asks for a simple visual energy curve, defaulting to a common adult pattern the user adjusts with a drag</li><li>The declared curve is labelled in the UI as an assumption, not a fact</li><li>Observed completion data by hour and task difficulty progressively adjusts it</li><li>Every adjustment is disclosed: "We moved your deep work to mornings based on what you have actually been finishing" (satisfies Q8)</li><li>Users can always override and can always revert to their declared pattern</li></ul>
+<p><strong>Action required from you:</strong> confirm or override. Then define what happens when a user's observed data contradicts their declared pattern. Recommendation: observed data wins after a defined threshold, with disclosure and a permanent revert option.</p>
+<h3>3.4 Blocker 3 â€” Leaderboard Timing (PRD Q1)</h3>
+<p>Recommendation: <strong>defer to post-launch.</strong> Three reasons, in order of weight:</p>
+<ol><li></li><li></li><li></li></ol>
+<p>This is easily reversed later. Include it in the design system's reserved patterns so adding it is not a redesign.</p>
+<h3>3.5 Exit Criteria</h3>
+<ul><li>Consistency score formula written down in plain language and approved</li><li>Energy signal approach confirmed, including the contradiction rule</li><li>Goal time horizon decided (PRD Q4): recommendation is <strong>quarterly</strong>, because annual goals do not produce visible progress within a retention window, and quarterly progress reviews map onto the weekly review cadence</li><li>IR versus AI communication approach decided (PRD Q5): recommendation is to <strong>lead with what the product does, not that AI does it</strong> â€” "your day is arranged around when you think best" rather than "AI scheduled your day"</li><li>Free tier decision made by business (PRD Q8)</li></ul>
+<hr />
+<h2>4. Phase 1 â€” Product Thesis Validation</h2>
+<p><strong>Duration:</strong> 5 to 7 days</p>
+<p><strong>Requirements delivered:</strong> None formally. Validates the assumptions underpinning S2, I1, and Success Criterion 3.</p>
+<p><strong>Depends on:</strong> Phase 0</p>
+<h3>4.1 Why This Phase Exists</h3>
+<p>The product's central claim is that scheduling by energy rather than by clock makes a perceptible difference. If users cannot feel that difference, the entire differentiator is decorative and the product collapses into a slightly nicer to-do list competing against far more mature tools.</p>
+<p>Risk 11 names this as a high-severity risk with a specific warning: users unable to articulate why the schedule differs from a manual one. Testing it costs a week. Finding out in Phase 5 costs the most expensive rebuild in the project.</p>
+<h3>4.2 What to Build</h3>
+<p>Not a prototype. A <strong>manual simulation</strong>, because automating it would beg the question.</p>
+<p>Produce two day plans for a realistic scenario â€” a professional with 8 meeting-heavy hours, three active goals, and eight tasks of mixed difficulty:</p>
+<table>
+<tr><th>Plan</th><th>Construction</th></tr>
+<tr><td><strong>Plan A â€” clock-ordered</strong></td><td>Tasks placed in priority order into available time, ignoring energy</td></tr>
+<tr><td><strong>Plan B â€” energy-aware</strong></td><td>Deep work in peak hours, administrative work in troughs</td></tr>
+</table>
+<p>Include a third variant to test the strongest claim:</p>
+<table>
+<tr><th>Plan</th><th>Construction</th></tr>
+<tr><td><strong>Plan C â€” Plan B with reasoning</strong></td><td>Same schedule as B, but each block explains its placement</td></tr>
+</table>
+<h3>4.3 Validation Method</h3>
+<p><strong>Test with 6 to 8 target users</strong>, recruited for knowledge work with genuine deadline pressure. Five or more below this number produces unreliable signal; more than eight is wasted effort.</p>
+<p>Two-part instrument:</p>
+<p><strong>Part one â€” preference (weak signal).</strong> Show A, B, and C side by side, ask which they would choose. Expect C to win. This proves little: people prefer explanations regardless of whether the explanation is correct.</p>
+<p><strong>Part two â€” felt difference (strong signal).</strong> Show A and B only, no explanation, ask:</p>
+<ol><li></li><li></li><li></li><li></li></ol>
+<p>Question 3 is the decisive one. <strong>If a user cannot articulate the difference, the thesis has failed</strong> â€” regardless of stated preferences.</p>
+<p>Question 4 tests the second risk: whether users believe the app knows them. If users think they could trivially build Plan A themselves, the product has not earned its complexity.</p>
+<h3>4.4 Decision Rules</h3>
+<p>Decide before running the sessions, so the result cannot be rationalised after the fact:</p>
+<table>
+<tr><th>Outcome</th><th>Signal</th><th>Action</th></tr>
+<tr><td><strong>Thesis confirmed</strong></td><td>â‰¥ 6 of 8 correctly articulate the difference in Q3</td><td>Proceed to Phase 3 as planned</td></tr>
+<tr><td><strong>Thesis weak</strong></td><td>3 to 5 of 8</td><td>Proceed, but treat Plan C's reasoning as mandatory rather than optional, and instrument Q3 from launch</td></tr>
+<tr><td><strong>Thesis failed</strong></td><td>â‰¤ 2 of 8</td><td>Stop. Return to product definition. Consider whether the differentiator should be something else entirely</td></tr>
+</table>
+<p>Also record, regardless of the thesis verdict: which plan did users think was realistic, and did the reasoning change their trust in the plan? Both inform Phase 9.</p>
+<h3>4.5 Exit Criteria</h3>
+<ul><li>Sessions completed with at least 6 target users</li><li>Q3 responses tabulated</li><li>Verdict recorded against the decision rules</li><li>Written conclusion on whether the energy thesis survives</li></ul>
+<hr />
+<h2>5. Phase 2 â€” Design System</h2>
+<p><strong>Duration:</strong> 10 to 15 days</p>
+<p><strong>Requirements delivered:</strong> Q3 (accessibility foundation), Q5 (low cognitive load), Q13 (tone consistency â€” vocabulary), and the visual foundation for all screens</p>
+<p><strong>Depends on:</strong> Phase 1</p>
+<h3>5.1 Why Design System Before Architecture</h3>
+<p>The design system must exist before feature screens are built, because it determines what components architecture must be able to render. Retrofitting accessibility across 15 screens after they are built is roughly ten times the work. Retrofitting it into tokens and primitives before they are built is close to free.</p>
+<p>It also forces a decision the PRD makes repeatedly and should be settled once: <strong>the screen inventory stays at 15.</strong> The PRD rejects a coach chat screen. Every new component must justify itself against that constraint, because a design system that makes new screens cheap to build removes the pressure that keeps the product small (Principle 8).</p>
+<h3>5.2 Token Architecture</h3>
+<p>Design tokens in three tiers, so that retheming does not require touching components.</p>
+<p><strong>Tier 1 â€” Primitive.</strong> Raw values with no meaning. A palette of colours, a spacing scale, type sizes, durations, radii.</p>
+<p><strong>Tier 2 â€” Semantic.</strong> Purpose-named. <code>surface-raised</code>, <code>text-muted</code>, <code>border-subtle</code>, <code>energy-high</code>, <code>priority-critical</code>. <strong>This is where most of the product's meaning lives.</strong></p>
+<p><strong>Tier 3 â€” Component.</strong> Bound to specific components.</p>
+<p>The semantic tier matters more than usual here for a non-obvious reason. The product communicates state constantly â€” scheduled, overdue, blocked, high energy, Top 3 â€” and each of those must be readable without colour (Q3). Semantic tokens let those states be defined once, correctly, in one place, rather than re-derived per screen with subtle inconsistency.</p>
+<h3>5.3 Colour and Status Semantics</h3>
+<p>This is where most of the design system's effort should go, because the product's emotional safety depends on it.</p>
+<p><strong>Requirement D9 and N6 forbid guilt-inducing language. The colour system must be equally free of punitive signalling.</strong></p>
+<table>
+<tr><th>State</th><th>Treatment</th><th>Never</th></tr>
+<tr><td>Completed</td><td>Muted, recedes</td><td>Loud celebration</td></tr>
+<tr><td>Overdue</td><td>Neutral grey, factual</td><td>Red, warning icon, exclamation marks</td></tr>
+<tr><td>Blocked</td><td>Distinct but calm</td><td>Red</td></tr>
+<tr><td>High priority</td><td>Accent emphasis</td><td>Red</td></tr>
+<tr><td>Missed day</td><td>Absent from display</td><td>Red counter, X marks, strike-through</td></tr>
+</table>
+<p><strong>The specific rule: red is never used.</strong> Not for overdue, not for errors that indicate user failure, not for missed streaks. Red is reserved exclusively for genuine input errors where the user must fix something. This is a deliberate, product-level constraint that will be debated by designers, so it is recorded here as a decision, not a suggestion.</p>
+<p>Overdue work appears neutral and factual â€” "3 tasks moved to your inbox" rather than "3 tasks overdue". This is not cosmetic softening; it is the mechanism that makes recovery (Journey 8.6) possible.</p>
+<h3>5.4 Typography and Density</h3>
+<p>Calm and compact. The target user checks this app dozens of times daily, so density determines whether it feels like a tool or an obligation.</p>
+<ul><li>Default body size that supports extended daily reading, since the evening review and journal are text-heavy</li><li>Tight line height for lists, relaxed for journal entries</li><li>Hierarchy by weight and colour rather than size alone, supporting Q3 text scaling</li><li>Support for text scaling up to 200% without content loss</li></ul>
+<h3>5.5 Component Inventory</h3>
+<p>Build only what the 15 screens require. Resist additions.</p>
+<p><strong>Foundation:</strong> button, text input, text area, select, checkbox, radio, switch, toggle group, slider, date picker, time picker, stepper, chip, badge, icon.</p>
+<p><strong>Status and data:</strong> progress bar, score display, stat tile, sparkline, comparison bar, empty state, error state, loading state.</p>
+<p><strong>Navigation:</strong> tab bar, back header, sheet, bottom sheet, inline disclosure, step indicator.</p>
+<p><strong>Product-specific:</strong> day timeline, schedule block, energy curve editor, task card, goal card with progress, Top 3 selector, capture button, focus session control, review question card, journal entry block, insight card with evidence citation, replan diff.</p>
+<p><strong>Pattern library:</strong> one-tap acceptance, undo replacing confirmation (Interaction Rule 7), reasoning disclosure, bulk selection, gentle slippage message, coach message with dismissal, weekly review decision row.</p>
+<p>The last two deserve emphasis. The <strong>replan diff</strong> must show what was cut, what was pushed, and why (requirement D7) in a single glance. The <strong>coach message with dismissal</strong> must always offer at least two responses including dismissal (requirement A8). Both encode product principles directly into components, which means the principles survive implementation pressure.</p>
+<h3>5.6 Accessibility Baseline</h3>
+<p>Non-negotiable, and verified rather than assumed.</p>
+<table>
+<tr><th>Requirement</th><th>Verification</th></tr>
+<tr><td>Screen reader on every screen</td><td>Manual test plus automated checks</td></tr>
+<tr><td>Complete keyboard navigation</td><td>Every interactive element reachable and operable</td></tr>
+<tr><td>Text scaling to 200%</td><td>No content loss, no overlap</td></tr>
+<tr><td>No colour-only meaning</td><td>Every state distinguishable without colour</td></tr>
+<tr><td>Contrast meets AA</td><td>Automated check across all token pairs</td></tr>
+<tr><td>Focus visible on every element</td><td>Keyboard traversal test</td></tr>
+<tr><td>Touch targets adequate</td><td>Verified on device, not just in design</td></tr>
+</table>
+<p>Run these against the component library before screens are built, so every screen inherits compliance rather than requiring individual audits.</p>
+<h3>5.7 Tone and Copy System</h3>
+<p>Requirement Q13 demands consistent, non-judgemental language (PRD Section 11.1). This becomes a documented vocabulary, not an aspiration.</p>
+<table>
+<tr><th>Instead of</th><th>Write</th><th>Reason</th></tr>
+<tr><td>"3 tasks overdue"</td><td>"3 tasks in your inbox"</td><td>Overdue implies failure</td></tr>
+<tr><td>"You failed to complete your Top 3"</td><td>"Your day got reshaped"</td><td>Failure framing</td></tr>
+<tr><td>"Don't break your streak!"</td><td>Nothing at all</td><td>Streak pressure is banned (PRD 7.3)</td></tr>
+<tr><td>"You haven't journaled in 5 days"</td><td>Nothing at all</td><td>Guilt trip</td></tr>
+<tr><td>"Great job hitting your goals!"</td><td>"Goal 1 moved forward"</td><td>Specific over generic praise</td></tr>
+<tr><td>"You are avoiding this project"</td><td>"This project has had no movement in 3 weeks"</td><td>Inference stated as fact is banned (PRD 13.2)</td></tr>
+</table>
+<p>Review every user-facing string against this list before release. Copy review is a phase gate, not a final polish step.</p>
+<h3>5.8 Deliverables</h3>
+<p>Token library in three tiers, semantic status model with the red-is-banned rule encoded, component library with accessibility verified, pattern library, tone and copy system, and a documented rule that any new screen requires justification against the 15-screen inventory.</p>
+<h3>5.9 Exit Criteria</h3>
+<ul><li>All components meet Q3 accessibility criteria, verified not assumed</li><li>Text scaling to 200% verified on the day timeline, the densest screen</li><li>Tone and copy system documented and reviewed</li><li>Screen inventory confirmed at 15, with no additions</li><li>A complete design of the day timeline exists and is walkable, since it is the densest and most-used screen and will expose system weaknesses early</li></ul>
+<hr />
+<h2>6. Phase 3 â€” Architecture</h2>
+<p><strong>Duration:</strong> 5 to 8 days</p>
+<p><strong>Requirements delivered:</strong> Q4 (offline), Q7 (privacy), Q8 (transparent AI), Q9 (durability), Q10 (cross-device), Q11 (resource), Q14 (graceful degradation)</p>
+<p><strong>Depends on:</strong> Phase 2</p>
+<h3>6.1 Approach</h3>
+<p>The architecture is described as <strong>decisions and consequences</strong>, not as technology choices. Stack-agnostic architecture first; a concrete stack recommendation follows in Appendix A and can be discarded without invalidating this section.</p>
+<p>Each decision below states the choice, the reason, the consequence accepted, and what it forecloses.</p>
+<h3>6.2 Decision 1 â€” Offline-First, Not Offline-Capable</h3>
+<p><strong>Decision:</strong> The device holds a complete working copy. The app is fully functional with no connection and synchronises when one returns.</p>
+<p><strong>Reason:</strong> Q4 is a Must. More importantly, it reflects reality for this audience. Commuting, travelling, and focus sessions are all situations with poor connectivity, and the evening review in particular happens at the end of a day when people are often out. An app that fails on the underground is an app that loses its habit.</p>
+<p>The PRD already narrowed this correctly: Q4 covers capture, planning, focus, and review. Full offline replication is explicitly out of scope in PRD Section 7.2.</p>
+<p><strong>Consequence accepted:</strong> Conflict resolution becomes a permanent concern rather than a future problem. If a user edits a task on a phone and a laptop while offline, something must give.</p>
+<p><strong>Forecloses:</strong> Any design where the server is authoritative. That is a real loss of simplicity, and it is the price of the requirement.</p>
+<h3>6.3 Decision 2 â€” The Scheduler Runs on the Device</h3>
+<p><strong>Decision:</strong> Day planning is computed locally, not on a server.</p>
+<p><strong>Reason:</strong> Three forces point the same way. Latency: a plan must be available instantly on open (Q1). Privacy: the schedule reveals the most intimate shape of someone's working life. Resilience: the core loop must work with no connection, per Decision 1.</p>
+<p><strong>Consequence accepted:</strong> Plans cannot be pre-computed for tomorrow while the device is off. Tomorrow's plan is generated when the device next runs. This is acceptable because the morning plan is a user-initiated ritual anyway (Journey 8.3), which is when the plan would be presented.</p>
+<p><strong>Forecloses:</strong> Generating plans for a whole week ahead without opening the app. This is requirement S13, already marked Could.</p>
+<h3>6.4 Decision 3 â€” AI Is a Bounded Service, Never a Planner</h3>
+<p><strong>Decision:</strong> AI performs parsing, phrasing, and pattern description. It does not decide what goes in the day.</p>
+<p><strong>Reason:</strong> This is the most important architectural decision in the document, because it resolves the tension between the auto-scheduling thesis and the AI guardrails.</p>
+<p>The scheduling algorithm is <strong>deterministic and inspectable</strong>. Given the same inputs it always produces the same plan, and it can always explain why each block sits where it does (requirement S7). AI may write the explanation in natural language, but never the decision.</p>
+<p>This matters more than it appears. Requirement P3 and S7 demand visible reasoning, and PRD Section 13.2 prohibits the coach presenting inference as fact. An AI-generated schedule cannot satisfy either â€” it cannot guarantee consistency, and its reasoning is post-hoc rationalisation rather than the actual logic.</p>
+<p>The AI boundary:</p>
+<table>
+<tr><th>AI does</th><th>AI does not</th></tr>
+<tr><td>Parse voice and text capture (C2, C3)</td><td>Decide task order (P2)</td></tr>
+<tr><td>Choose slot placements (S2, S3)</td><td>Determine what to cut (P5)</td></tr>
+<tr><td>Explain a placement in plain language (S7, A10)</td><td>Invent a reason for a placement it chose</td></tr>
+<tr><td>Detect overload (A2)</td><td>Make a change without consent (PRD 13.2)</td></tr>
+<tr><td>Generate journal prompts (J3, J7)</td><td>Diagnose the user (PRD 13.2)</td></tr>
+<tr><td>Describe patterns in the user's data (A4, I2, I3)</td><td>State an inference as fact (Q8)</td></tr>
+</table>
+<p><strong>Consequence accepted:</strong> Scheduling quality now depends on hand-written algorithm quality rather than a model's capability. This is harder to improve quickly, and it is the correct trade. A schedule a user can interrogate and trust beats a marginally better schedule that changes when they do not expect it.</p>
+<p><strong>Forecloses:</strong> Using AI to improve scheduling by simply asking a model to plan. This is where most competitors will go, and it is the wrong choice for this product's trust requirements.</p>
+<h3>6.5 Decision 4 â€” The Scheduling Algorithm Is a Constraint Solver, Not a Heuristic</h3>
+<p><strong>Decision:</strong> The day planner models the problem as constrained assignment. Tasks have requirements; time has properties; fixed commitments remove capacity. Find an assignment maximising total value subject to all constraints.</p>
+<p><strong>Reason:</strong> Two properties are non-negotiable. <strong>Determinism</strong> â€” the same inputs must give the same plan, or requirement P8's promise that manual overrides persist becomes meaningless. <strong>Explainability</strong> â€” the reason a task sits at 09:30 must be derivable, not guessed. A heuristic that greedily fills slots satisfies neither reliably.</p>
+<p>A solver also makes the reasoning requirement (S7) fall out naturally: the answer includes what each placement was competing against, which is exactly what the user needs to judge whether the plan makes sense.</p>
+<p><strong>Consequence accepted:</strong> More complex than a greedy algorithm, and the constraints must be modelled carefully. Getting the model right is most of the difficulty of Phase 5.</p>
+<p><strong>Forecloses:</strong> Rapid scheduling improvements by tweaking heuristics. Changes become constraint additions, which require thought.</p>
+<h3>6.6 Decision 5 â€” Explanation Is a Product Feature, Not Debug Output</h3>
+<p><strong>Decision:</strong> The scheduler's reasoning is a structured data structure from the start â€” which constraint bound each task, what it competed against, why it lost or won â€” and the UI renders it. It is not generated later by asking a model to explain a placement.</p>
+<p><strong>Reason:</strong> Requirements S7, P3, I3, and A10 all demand reasoning. Four separate requirements mean it is core, not a feature. Structured reasons also mean the same evidence serves the scheduler, the replan diff, and the weekly review. And it satisfies Q8 by construction, since the reasoning is a fact about the algorithm rather than a model's impression.</p>
+<p><strong>Consequence accepted:</strong> The data model carries reasoning metadata from the start. Cheap now, expensive later.</p>
+<h3>6.7 Decision 6 â€” Journal Entries Are Local-First and Encrypted at Rest</h3>
+<p><strong>Decision:</strong> Journal content is stored encrypted on the device. It syncs only as the user directs.</p>
+<p><strong>Reason:</strong> Requirement Q7 makes journal content private unless explicitly shared. PRD Section 14 principle 2 states journal content is never surfaced to other users and never used for any purpose. Design the storage to make that structurally true rather than merely policy.</p>
+<p><strong>Consequence accepted:</strong> Content is not searchable server-side, which makes search a client-side concern and limits performance on very large histories. Acceptable â€” most users will have hundreds, not tens of thousands, of entries.</p>
+<p><strong>Forecloses:</strong> Server-side full-text search over journal history. Requirement J5 still passes, but implementation is client-side.</p>
+<h3>6.8 Decision 7 â€” AI Processing Is Explicit and Disclosed</h3>
+<p><strong>Decision:</strong> Any content sent to an AI service crosses a boundary that is disclosed at the point of use. Journal content and task text are not sent for background model improvement. AI features not required for the core loop can be disabled without degrading it.</p>
+<p><strong>Reason:</strong> Requirements Q7a, Q8, and PRD Section 13.3. Sending a user's private thoughts for training without meaningful consent would be a serious violation of the trust this product depends on. Product differentiation here is trust, so the architecture must enforce trust rather than rely on policy.</p>
+<p><strong>Consequence accepted:</strong> Less capable AI features than a competitor willing to send everything. Correct trade for this product.</p>
+<h3>6.9 Decision 8 â€” Privacy Controls Are Structural, Not a Settings Screen</h3>
+<p><strong>Decision:</strong> Every data flow has a declared purpose and a disclosure point. The leaderboard is opt-in with data exposure limited to display name, and users who opt out are never listed, not merely unranked (requirement I10).</p>
+<p><strong>Reason:</strong> Requirement I11 requires opt-out to be one action and fully functional. Making that true structurally prevents future changes from breaking it.</p>
+<p><strong>Consequence accepted:</strong> More upfront work per feature, since each needs a privacy review.</p>
+<p><strong>Forecloses:</strong> Adding any social feature without revisiting the data model.</p>
+<h3>6.10 Decision 9 â€” Graceful Degradation Is a Per-Service Concern</h3>
+<p><strong>Decision:</strong> Every external dependency â€” calendar providers, AI services, notifications â€” degrades independently and states plainly what is not working.</p>
+<p><strong>Reason:</strong> Requirement Q14. The failure mode to avoid is a calendar provider having an outage and the app silently producing a plan that ignores real meetings, which is worse than no plan and destroys trust.</p>
+<p><strong>Consequence accepted:</strong> Each integration needs an explicit degraded state designed, not defaulted into.</p>
+<h3>6.11 Decision 10 â€” Notifications Are a Bounded Resource</h3>
+<p><strong>Decision:</strong> A global notification budget, with per-type quotas, enforced at the architectural level. Default maximum three per day (PRD Section 12.2).</p>
+<p><strong>Reason:</strong> Requirement N5, and the dismissal-rate metric in PRD Section 6.2.5 treats excessive notification as a defect. Architecture should make the policy structural.</p>
+<p><strong>Consequence accepted:</strong> Some genuinely useful notifications will be suppressed. That is the intended behaviour.</p>
+<h3>6.12 Decision 11 â€” Design for Small Surface, Hard to Expand</h3>
+<p><strong>Decision:</strong> The navigation architecture encodes the 15-screen inventory. Adding a screen is a deliberate change requiring product approval.</p>
+<p><strong>Reason:</strong> Principle 8. Friction in adding screens is a feature â€” it is the enforcement mechanism for the product's core discipline.</p>
+<p><strong>Consequence accepted:</strong> User requests for features get deferred more often, which will occasionally frustrate users.</p>
+<h3>6.13 Decision Register</h3>
+<table>
+<tr><th>#</th><th>Decision</th><th>Forecloses</th><th>Revisit if</th></tr>
+<tr><td>1</td><td>Offline-first</td><td>Server-authoritative model</td><td>Never. Core to the product</td></tr>
+<tr><td>2</td><td>On-device scheduling</td><td>Pre-computed future plans</td><td>S13 promoted to Should</td></tr>
+<tr><td>3</td><td>AI bounded, not a planner</td><td>AI-driven scheduling</td><td>Never. Trust requirement</td></tr>
+<tr><td>4</td><td>Constraint solver</td><td>Rapid heuristic tuning</td><td>Scheduling quality proves adequate</td></tr>
+<tr><td>5</td><td>Reasoning as data</td><td>Post-hoc explanations</td><td>Never. Four requirements depend on it</td></tr>
+<tr><td>6</td><td>Encrypted local journal</td><td>Server-side journal search</td><td>Journal history exceeds thousands of entries</td></tr>
+<tr><td>7</td><td>Explicit AI disclosure</td><td>Bulk training on user data</td><td>Never. Trust requirement</td></tr>
+<tr><td>8</td><td>Structural privacy</td><td>Cheap social features</td><td>Social scope revisited</td></tr>
+<tr><td>9</td><td>Per-service degradation</td><td>Unified failure handling</td><td>Never. Q14 requirement</td></tr>
+<tr><td>10</td><td>Notification budget</td><td>High notification volume</td><td>Never. Retention risk</td></tr>
+<tr><td>11</td><td>Hard screen limit</td><td>Rapid feature expansion</td><td>Never. Principle 8</td></tr>
+</table>
+<h3>6.14 Exit Criteria</h3>
+<ul><li>All eleven decisions documented with consequences and revisit triggers</li><li>Every external service has a defined degraded state</li><li>AI boundary table agreed with engineering, so it cannot be eroded during build</li><li>Privacy review passed on the data flow model</li><li>Data model covers goals, projects, tasks, routines, blocks, journal entries, and structured reasoning</li></ul>
+<hr />
+<h2>7. Phase 4 â€” Foundations</h2>
+<p><strong>Duration:</strong> 15 to 20 days</p>
+<p><strong>Requirements delivered:</strong> G1, G3, G4, G6, G9, G10, G12, C1, C2, C3, C4, C5, C6, C9, and foundations of Q2, Q4, Q9, Q10, Q11</p>
+<p><strong>Depends on:</strong> Phase 3</p>
+<h3>7.1 Scope</h3>
+<p>The data layer plus capture and the goal hierarchy. No scheduling yet â€” this phase ends with users able to build a structure worth scheduling.</p>
+<h3>7.2 Build Order</h3>
+<p>Follow the capture path, because it is where users form their first impression.</p>
+<p><strong>Step 1 â€” Data model and local store.</strong> Goals, projects, tasks, routines, journal entries, blocks, and reasoning structures per Decision 5. Offline-first with durable writes per Q9.</p>
+<p><strong>Step 2 â€” Capture (C1 through C6).</strong> Voice and text into the inbox. This is Principle 2 in practice: one interaction from anywhere, transcription, parsing, and exactly one clarifying question when ambiguous (C5).</p>
+<p>Capture must be interruptible. Per Q2, a user interrupted mid-capture returns to exactly where they were. This is an absolute gate, and it is tested by interrupting every capture path.</p>
+<p><strong>Step 3 â€” Inbox triage.</strong> File, merge, discard, file in bulk (C7, C8).</p>
+<p><strong>Step 4 â€” Goals, projects, tasks.</strong> G1, G3, G4, with the five-goal warning (G2), unfiled tasks (G5), progress view (G6), health flags (G7), lifecycle actions (G9), traceability (G10), goal-wide task views (G11), life obligations (G12).</p>
+<p><strong>Step 5 â€” Journal foundation.</strong> Entries attached to dates (J1), referencing the day's work (J2), with free-form writing and mood (J4). Guidance and search follow in Phase 7.</p>
+<p><strong>Step 6 â€” Cross-device sync.</strong> Per Q10, working from Decision 1.</p>
+<h3>7.3 Notes on Individual Requirements</h3>
+<p><strong>Capture is the highest-polished flow in the product.</strong> Risk 3 identifies capture friction as the point where users are lost mid-thought, and Principle 2 makes attention the scarce resource. Do not treat this as a supporting feature. It deserves the most iteration of anything in this phase.</p>
+<p><strong>The five-goal warning (G2) must not block.</strong> Warn, offer to pause an existing goal, allow override. Goal sprawl is Risk 7, but a hard block would violate the forgiving-by-design principle.</p>
+<p><strong>Reasoning structures ship empty (Decision 5).</strong> Build the data shape now even though the scheduler arrives in Phase 5. Retrofitting reasoning metadata across stored blocks is expensive.</p>
+<h3>7.4 Exit Criteria</h3>
+<ul><li>Voice capture works end to end, under five seconds from one interaction</li><li>Interrupt safety verified across every input surface (Q2)</li><li>Natural text input correctly extracts action, date, time, and priority</li><li>Goals, projects, and tasks fully functional with working progress view</li><li>Journal entries save and survive app termination mid-write (Q9)</li><li>Sync works across two devices, including concurrent offline edits (Q10)</li><li>All work functional with no connection (Q4)</li><li><strong>Check-in:</strong> live one full day of capture and structuring. Note every point of hesitation.</li></ul>
+<hr />
+<h2>8. Phase 5 â€” Prioritisation and Scheduling</h2>
+<p><strong>Duration:</strong> 15 to 20 days</p>
+<p><strong>Requirements delivered:</strong> P1, P2, P3, P4, P5, P8, S1, S2, S3, S4, S5, S6, S7, S9, S11</p>
+<p><strong>Depends on:</strong> Phase 4</p>
+<h3>8.1 Why This Is the Most Important Phase</h3>
+<p>This phase builds the core thesis. If the schedule is not believable, the product is a to-do list with a calendar attached, and users will correctly conclude they could have done this with a free app.</p>
+<p>Every later phase â€” focus, review, insights, coaching â€” presents or evaluates the output of this phase. Defects here are inherited everywhere.</p>
+<h3>8.2 Step 1 â€” Prioritisation (P1 to P8)</h3>
+<p>Three frameworks (P1): Eisenhower, Impact versus Effort, and a custom model.</p>
+<p>Ranking must be deterministic (Decision 4) and every rank must explain itself (P3). Manual overrides persist and the system does not silently revert them (P8) â€” this is a trust requirement and a frequent failure point in competitors.</p>
+<p>The Top 3 (P4) selects from the ranking weighted by goal importance.</p>
+<p>Elimination suggestions (P5) name specific tasks and state the consequence of each. Not "some work" â€” specific names.</p>
+<h3>8.3 Step 2 â€” The Constraint Model</h3>
+<p>Per Decision 4, model as constrained assignment.</p>
+<p><strong>Time dimension.</strong> Working hours, commute, protected personal time (S4), plus synced calendar events as immovable (S9).</p>
+<p><strong>Task dimensions.</strong> Duration, difficulty, deadline, priority, goal, project.</p>
+<p><strong>Energy dimension.</strong> Per the Phase 0 decision: declared curve, refined by observation, disclosed when adjusted, always overridable.</p>
+<p><strong>Break dimension.</strong> Focus sessions and recovery breaks included by design (S5), positioned to sustain energy rather than at fixed intervals.</p>
+<p><strong>Buffer.</strong> Unallocated capacity retained for overruns (S11), visible and labelled.</p>
+<p>The buffer deserves emphasis. A day filled to capacity teaches the user the app is fiction the first time something overruns. Visible buffer is honest and it absorbs the reality that overruns happen.</p>
+<h3>8.4 Step 3 â€” Reasoning Output</h3>
+<p>Per Decisions 5 and 6, produce structured reasoning for every placement: which constraint bound the task, what it competed against, what displaced it or what displaced it.</p>
+<p>This is a substantial part of the work and the easiest to under-prioritise, because it is invisible until it is missing. Requirements S7, P3, I3, and A10 all depend on it. Budget it explicitly.</p>
+<h3>8.5 Step 4 â€” Editing and Regeneration</h3>
+<p>Drag, resize, move, reject (S6). The system absorbs changes and re-plans the remainder, showing what moved and why.</p>
+<p>Regeneration (S10) must preserve completed work and offer to reapply manual changes.</p>
+<h3>8.6 Step 5 â€” Calendar Integration</h3>
+<p>Two-way sync with all three providers (S8). Degradation per Decision 9: when a provider is unavailable, state what is not syncing, and never silently produce a plan that ignores real meetings.</p>
+<h3>8.7 Test Scenarios</h3>
+<p>Scheduling is the most algorithmically demanding part of the product. Test against realistic density, not toy cases.</p>
+<table>
+<tr><th>Scenario</th><th>Tests</th></tr>
+<tr><td>8 meeting-heavy hours, 8 mixed tasks</td><td>Realistic load, the common case</td></tr>
+<tr><td>Deadline on three tasks the same day</td><td>Contention, S3, elimination (P5)</td></tr>
+<tr><td>Task longer than any available gap</td><td>S4 boundaries, honest failure</td></tr>
+<tr><td>Every day fully booked</td><td>Buffer behaviour, honest failure</td></tr>
+<tr><td>Overloaded day, 14 hours of work in 8</td><td>Overload detection (A2), what gets cut</td></tr>
+<tr><td>User disagrees with every placement</td><td>Override (P8), whether they can fight it</td></tr>
+<tr><td>Calendar provider down</td><td>Degradation (Decision 9), no silent wrongness</td></tr>
+<tr><td>Shift worker with irregular hours</td><td>PRD Open Question 7</td></tr>
+</table>
+<p>The last two are the ones that get skipped and should not be.</p>
+<h3>8.8 Check-In â€” Extended</h3>
+<p>This phase gets an extended check-in, because the stakes are highest.</p>
+<ol><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+<p><strong>Decision rule:</strong> if more than half the blocks get moved, the scheduler needs another iteration before proceeding. Proceeding with a distrusted scheduler means every later phase is built on an unstable foundation. Do not rationalise past this.</p>
+<h3>8.9 Exit Criteria</h3>
+<ul><li>Three frameworks implemented, each deterministic, each explaining its ranking</li><li>Day plan generated respecting all constraints, with verified buffer</li><li>Energy matching working and disclosed</li><li>Reasoning shown for every block and traceable to real algorithm output</li><li>Manual overrides persist across regeneration</li><li>All three calendar providers connect and sync</li><li>Fewer than 30% of blocks moved across three real workdays</li><li>Replan diff shows what was cut, what was pushed, and why (D7 groundwork)</li><li>No scenario silently produces a wrong plan</li></ul>
+<hr />
+<h2>9. Phase 6 â€” The Daily Loop</h2>
+<p><strong>Duration:</strong> 15 to 20 days</p>
+<p><strong>Requirements delivered:</strong> D1, D2, D3, D4, D5, D6, D7, D8, D9, D11, F1, F2, F3, F5, F6, N1, N2</p>
+<p><strong>Depends on:</strong> Phase 5</p>
+<h3>9.1 Why This Phase Defines the Product</h3>
+<p>The PRD's own failure analysis is that users abandon at the first difficult week. The daily loop is where that battle is fought or lost. Journey 8.6 (recovery from a missed day) is the highest-risk moment in the entire lifecycle, and its requirements sit here.</p>
+<h3>9.2 Step 1 â€” Morning Plan (D1, D2, D3)</h3>
+<p>Prompt at the user's chosen time. Present the schedule, the Top 3 with reasoning, and a one-tap energy log.</p>
+<p><strong>Hard limit: five minutes</strong> (D3). Measure it, do not estimate it.</p>
+<p>The energy log is one tap and it does real work. Per the Phase 0 decision it feeds the day's scheduling, so a habit is being built rather than a form being filled in.</p>
+<h3>9.3 Step 2 â€” Focus Mode (F1, F2, F3, F5, F6)</h3>
+<p>One action from a block (F1). Notifications silenced (F2), distracting apps blocked (F3).</p>
+<p><strong>F3 is the one to check early.</strong> Blocking arbitrary applications is platform-limited. PRD Open Question 6 asks whether native capability is required. Investigate this in the first days of the phase. If full native blocking is impossible on a target platform, the honest options are a guided setup flow, an allowlist of known distracting apps, or platform-specific limitations â€” and PRD Section 11.3 already commits to explaining what is blocked before it happens.</p>
+<p>On completion, log what was accomplished and whether the estimate was accurate (F5), and feed future estimates (F6).</p>
+<h3>9.4 Step 3 â€” Evening Review (D4, D5, D6, D11)</h3>
+<p>Three to five questions (D5). Completion status pre-filled from actual day data â€” the user should confirm, not transcribe.</p>
+<p>Questions must reference the actual day: a task that slipped, a meeting that ran long. Generic prompts produce generic answers, and Risk 8 identifies week-two abandonment.</p>
+<p><strong>Hard limit: five minutes</strong> (D6). Every question answerable in one tap or one line.</p>
+<p>The review must feed tomorrow's scheduling (D11). This is what makes it reflection rather than data entry.</p>
+<h3>9.5 Step 4 â€” Replan (D7, D8, D9)</h3>
+<p>When the day is not completed, propose a revised plan showing what was cut, what was pushed, and why (D7). One tap to accept, or adjust before accepting (D8).</p>
+<p><strong>D9 is a design constraint, not a feature.</strong> No punishment, no warnings, no streak loss on unrelated items. Verified by full copy review against the tone system.</p>
+<p>Design the replan diff carefully. This screen carries the emotional weight of the product, and it is the moment Principle 4 is either honoured or broken.</p>
+<h3>9.6 Step 5 â€” Notifications (N1, N2)</h3>
+<p>Block-start nudge (N1), suppressed if already focused or started manually.</p>
+<p>Day-falling-behind alert (N2), at most once per day, only on material divergence, worded neutrally and offering a replan rather than reporting failure.</p>
+<p>Both within the three-per-day default budget (Decision 10).</p>
+<h3>9.7 Step 6 â€” Recovery Experience</h3>
+<p>Not a separate feature. The behaviour of the app when the user returns after absence.</p>
+<p>Requirements: no streak warnings, no backlog wall, no missed-day counter. Welcome without reference to the gap. Present today only. Backlog summarised neutrally, never displayed as a wall.</p>
+<p>PRD Section 11.3 requires first return after long absence to show today only. Implement this deliberately â€” it is the concrete mechanism for Success Criterion 10 and the mitigation for Risk 1.</p>
+<h3>9.8 Step 3 Check-In â€” Extended</h3>
+<ol><li></li><li></li><li></li><li></li><li></li></ol>
+<p>Step 4 is the most important test in this phase and the easiest to skip. You cannot evaluate your own recovery experience, because you know it will be gentle.</p>
+<h3>9.9 Exit Criteria</h3>
+<ul><li>Morning plan completable in under five minutes, measured</li><li>Evening review completable in under five minutes, measured, with questions referencing actual day data</li><li>Focus mode starts in one action, silences notifications, blocks apps or states honestly what it cannot block</li><li>Replan works, showing what was cut, what was pushed, and why</li><li>Skip a day and return: no guilt signals anywhere, verified by walking every screen</li><li>Notifications within the daily budget</li><li>Another person completes a day unassisted without hesitation</li><li><strong>Check-in:</strong> two full days lived, plus a deliberate miss-and-return</li></ul>
+<hr />
+<h2>10. Phase 7 â€” Routines and Reflection</h2>
+<p><strong>Duration:</strong> 10 to 12 days</p>
+<p><strong>Requirements delivered:</strong> R1, R2, R3, R4, R5, R6, J3, J4, J5, J6, J7</p>
+<p><strong>Depends on:</strong> Phase 6</p>
+<h3>10.1 Why Now</h3>
+<p>Routines belong inside the planner, not beside it. PRD Section 7.3 explicitly rejects a separate habit tracker, so routines require a working scheduler to schedule against. The journal earns its place once the daily loop produces the events worth reflecting on.</p>
+<h3>10.2 Routines (R1 to R6)</h3>
+<p>All four cadence options (R2). Scheduled into the day plan like any task, respecting the same constraints (R3).</p>
+<p>Consistency tracked per routine (R4). <strong>Slippage surfaced gently</strong> (R5) â€” "three skipped this month, adjust or pause?" Never failure framing. Routines link to goals (R7) and streaks are offered with consent, never imposed (R8). Note the PRD discrepancy: the v1 draft says streaks exist for daily rituals, while v2 limits them to routines, consistent with Section 7.3 rejecting streak pressure on rituals. <strong>Treat v2 as authoritative.</strong></p>
+<p>Pause without losing history (R6).</p>
+<h3>10.3 Journal (J3 to J7)</h3>
+<p>Guided prompts referencing the actual day (J3). Free-form writing always available with no prompt required (J4) â€” prompting must never feel compulsory.</p>
+<p>Search by date, mood, goal, and text (J5), client-side per Decision 6.</p>
+<p>Week and month grouping (J6).</p>
+<p>Coach follow-up questions (J7): asked when an answer is superficial, withheld when complete. Interrogating a complete answer is a failure mode worth testing for explicitly.</p>
+<h3>10.4 Check-In</h3>
+<ol><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+<hr />
+<h2>11. Phase 8 â€” Progress and Insights</h2>
+<p><strong>Duration:</strong> 12 to 15 days</p>
+<p><strong>Requirements delivered:</strong> I1, I2, I3, I4, I5, I6, I7, I9, I11, I13, G7, G8</p>
+<p><strong>Depends on:</strong> Phase 6</p>
+<h3>11.1 Why This Phase Is Where Value Is Proven</h3>
+<p>Everything before this is infrastructure. This phase is where users discover whether the effort is working. Requirement I4 leads with course-correction decisions, not statistics, because the point is to change what happens next rather than to display numbers.</p>
+<h3>11.2 The Score (I6)</h3>
+<p>Per the Phase 0 decision, the formula is defined there and must be implemented exactly as specified, because I6 requires it to be reproducible from underlying task data and I3 requires insights to cite their evidence.</p>
+<p>The formula in one sentence, shown to the user:</p>
+<blockquote><em>Your consistency is the share of your scheduled work you completed that moved one of your active goals forward.</em></blockquote>
+<p>Ritual adherence is tracked privately for retention analysis but never appears in a user-facing score.</p>
+<h3>11.3 Strengths and Weaknesses (I7)</h3>
+<p>Equal prominence. <strong>Stated factually without hedging</strong> (PRD Section 11.1). The coach should report uncomfortable truths plainly.</p>
+<p>This requires a data-visibility decision: naming "you complete 40% of deep work but 90% of admin" is far more useful than a summary figure, and is more likely to be uncomfortable. Ship the specific version. PRD Section 13.4 permits plain reporting and prohibits softening.</p>
+<h3>11.4 Insight Feed (I2, I3)</h3>
+<p>Automatic, no user effort. Every insight cites the behaviour behind it, and the minimum data threshold is disclosed â€” "based on 12 days of data". Where data is insufficient, say so and state what is needed. Fabricating a pattern to fill space is banned by PRD Section 13.2 and directly undermines the feature.</p>
+<h3>11.5 Weekly Review (I4, I5)</h3>
+<p>What advanced, what stalled â€” named specifically, not counted â€” the consistency score, insights, and course correction.</p>
+<p>Each goal carries an explicit action: continue, adjust, or drop. Dropping requires confirmation and states what history is preserved.</p>
+<p><strong>The review must lead with decisions, not statistics.</strong> A weekly review that opens with charts and ends with a list gets skimmed and skipped (Risk 12).</p>
+<h3>11.6 Goal Health (G7, G8)</h3>
+<p>Stalled goals surfaced neutrally with reschedule, rewrite, or drop. Contention warnings when goals compete for time before deadlines.</p>
+<h3>11.7 Streaks (I9)</h3>
+<p>Routines only. <strong>A missed day pauses rather than destroys.</strong> Copy contains nothing implying loss. PRD Section 7.3 rejects streak pressure on the daily rituals entirely.</p>
+<h3>11.8 History (I13)</h3>
+<p>Any past week's review, score, and insight set retrievable.</p>
+<h3>11.9 Check-In</h3>
+<ol><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+<hr />
+<h2>12. Phase 9 â€” Coaching Layer</h2>
+<p><strong>Duration:</strong> 10 to 12 days</p>
+<p><strong>Requirements delivered:</strong> A1, A2, A3, A4, A5, A8, A10, and P5 groundwork</p>
+<p><strong>Depends on:</strong> Phase 8</p>
+<h3>12.1 Why Last, and Why It Is the First Thing to Cut</h3>
+<p>The coach is valuable but not load-bearing. Everything it does is an enhancement to work the product already does. Per Section 2, if time runs short this phase is thinned before anything else is touched.</p>
+<p>The good news is that this phase is cheaper than it looks, because the infrastructure is already built. Decision 5's structured reasoning means the coach explains real algorithm output rather than inventing explanations. Requirement A10 is satisfied by construction.</p>
+<h3>12.2 What the Coach Does</h3>
+<p><strong>Morning briefing (A1).</strong> Under 150 words, spoken or written. Summarises the day, the Top 3, and anything needing a decision.</p>
+<p><strong>Overload detection (A2).</strong> Before the user commits to the day. Names specific tasks, never categories. This is deterministic logic operating on the schedule, not AI inference.</p>
+<p><strong>Journal interrogation (A3).</strong> Probing follow-ups when answers are superficial. Withheld when complete.</p>
+<p><strong>Pattern recognition (A4).</strong> Across weeks. Minimum data threshold before stating anything, and the threshold is disclosed.</p>
+<p><strong>Course correction (A5).</strong> In the weekly review. Cites inactivity. Leaves the decision entirely with the user.</p>
+<p><strong>Silence by default (A7).</strong> On a well-functioning day with nothing notable, no commentary at all. <strong>Test this explicitly</strong> â€” a coach that manufactures observations to appear useful is worse than no coach, and it is the most likely way this phase fails.</p>
+<p><strong>Always dismissible (A8).</strong> Every message offers at least two responses including dismissal. Dismissed suggestions do not reappear.</p>
+<h3>12.3 Prohibited Behaviour</h3>
+<p>PRD Section 13.2 and 13.4 in full. No diagnosis. No manipulation. No fabricated data. No unrequested generation. No inference stated as fact. No decisions on the user's behalf.</p>
+<p>One worth restating: <strong>the coach may suggest resting, but never suggests increasing activity to improve a rank</strong> (PRD 13.2). If the leaderboard ships later, this must be enforced.</p>
+<h3>12.4 Check-In</h3>
+<ol><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+<hr />
+<h2>13. Phase 10 â€” Onboarding and Launch Readiness</h2>
+<p><strong>Duration:</strong> 12 to 15 days</p>
+<p><strong>Requirements delivered:</strong> B1, B2, B3, B4, B5, B6, B7, N3, N4, N5, N6, A7, A9, J8, and the whole of Q1 through Q14</p>
+<p><strong>Depends on:</strong> Phases 7, 8, 9</p>
+<h3>13.1 Onboarding (B1 to B6)</h3>
+<p>Five steps: value framing before any input, then goals, schedule and energy, framework, calendar, first plan.</p>
+<p><strong>Under ten minutes</strong> (B6), measured. Skippable with partial data retained (B7).</p>
+<p>The first week is deliberately conservative. Demonstrating achievable completion is more valuable than demonstrating ambition â€” Risk 14 identifies over-committed onboarding as a cause of first-day abandonment.</p>
+<p>Calendar is optional with an honest explanation of what is accessed and why (B4). Skipping does not block onboarding.</p>
+<p>Value framing comes first, never an empty form. A user should see what the product does before being asked to supply anything.</p>
+<h3>13.2 Non-Functional Requirements â€” Final Verification</h3>
+<p>Every Q1 to Q14 verified rather than assumed.</p>
+<table>
+<tr><th>ID</th><th>Requirement</th><th>Verification</th></tr>
+<tr><td>Q1</td><td>Responsiveness</td><td>Measured on the oldest supported device. Any operation over one second communicates meaningful progress</td></tr>
+<tr><td>Q2</td><td>Interruption safety</td><td>Interrupt every input flow and return. Nothing lost</td></tr>
+<tr><td>Q3</td><td>Accessibility</td><td>Full WCAG 2.1 AA audit by a third party, not self-assessed</td></tr>
+<tr><td>Q4</td><td>Offline availability</td><td>Full day completed in aeroplane mode</td></tr>
+<tr><td>Q5</td><td>Low cognitive load</td><td>Five first-time users complete a day unassisted</td></tr>
+<tr><td>Q6</td><td>Data ownership</td><td>Complete export, readable, ungated, deletion unobstructed</td></tr>
+<tr><td>Q7</td><td>Privacy by default</td><td>Third-party privacy review</td></tr>
+<tr><td>Q8</td><td>Transparent AI</td><td>AI attribution, correction, and disablement all work</td></tr>
+<tr><td>Q9</td><td>Durability</td><td>Kill the app mid-write, repeatedly. Nothing lost</td></tr>
+<tr><td>Q10</td><td>Cross-device consistency</td><td>Two devices, concurrent offline edits</td></tr>
+<tr><td>Q11</td><td>Resource proportionality</td><td>Battery measured across a full day</td></tr>
+<tr><td>Q12</td><td>Tone consistency</td><td>Full copy review against the tone system</td></tr>
+<tr><td>Q13</td><td>Learnability</td><td>First day completed with no documentation</td></tr>
+<tr><td>Q14</td><td>Graceful degradation</td><td>Every service failed deliberately</td></tr>
+</table>
+<p>Q3 and Q6 deserve external verification. Self-assessment of accessibility is unreliable, and data ownership is a promise the product cannot afford to break quietly.</p>
+<h3>13.3 Notification Policy (N3, N4, N5, N6)</h3>
+<p>Ritual prompts at chosen times (N3). Every category adjustable, snoozable, silentable (N4). Default maximum three per day (N5). Full copy review for guilt-inducing language (N6).</p>
+<p>Coach mutable except essential alerts (A9).</p>
+<h3>13.4 Export (J8, Q6)</h3>
+<p>Complete export of goals, projects, tasks, routines, journal entries, and insights. Readable, human-formatted, dated, ungated.</p>
+<p><strong>Test by actually reading the export.</strong> If you cannot make sense of your own export file, it fails Q6 regardless of its technical validity.</p>
+<h3>13.5 Release Gate Verification</h3>
+<p>All 16 criteria from PRD Section 16 verified as verifiable, even where the target is not yet measurable pre-launch. Several are inherently post-launch metrics â€” Day 30 retention, for instance â€” and should be instrumented and confirmed as measurable rather than as met.</p>
+<p>Be honest about which gates can be met now and which await data. Do not claim a retention target is achieved before any user has had 30 days.</p>
+<h3>13.6 Check-In â€” Final</h3>
+<ol><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+<hr />
+<h2>14. Phase 11 â€” Beta and Validation</h2>
+<p><strong>Duration:</strong> 4 weeks</p>
+<p><strong>Requirements delivered:</strong> Validates all release criteria</p>
+<p><strong>Depends on:</strong> Phase 10</p>
+<h3>14.1 Purpose</h3>
+<p>Nothing in Phases 1 to 10 substitutes for real users. This phase is where the product's assumptions meet reality.</p>
+<h3>14.2 Recruitment</h3>
+<p><strong>30 to 50 users</strong>, knowledge workers with genuine deadline pressure. Below 30, retention numbers are too noisy to interpret. Above 50 exceeds what a solo developer can support while also building.</p>
+<p>Recruit deliberately rather than widely. Target the secondary personas as well as the primary: the Ambitious Planner and especially the Overwhelmed Returner, who is the real test of whether forgiveness works.</p>
+<h3>14.3 Weekly Cadence</h3>
+<table>
+<tr><th>Week</th><th>Focus</th><th>Key question</th></tr>
+<tr><td>1</td><td>Activation</td><td>Do users reach a populated first day? Where do they stop?</td></tr>
+<tr><td>2</td><td>Daily loop</td><td>Do the rituals stick or collapse?</td></tr>
+<tr><td>3</td><td>Missed-day recovery</td><td>Do users come back after lapses? This is the highest-risk moment</td></tr>
+<tr><td>4</td><td>Progress</td><td>Do users reach weekly review and make real decisions?</td></tr>
+</table>
+<h3>14.4 What to Watch Every Week</h3>
+<p><strong>Do not watch:</strong> task counts, session length, notification open rates. PRD Section 6.3 lists these as counter-metrics. Rising task creation with flat goal progression means a graveyard, not engagement.</p>
+<p><strong>Do watch:</strong></p>
+<table>
+<tr><th>Metric</th><th>Target</th><th>Signal if missed</th></tr>
+<tr><td>Onboarding completion</td><td>â‰¥ 70%</td><td>Setup is too long or confusing</td></tr>
+<tr><td>First day planned</td><td>â‰¥ 55%</td><td>First-run experience fails</td></tr>
+<tr><td>Morning plan completion</td><td>â‰¥ 65%</td><td>Ritual is too heavy or the plan is not trusted</td></tr>
+<tr><td>Evening review completion</td><td>â‰¥ 55%</td><td>Reflection is not landing</td></tr>
+<tr><td>Recovery within 24h of a miss</td><td>â‰¥ 65%</td><td>Forgiveness is not working</td></tr>
+<tr><td>Tasks linked to a goal</td><td>â‰¥ 80%</td><td>Spine is being ignored</td></tr>
+<tr><td>Blocks accepted unchanged</td><td>â‰¥ 70%</td><td>Scheduling quality is insufficient</td></tr>
+<tr><td>Useful insight reported</td><td>â‰¥ 50% WAU</td><td>Insight feed is filler</td></tr>
+<tr><td>Dismissal rate</td><td>â‰¤ 20%</td><td>Notification policy is being violated</td></tr>
+</table>
+<p>Also conduct two qualitative rounds: a first-week diary study, and interviews with users who returned after a lapse. The second is the most valuable research in the phase, because it tests the product's central differentiator at the moment it matters most.</p>
+<h3>14.5 Decision Rules</h3>
+<p>Decide in advance:</p>
+<table>
+<tr><th>Result</th><th>Action</th></tr>
+<tr><td>Loop completion â‰¥ 60%</td><td>Product thesis holding. Proceed to wider release</td></tr>
+<tr><td>Loop completion 40 to 60%</td><td>Loop works but is heavy. Investigate friction before scaling</td></tr>
+<tr><td>Loop completion below 40%</td><td>The daily loop is not forming. Do not scale. Return to Phase 6</td></tr>
+<tr><td>Recovery below 50%</td><td>Forgiveness is failing, which is the predicted abandonment point. Return to Phase 6</td></tr>
+<tr><td>Blocks accepted below 50%</td><td>Scheduling is the problem, not the ritual. Return to Phase 5</td></tr>
+<tr><td>Insight usefulness below 25%</td><td>Insight feed is filler. Simplify or remove it</td></tr>
+</table>
+<p>The last two matter most. Scaling before fixing the scheduler multiplies the problem across more users.</p>
+<h3>14.6 Exit Criteria</h3>
+<ul><li>4 weeks complete with all metrics instrumented and visible</li><li>Decision rules evaluated and acted on</li><li>Qualitative research complete, including lapse-and-return interviews</li><li>Written assessment of whether the thesis survived contact with real users</li></ul>
+<hr />
+<h2>15. Phase 12 â€” Post-Launch</h2>
+<p><strong>Duration:</strong> Ongoing</p>
+<h3>15.1 Leaderboard Decision</h3>
+<p>Deferred per Phase 0. Revisit only when Phase 11 shows Day 30 retention above 25%, which establishes a population worth ranking.</p>
+<p>Before building, answer: does the market support it? An empty leaderboard is worse than none. Given that consistency scoring rests on a contested definition, the honest default may be to ship this never. PRD Section 7.3 rejects real-name ranking outright; if it ships at all, it is display names and opt-in.</p>
+<h3>15.2 V2 Candidates</h3>
+<p>Deferred requirements, in the order they become most valuable:</p>
+<table>
+<tr><th>Requirement</th><th>Value if promoted</th><th>Condition for promotion</th></tr>
+<tr><td>S13 â€” multi-day planning</td><td>Users plan on Sundays</td><td>Users complain about replanning daily</td></tr>
+<tr><td>J6 â€” week and month journal views</td><td>Pattern recognition over time</td><td>Journal usage high enough to justify</td></tr>
+<tr><td>R7 â€” routines linked to goals</td><td>Goal progress includes behaviour</td><td>Users ask why routines do not count</td></tr>
+<tr><td>B8 â€” import from other tools</td><td>Reduces switching friction</td><td>Launch cohort complains about manual entry</td></tr>
+<tr><td>A9 â€” coach muting</td><td>Users overwhelmed by coaching</td><td>Coach dismissal above 30%</td></tr>
+<tr><td>G12 â€” life obligations</td><td>Serves non-work-heavy users</td><td>Irregular-hours research (PRD Q7) completes</td></tr>
+<tr><td>F4 â€” energy-based breaks</td><td>Better energy management</td><td>Scheduling proven and stable</td></tr>
+<tr><td>P7 â€” custom frameworks</td><td>Power users</td><td>Secondary persona demand</td></tr>
+<tr><td>F8 â€” ambient sounds</td><td>Marginal</td><td>Only if trivially cheap</td></tr>
+<tr><td>J9 â€” journal images</td><td>Emotional expression</td><td>Journal usage high</td></tr>
+<tr><td>I12 â€” own rank when opted out</td><td>Fairness nicety</td><td>Only if leaderboard ships</td></tr>
+</table>
+<h3>15.3 Standing Priorities</h3>
+<p>Permanent, not phase-based:</p>
+<ol><li></li><li></li><li></li><li></li><li></li><li></li></ol>
+<hr />
+<h2>16. Requirement Coverage Summary</h2>
+<h3>16.1 By Phase</h3>
+<table>
+<tr><th>Phase</th><th>Requirements</th></tr>
+<tr><td>0 â€” Blockers</td><td>None. Resolves PRD Open Questions 1, 2, 3, 4, 5, 8</td></tr>
+<tr><td>1 â€” Thesis validation</td><td>None formally. Validates S2, I1, Success Criterion 3</td></tr>
+<tr><td>2 â€” Design system</td><td>Q3, Q5, Q13 foundation</td></tr>
+<tr><td>3 â€” Architecture</td><td>Q4, Q7, Q8, Q9, Q10, Q11, Q14</td></tr>
+<tr><td>4 â€” Foundations</td><td>G1, G3, G4, G6, G9, G10, G12, C1â€“C6, C9, Q2, Q4, Q9â€“Q11</td></tr>
+<tr><td>5 â€” Prioritisation and scheduling</td><td>P1â€“P5, P8, S1â€“S7, S9, S11</td></tr>
+<tr><td>6 â€” Daily loop</td><td>D1â€“D9, D11, F1â€“F3, F5, F6, N1, N2</td></tr>
+<tr><td>7 â€” Routines and reflection</td><td>R1â€“R6, J3â€“J7</td></tr>
+<tr><td>8 â€” Progress and insights</td><td>I1â€“I7, I9, I11, I13, G7, G8</td></tr>
+<tr><td>9 â€” Coaching</td><td>A1â€“A5, A8, A10</td></tr>
+<tr><td>10 â€” Launch readiness</td><td>B1â€“B6, N3â€“N6, A7, A9, J8, Q1â€“Q14</td></tr>
+<tr><td>11 â€” Beta</td><td>Validation of all</td></tr>
+<tr><td>12 â€” Post-launch</td><td>I10, I12, and deferred Should and Could requirements</td></tr>
+</table>
+<h3>16.2 By Priority</h3>
+<p>All 82 <strong>Must</strong> requirements land by end of Phase 10.</p>
+<table>
+<tr><th>Priority</th><th>Total</th><th>Phases 0â€“10</th><th>Phase 12</th></tr>
+<tr><td>Must</td><td>82</td><td>82</td><td>â€”</td></tr>
+<tr><td>Should</td><td>32</td><td>24</td><td>8</td></tr>
+<tr><td>Could</td><td>8</td><td>0</td><td>8</td></tr>
+</table>
+<p>Eight <strong>Should</strong> requirements defer to post-launch: S10, S12, S13, G8, G11, D10, N7, and C7 or C8 where triage proves sufficient without bulk operations. Confirm during Phase 11.</p>
+<p>All 8 <strong>Could</strong> requirements defer. This is intentional â€” none is required by the daily loop, and each adds surface area against Principle 8.</p>
+<h3>16.3 Requirement Discrepancies Between PRD Drafts</h3>
+<p>The v1 Markdown draft and v2 HTML differ in three places. <strong>v2 is authoritative.</strong> Recorded so the differences do not surface as bugs later.</p>
+<table>
+<tr><th>Item</th><th>v1 (PRD.md)</th><th>v2 (FocusFlow_PRD_v2)</th><th>Resolution</th></tr>
+<tr><td>Non-functional IDs</td><td>Q1â€“Q12 plus Q7a</td><td>Q1â€“Q14, no Q7a</td><td>Use v2 numbering. v1's Q7a became v2's Q8</td></tr>
+<tr><td>Streaks scope</td><td>I8: "daily rituals and routines"</td><td>I8: routines only, offered with consent</td><td>v2. Consistent with v2 Section 7.3 rejecting streak pressure on rituals</td></tr>
+<tr><td>Coach surface</td><td>Not specified</td><td>Explicitly no chat screen (Appendix C)</td><td>v2. Coach works in context</td></tr>
+</table>
+<hr />
+<h2>17. Risk Register for the Plan</h2>
+<p>Risks of executing this plan, as distinct from product risks in PRD Section 17.</p>
+<table>
+<tr><th>#</th><th>Risk</th><th>Severity</th><th>Mitigation</th></tr>
+<tr><td>1</td><td>Phase 5 scheduling takes three times the estimate</td><td>High</td><td>Phase 1 validates the thesis cheaply first. If the solver proves too slow, cut features rather than extend the phase</td></tr>
+<tr><td>2</td><td>Solo developer capacity is optimistic</td><td>High</td><td>Phase gates mean you can stop after any phase with something usable. Never carry known defects forward</td></tr>
+<tr><td>3</td><td>AI scope creeps during Phase 9</td><td>Medium</td><td>Decision 3's AI boundary table is agreed in Phase 3 precisely so it cannot be eroded during build</td></tr>
+<tr><td>4</td><td>F3 app blocking is platform-impossible</td><td>Medium</td><td>Investigate in the first days of Phase 6, not at the end. PRD 11.3 already commits to honest capability statements</td></tr>
+<tr><td>5</td><td>Design system grows to serve imagined needs</td><td>Medium</td><td>Screen inventory capped at 15. New components require justification</td></tr>
+<tr><td>6</td><td>Cross-device sync becomes a project of its own</td><td>Medium</td><td>Phase 4 Step 6. If it overruns, ship single-device first and say so plainly rather than slipping silently</td></tr>
+<tr><td>7</td><td>Beta recruitment is too small to be meaningful</td><td>Medium</td><td>30 to 50 minimum. Below 30, retention signal is noise</td></tr>
+<tr><td>8</td><td>Check-ins become ceremonial</td><td>Medium</td><td>Step 3 of the ritual is written before any discussion. Rationalisation after the fact is the failure mode</td></tr>
+<tr><td>9</td><td>Phase 0 decisions get revisited mid-build</td><td>Medium</td><td>Decision register in Phase 3 states what forces a revisit. Deviations require an explicit register update</td></tr>
+<tr><td>10</td><td>Energy data never gets good enough</td><td>Medium</td><td>Declared-plus-observed makes the first week work. Accept that week four is better than week one rather than expecting accuracy sooner</td></tr>
+</table>
+<hr />
+<h2>18. Appendix A â€” Concrete Stack Recommendation</h2>
+<p><strong>This appendix is optional.</strong> Sections 3 to 17 are stack-agnostic and remain valid if this recommendation is rejected entirely.</p>
+<h3>18.1 Platform</h3>
+<p><strong>Recommendation:</strong> React Native for iOS and Android, with a small web companion for desktop review only.</p>
+<p>Reasons: single codebase for both mobile platforms matters enormously at solo scale; the app is overwhelmingly mobile, since capture during work and evening review happen away from a desk; focus mode needs notification and app-blocking control that only native gives; web is needed only for occasional review, so it should not get first-class design investment.</p>
+<p>Alternative: Flutter. Comparable outcomes, different tooling. If Dart is more comfortable, this is a reasonable swap.</p>
+<h3>18.2 Storage</h3>
+<p><strong>Recommendation:</strong> SQLite locally, with an encrypted journal table per Decision 6.</p>
+<p>Reasons: relational integrity across goals, projects, and tasks; query performance over the large joins the insight feed needs; offline-first is the local database's home ground.</p>
+<p>Alternative: a local-first sync framework. Faster to build, less control over conflict resolution, which Decision 1 made a permanent concern.</p>
+<h3>18.3 Sync</h3>
+<p><strong>Recommendation:</strong> Operation-log sync with last-write-wins per field, plus explicit conflict detection on structured blocks.</p>
+<p>Reasons: field-level last-write-wins handles the common case of editing different attributes on two devices; detecting and surfacing conflicts on schedule blocks respects requirement P8's promise that manual overrides persist; an operation log allows the encrypted journal to sync only as the user directs per Decision 7.</p>
+<h3>18.4 Scheduling</h3>
+<p><strong>Recommendation:</strong> A dedicated constraint solver module, isolated behind a single interface so it can be replaced without touching the UI.</p>
+<p>Reasons: Decision 4's determinism and explainability requirements are testable only through a stable interface; isolating it means Phase 5 rework is contained; the reasoning output structure becomes a formal contract rather than an implementation detail.</p>
+<h3>18.5 AI Access</h3>
+<p><strong>Recommendation:</strong> Provider-agnostic abstraction with one provider behind it.</p>
+<p>Reasons: Decision 7 requires explicit disclosure at each point of use, which means the abstraction also knows when AI is being invoked; provider switching is a commercial decision, not an architectural one; the abstraction must never expose a decision-making capability per Decision 3.</p>
+<h3>18.6 Structure</h3>
+<p><strong>Recommendation:</strong> Single repository, modular by feature rather than by layer.</p>
+<p>Reason: at solo scale, layer-based structure produces navigation overhead without benefit. One module per capability area, matching the PRD's twelve areas, keeps requirements and code locatable together.</p>
+<h3>18.7 Testing</h3>
+<table>
+<tr><th>Type</th><th>Focus</th><th>Why</th></tr>
+<tr><td>Unit</td><td>Scheduling algorithm, score formula, energy matching</td><td>Determinism is the property being tested</td></tr>
+<tr><td>Property-based</td><td>Scheduling invariants</td><td>No hard break should ever produce an overlapping schedule</td></tr>
+<tr><td>Integration</td><td>Sync conflicts, capture, calendar</td><td>Where the complexity lives</td></tr>
+<tr><td>Manual</td><td>Accessibility, tone, one-day usability</td><td>Cannot be automated</td></tr>
+<tr><td>Regression</td><td>Every skipped test from a check-in</td><td>Closes the loop the ritual creates</td></tr>
+</table>
+<p><strong>The check-in friction log should produce regression tests directly.</strong> Every defect found in a check-in becomes a permanent test.</p>
+<hr />
+<h2>19. Related Documents</h2>
+<ul><li><code>FocusFlow_PRD_v2.pdf</code> â€” Product Requirements Document, the source for this plan</li><li><code>FEATURES.md</code> â€” Feature inventory from user interviews</li><li>Phase 3 produces the technical design specification, out of scope here</li><li>Phase 2 produces the design system documentation</li><li>Phase 11 produces the beta findings report</li></ul>
+<hr />
+<h2>20. Sign-Off</h2>
+<table>
+<tr><th>Role</th><th>Name</th><th>Date</th><th>Status</th></tr>
+<tr><td>Product Owner</td><td></td><td></td><td>Pending</td></tr>
+<tr><td>Design Lead</td><td></td><td></td><td>Pending</td></tr>
+<tr><td>Engineering Lead</td><td></td><td></td><td>Pending</td></tr>
+</table>
+<p><strong>Immediate next action:</strong> complete Phase 0. Two decisions â€” the consistency score formula and the energy signal approach â€” block everything downstream, and both can be made in an afternoon.</p>
+</body>
+</html>

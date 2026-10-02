@@ -67,6 +67,9 @@ These are the decision criteria. When requirements conflict, these resolve them.
 | File | Description |
 |---|---|
 | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | **Start here to build** — begin with **Section 1A: Fast Track**, a 10-day prototype. Then Section 1B for the roadmap, and the 13 detailed phases after that |
+| [FocusFlow_Implementation_Plan_v1.1.pdf](FocusFlow_Implementation_Plan_v1.1.pdf) | Implementation Plan, formatted — read offline or on a phone |
+| [FocusFlow_Implementation_Plan_v1.1.docx](FocusFlow_Implementation_Plan_v1.1.docx) | Same document, editable in Word |
+| [FocusFlow_Implementation_Plan_v1.1.html](FocusFlow_Implementation_Plan_v1.1.html) | Same document, viewable in a browser |
 | [FocusFlow_PRD_v2.pdf](FocusFlow_PRD_v2.pdf) | Product Requirements Document, 38 pages — the full specification |
 | [FocusFlow_PRD_v2.docx](FocusFlow_PRD_v2.docx) | Same document, editable in Word |
 | [FocusFlow_PRD_v2.html](FocusFlow_PRD_v2.html) | Same document, viewable in a browser |
