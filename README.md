@@ -66,7 +66,7 @@ These are the decision criteria. When requirements conflict, these resolve them.
 
 | File | Description |
 |---|---|
-| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | **Start here to build** — 13 phased plan with check-ins, architecture decisions, and exit criteria |
+| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | **Start here to build** — begin with **Section 1A: Fast Track**, a 10-day prototype. Then Section 1B for the roadmap, and the 13 detailed phases after that |
 | [FocusFlow_PRD_v2.pdf](FocusFlow_PRD_v2.pdf) | Product Requirements Document, 38 pages — the full specification |
 | [FocusFlow_PRD_v2.docx](FocusFlow_PRD_v2.docx) | Same document, editable in Word |
 | [FocusFlow_PRD_v2.html](FocusFlow_PRD_v2.html) | Same document, viewable in a browser |
@@ -90,7 +90,30 @@ The PRD contains 19 sections and 3 appendices, covering:
 
 ### Implementation plan at a glance
 
-The [implementation plan](IMPLEMENTATION_PLAN.md) converts the PRD into 13 sequential phases, sized for a solo developer. Roughly 22 to 27 weeks to launch, excluding the 4-week beta.
+**Two ways to start:**
+
+| Route | For |
+|---|---|
+| **Fast Track** (Section 1A) | Getting something real running fast. A 10-day prototype you can test with a few people, designed to become the foundation rather than be thrown away. Plain language, no assumed experience. |
+| **Full plan** (Phases 0–12 below) | Building the complete product with design system, architecture, and beta validation. Roughly 22 to 27 weeks. |
+
+**Recommended:** start with the Fast Track. It validates the core idea cheaply and everything it skips can be added afterwards without starting over. Section 1B explains how.
+
+#### The Fast Track in brief
+
+Ten days to a working app that builds your day and explains its choices. The whole product in miniature.
+
+Three decisions on day one make everything else cheap to add later instead of a rewrite:
+
+1. Every task gets an empty slot for a goal, even though goals do not exist yet
+2. Meetings are stored the same way as blocks, with a label saying where they came from
+3. Reasoning is saved as separate facts, not as finished sentences
+
+Then: days 2–4 scheduler, days 5–6 day view, day 7 moving things, day 8 replanning, day 9 not falling over, day 10 testing.
+
+The prototype cannot tell you whether people will keep using this. It tells you whether the core idea lands. Those are different questions and it is worth keeping them apart.
+
+#### The full 13 phases
 
 | Phase | Name | Est. | Delivers |
 |---|---|---|---|
