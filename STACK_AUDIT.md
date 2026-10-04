@@ -9,7 +9,9 @@
 
 ## The short version
 
-I checked all eight technologies against current pricing. **Six are right and I recommend keeping them. Two need a caveat, and I have not changed them without telling you first. I am not adding any new service.**
+I checked all eight technologies against current pricing. **Six are right and I recommend keeping them. Two needed changes, both explained below. No new paid service has been introduced.**
+
+On your instruction, **Vercel has been removed and the app now runs on your own computer.** That turned out to be the better choice on the merits, not merely a permitted one — the reason is in the section below.
 
 | Technology | Verdict | One-line reason |
 |---|---|---|
@@ -19,22 +21,18 @@ I checked all eight technologies against current pricing. **Six are right and I 
 | **Neon** | **Keep, do not switch to Supabase** | Supabase's free tier deletes nothing but *pauses* your database after one idle week, and has no backups at all on free |
 | **Prisma** | Keep, but **pin version 7** | Free and open source, but version 8 removed some commands the AI will assume exist |
 | **Tailwind CSS** | Keep | Free, MIT licence, no account, no limits |
-| **Vercel** | Keep, **but read the warning below** | Free and excellent. The catch is one clause in their terms that affects you specifically |
+| **Vercel** | **Removed — hosting locally instead** | Your instruction. Also better: it removes the only commercial-use restriction in the stack, and there is no longer any account or card anywhere |
 | **date-fns** + **date-fns-tz** | Keep, **isolate them** | Free forever. Confined to one file so they can be swapped later cheaply |
 
-**Total MVP cost: $0.** No card required on any of them.
+**Total MVP cost: $0.** No card required anywhere, because there is nothing to sign up for.
 
-### The one thing that needs your attention
+### One thing you should know
 
-**Vercel's free plan is for personal, non-commercial use only.** I have to flag this because your plan is to test with real people.
+**Hosting locally removes a restriction rather than adding one.** The earlier version of this audit carried a warning: Vercel's free plan is non-commercial by their terms, so the first time FocusFlow earned money you would have been forced onto a $20/month plan.
 
-What that means in practice:
+**That problem no longer exists.** There are no terms, because there is no service. You can test with anyone, and you can charge money, with nothing to change and nothing to pay.
 
-- Showing FocusFlow to friends and testers who are not paying you is fine on the free plan
-- The moment you take money for it — a paid subscription, a paid customer, advertising — you must move to the $20/month Pro plan
-- Also arguably commercial: paying a freelancer to build it
-
-This is not a trap and it costs you nothing to find out now. **For the 10-day prototype, the free plan is appropriate.** When you first earn money, upgrade to Pro that day. That is a $20/month line item, and it is the single cheapest thing you will ever pay for.
+The cost of local hosting is a different one, and it is real: **your computer must be awake for the app to exist.** Section 7 explains how testers reach it, and recommends one free tool that solves it.
 
 ---
 
@@ -69,18 +67,16 @@ Each of the eight gets the same seven questions.
 
 | Question | Answer |
 |---|---|
-| Free or open source? | Free, open source (MIT licence). Hosting costs money — see Vercel below. |
-| Free-tier limits | The software has none. The free *hosting* has limits. |
-| What could charge me? | Nothing in the library itself. You pay for hosting, which you chose separately. |
+| Free or open source? | Free, open source (MIT licence). Hosting costs nothing either — you run it on your own computer, see section 7. |
+| Free-tier limits | None anywhere. Not in the software, and none in hosting either. |
+| What could charge me? | Nothing. There is no account and no billing page. |
 | Card required? | No. |
 | Free alternative? | Any other web framework — but you would be learning something less well documented. |
 | Can I migrate away? | **Yes, but this is the most framework-specific decision in the stack.** |
 
 **Verdict: keep.** It is the most-used web framework in the world, which means your AI assistant knows it extremely well. Fewer strange errors while you are learning.
 
-**Future limitation you should know about.** Next.js is built and optimised for Vercel. Moving to a different host is possible and supported, but you would swap a few deployment settings rather than click a button. **The code itself is portable** — the React parts of Next.js are standard React. If you ever move, you move the hosting, not the application.
-
-**How to reduce this risk:** keep the framework doing ordinary work. Do not lean on Vercel-specific features. This costs you nothing and keeps the door open.
+**Future limitation you should know about.** None, any more. Next.js is a documented, first-class way of running as a plain Node.js server — not a hosting afterthought. Running it yourself is a supported deployment method, not a downgrade. This is now covered in section 7.
 
 ---
 
@@ -112,7 +108,7 @@ Each of the eight gets the same seven questions.
 | Question | Answer |
 |---|---|
 | Free or open source? | The software is free and open source. Neon is a commercial company that hosts it for you. |
-| Free-tier limits | **1 GB storage, 100 projects, 100 compute-hours per project per month, 5 GB network transfer, 6-hour restore history, 1 manual snapshot.** No expiry date. |
+| Free-tier limits | **0.5 GB storage, 100 projects, 100 compute-hours per project per month, 5 GB network transfer, 6-hour restore history, 1 manual snapshot.** No expiry date. |
 | What could charge me? | Only if you deliberately upgrade to their paid "Launch" plan ($0.106 per compute-hour, $0.35 per GB-month). **On the free plan you cannot be charged — hitting a limit pauses things rather than billing you.** |
 | Card required? | **No.** Neon does not ask for a card on the free plan. |
 | Free alternative? | Supabase (compared below), or running PostgreSQL on your own computer. |
@@ -126,9 +122,11 @@ Each of the eight gets the same seven questions.
 
 **Going over a limit pauses rather than bills.** If you exceed storage or compute on the free plan, writes fail and the database suspends. It does not charge you. This is a much safer arrangement than a plan that quietly bills you for going slightly over.
 
-**Future limitation:** if you get genuinely large — more than about 1 GB of data, or needing backups longer than 6 hours — you will move to their $10-ish Launch tier or another host. That is a billing change, not a migration: the connection string stays the same, per Neon's own documentation.
+**Future limitation:** if you get genuinely large — more than about half a gigabyte of data, or needing backups longer than 6 hours — you will move to their $10-ish Launch tier or another host. That is a billing change, not a migration: the connection string stays the same, per Neon's own documentation.
 
-**How much data is 1 GB?** A single task row is roughly 500 bytes. Even a very large app holds about two million of them. For your prototype with five testers for ten days, you will use well under one megabyte. You are not going to approach this limit.
+**How much data is half a gigabyte?** A single task row is roughly 500 bytes. Even a very large app holds about a million of them. For your prototype with five testers for ten days, you will use well under one megabyte — that is about five hundredth of the limit. You are not going to approach it.
+
+**One note on this number, so it does not confuse you later.** Neon announced that free storage is moving to 1 GB, but their published pricing and plan tables still say 0.5 GB. I have used the lower, currently documented figure throughout, because it is the one that is definitely in force. If you check and see 1 GB, that is the increase arriving — good news, and nothing in this document needs to change.
 
 ---
 
@@ -176,37 +174,79 @@ Prisma version 8 is being released around now and it is a large rewrite. It remo
 
 ---
 
-### 7. Vercel
+### 7. Local hosting — Node.js on your own machine
 
-**What it does.** Puts your app on the internet at a real web address so testers can open it. It also does the deployment: you push code, it builds and publishes.
+**What it does.** The app runs as a program on your own computer. You start it with one command, open it in your browser, and it works. Anyone on the same Wi-Fi can open it too.
 
 | Question | Answer |
 |---|---|
-| Free or open source? | Hosting is a paid commercial service with a free tier. Not open source. |
-| Free-tier limits | 100 GB transfer, 1 million function calls per month, 50,000 analytics events, 200 projects, 100 deployments per day, 1 hour of logs. 1 GB of file storage if you ever use it. |
-| What could charge me? | **Only by upgrading to Pro.** On the free plan you cannot purchase extra usage — you get paused when you hit a limit. |
-| Card required? | No, for the free plan. |
-| Free alternative? | Netlify, Cloudflare Pages, Fly.io, Render, or running it on your own computer. |
-| Can I migrate away? | **Yes.** See below. |
+| Free or open source? | **Completely free and fully yours.** Node.js is open source. There is no company and no plan. |
+| Free-tier limits | **None, because there are no tiers.** It uses your computer's memory and disk. |
+| What could charge me? | **Nothing. There is no account and no billing page.** Your only cost is the electricity. |
+| Card required? | **No. There is nothing to sign up for.** |
+| Free alternative? | It is itself the free option. |
+| Can I migrate away? | **Already portable.** It runs anywhere that runs Node. |
 
-**Verdict: keep, with the commercial-use clause understood.**
+**Verdict: changed to local hosting on your instruction.** This is a better fit for the prototype than any hosted option, and here is why.
 
-**Your free-tier limits are not remotely close.** One million function calls per month is roughly what a small app uses in a year. For five testers, you are talking about hundreds of calls.
+#### What you gain
 
-**The commercial-use clause, restated.** Vercel's terms say Hobby is for "non-commercial personal use," and define commercial use as any deployment used for the financial gain of anyone involved in producing the project. Concretely:
+**The commercial-use problem disappears entirely.** The previous draft of this audit carried a warning at the very top: Vercel's free plan is non-commercial by their terms, so taking money would force a $20/month upgrade. That constraint is gone. There is no terms of service because there is no service.
 
-| Activity | Allowed on free? |
-|---|---|
-| Testing with friends and testers who pay nothing | Yes |
-| Building for yourself | Yes |
-| Accepting money, subscriptions, or advertising | **No — Pro required** |
-| Paying a contractor to build it | Arguably no — Pro required |
+**Nothing can be suspended, throttled, or repriced.** No free-tier limits to hit, because there are no free-tier limits. If you want to run fifty testers instead of five, you run fifty testers.
 
-If in doubt, ask Vercel. But note the trigger is *earning*, not *having users*.
+**No account, no dashboard, no card anywhere.** You already have Node.js installed — I verified it, version 24.21.0. You are already set up.
 
-**Migrating away later.** Next.js runs on any Node host. Moving means changing build settings and the domain. No application code changes. **The cost of this risk is genuinely low.**
+**It is genuinely simpler.** A hosted platform does work you now skip: it receives your code, builds it, decides how to run it, and gives you a URL. Locally, you do those yourself with two commands you will know by heart.
 
-**One thing to avoid:** do not use Vercel Blob for file storage. It is convenient and it locks you in. Part 3 explains the alternative.
+#### What you give up
+
+**Testers must be reachable.** This is the real cost, and it deserves a clear answer rather than a vague reassurance. A program on your computer is only visible to people who can reach your computer. Two ways to solve it:
+
+| Approach | Who can open it | Cost | Card |
+|---|---|---|---|
+| **Same Wi-Fi only** — share your local network address | People in the same building | $0 | No |
+| **Cloudflare Tunnel** — one extra program gives you a public web address | Anyone, anywhere | $0 | **No** |
+
+Both work. For a prototype tested by three to five people, **Cloudflare Tunnel is the one I recommend**, and I will set it up on Day 1. It needs no account, no domain, and no payment card, and it produces a normal secure web address that anyone can open on a phone. It is explicitly built for testing and development.
+
+The one thing to know: a Tunnel address changes each time you restart it. For Day 10, you start it once and send that address to your testers. If it changes, you send the new one. That is a small inconvenience, not a limitation.
+
+**Your computer must be awake and switched on.** If it sleeps, the app stops. Worth knowing before you schedule a test session.
+
+**You run two commands instead of pressing deploy.** `npm run build` then `npm start`. In practice you will wrap this in one command so it stays a single step.
+
+**Not reachable while you are travelling.** If your laptop is closed, there is no app. For a prototype, this is usually acceptable — and it is a problem that only exists while you have no real users.
+
+#### Why this is more future-proof, not less
+
+This is the part that surprised me when I checked, and it runs opposite to the usual assumption that hosting locally is a retreat.
+
+**Next.js ships with first-class support for running as a plain Node.js server.** Running your own server is not a workaround or a downgrade — it is one of the documented, supported deployment methods alongside containers and static export.
+
+**And it makes Docker later genuinely trivial.** Next.js has a setting, `output: "standalone"`, which bundles everything the app needs into a single small folder. A Dockerfile for it is then about ten fixed lines that never change. I will enable this setting on Day 1 — it costs nothing, changes nothing about how the app behaves, and means adding Docker later is writing down instructions you already have rather than restructuring code.
+
+**Moving to a server later is the same two commands on a rented machine.** Rent any Linux server, copy your folder, run the same two commands. No code changes, no framework changes, no vendor to negotiate with. Roughly $5 a month for a small server, whenever you actually need one.
+
+**The one thing to be careful about.** A local server by default listens on all network interfaces, which means anything on your Wi-Fi can reach it. On home Wi-Fi with a password that is fine. On open public Wi-Fi in a café, bind it to localhost only and reach it through the Tunnel instead. I will make localhost-only the default and switch it on deliberately.
+
+#### Comparison with the options you rejected
+
+| | **Local (chosen)** | Vercel | A paid host |
+|---|---|---|---|
+| Monthly cost | **$0** | $0, then $20 on earning | $5–20 |
+| Payment card | **Never** | Not on free | Usually yes |
+| Commercial-use limits | **None** | Yes on free tier | Depends |
+| Account needed | **None** | Yes | Yes |
+| Can be throttled or suspended | **Never** | Yes, on limits | Yes |
+| Works with no internet connection | App yes, database no | Yes | Yes |
+| Where the app files live | **On your machine** | On their servers | On their servers |
+| Where the data lives | **Neon** (still remote) | On their servers | On their servers |
+| Moving elsewhere later | Already portable | Easy | Easy |
+
+**Being honest about what is and is not local.** Your application runs on your computer, and your code sits in a folder you can read, back up, and hand to anyone. That is the part that was previously trapped on someone else's servers.
+
+**The database is still on Neon's computers**, and it has to be, because you decided not to run PostgreSQL yourself. It remains completely portable — it is standard PostgreSQL, and moving it is a one-line change to a connection string. But I want to be accurate: local hosting made your *application* local, not your *data*.
 
 ---
 
@@ -239,7 +279,7 @@ You asked for this comparison rather than a silent switch, so here it is properl
 |---|---|---|
 | What it is | Managed PostgreSQL, and nothing else | A whole backend: database, login, file storage, and more |
 | Free price | $0 | $0 |
-| **Free database size** | **1 GB per project** | 500 MB per project |
+| **Free database size** | **0.5 GB per project** | 500 MB per project |
 | **Free project count** | **100** | **2** |
 | **What happens when idle** | **Shuts down after 5 min, wakes automatically. No penalty.** | **Paused after 1 week of low activity. You must unpause it.** |
 | **Backups on free** | **6-hour restore window + 1 manual snapshot** | **None at all** |
@@ -260,6 +300,8 @@ Neon has no such behaviour in the same sense. Its server sleeps after five minut
 **Neon has backups on the free tier. Supabase does not.** This matters more than it sounds. Your whole plan rests on data typed in by testers. If a schema mistake wipes it, Supabase free has no way back. Neon keeps six hours of history plus one manual snapshot, free.
 
 **Two free projects is tight.** You want somewhere to experiment without risking the live demo. Neon gives you 100.
+
+**On storage size, the two are effectively equal.** Supabase gives 500 MB per project; Neon gives 0.5 GB. That is the same amount, so storage is not a reason to choose either. The reasons above are the reasons.
 
 ### What Supabase is genuinely better at
 
@@ -286,7 +328,7 @@ You asked me to be explicit about these. **For each, my recommendation is to add
 | **Authentication** | **Simple passwordless link** — see below | More than about 50 users | $0 → $0 |
 | **Database storage** | Neon, already decided | Never, it is set up | $0 |
 | **File storage** | **Nothing. No uploads in the prototype.** | You add attachments | $0 → free tier |
-| **Hosting** | Vercel free, already decided | You take money | $0 → $20/mo |
+| **Hosting** | **Your own computer, already decided** | Never for the prototype | $0 |
 | **Email** | **Nothing. Not needed for the prototype.** | Onboarding or password resets | $0 |
 | **Notifications** | **Nothing. See the honest note.** | Focus mode ships | $0 → varies |
 | **Analytics** | **Count rows in your own database.** See below | You need marketing data | $0 |
@@ -362,7 +404,7 @@ When you do need real notifications, options range from about $0 (a free tier) t
 
 One SQL query gives you the answer, and it costs nothing, has no cookie banner, and collects no data about anyone's visitors.
 
-**If you later want traffic analytics for a marketing site**, Vercel's built-in analytics is free on the free tier (50,000 events per month) and needs no extra setup. Plausible is the privacy-respecting alternative but has **only a 30-day trial, not a free tier** — so if you ever choose it, remember it starts charging. Avoid services whose "free" offer is a trial.
+**If you later want traffic analytics for a marketing site,** that is a genuine question rather than a current need. Cloudflare's free analytics service is one option at no cost. Plausible is the privacy-respecting alternative but has **only a 30-day trial, not a free tier** — so if you ever choose it, remember it starts charging. Avoid any service whose "free" offer is a trial. Note that neither is needed for FocusFlow itself, since the app's own behaviour is recorded in your database.
 
 ### Backups — free, but do them deliberately
 
@@ -380,7 +422,7 @@ This is the "passwords and settings" file. It holds your database connection str
 
 - A file named `.env.local` holds your settings on your own computer. It is listed in `.gitignore`, so it never gets uploaded to GitHub.
 - A file named `.env.example` shows which settings are needed without their real values. This one *is* in GitHub, so other people know what to fill in.
-- On Vercel, you add the real values through their dashboard. They stay encrypted there and never appear in your code.
+- Because there is no hosting provider, there is no dashboard. The `.env.local` file *is* the configuration. When you eventually move to a server, you copy this one file across, unchanged.
 
 **What is in yours right now:** exactly one line — the Neon database connection string. That is it. No API keys, no secrets, nothing else.
 
@@ -394,24 +436,29 @@ Explained as if you have never seen a technical diagram. Here is the whole syste
 
 ### What you are actually building
 
-Five parts, and only five:
+Five parts that actually run, and only five:
 
 1. **The screens** — what people see and tap
 2. **The data door** — the one place that reads and writes the database
 3. **The scheduler** — the part that decides what goes where in the day
 4. **The database** — your tables, on Neon's computers
-5. **Vercel** — where the app lives so people can open it
+5. **Your computer** — where the app runs
 
 ```
     ┌─────────────────────────────────────────────┐
-    │            Vercel  (free)                    │
-    │   Puts the app online at a web address       │
-    │   Cost: $0  ·  Then $20/mo only if you earn  │
+    │        YOUR COMPUTER   (free, forever)      │
+    │   The app itself runs here. No account.     │
+    │   Cost: $0  ·  No card, ever                │
+    │                                             │
+    │   People open it via one of:                │
+    │     · your Wi-Fi address  (same building)   │
+    │     · a free Tunnel link  (anyone, anywhere)│
     └───────────────────┬─────────────────────────┘
                         │  people open the link
                         ▼
     ┌─────────────────────────────────────────────┐
     │        The app  (Next.js + TypeScript)       │
+    │        running as a Node.js server          │
     │                                             │
     │  ┌───────────────────────────────────────┐  │
     │  │  SCREENS                             │  │
@@ -437,7 +484,7 @@ Five parts, and only five:
                         ▼
     ┌─────────────────────────────────────────────┐
     │      Neon — PostgreSQL   (free)             │
-    │      10 tables · 1 GB limit · backups free  │
+    │      10 tables · 0.5 GB limit · backups free  │
     └─────────────────────────────────────────────┘
 ```
 
@@ -448,9 +495,10 @@ Five parts, and only five:
 | **Screens** | The pages people look at. Day view, add a task, add a meeting, first-time setup. | $0 | Never — this is the product |
 | **The data door** | The only code allowed to talk to the database. Everything else asks it. | $0 | No, and it should never be removed |
 | **The scheduler** | One function that takes your tasks and time and produces a day. It explains itself. | $0 | Never — this is the thesis |
+| **Your computer** | Where the app runs, as an ordinary program. You start it; it runs until you stop it. | $0 | It is the app — but it moves to a server unchanged |
 | **Neon** | Where the data lives, on the internet, reachable by your app. | $0 | Yes — change one line of configuration |
-| **Vercel** | Where the app lives, so other people can open it. | $0 | Yes — move it, the code is unaffected |
-| **GitHub** | Where your code is saved and versioned, so you can undo mistakes. | $0 | Yes, but do not — it is your safety net |
+
+One more thing is not part of the running system but matters just as much: **GitHub**, where your code is saved so you can undo mistakes. Never delete it — it is your safety net.
 
 **Your total: $0 per month, no card required anywhere.**
 
@@ -493,11 +541,11 @@ Three decisions keep you from being trapped, and each costs nothing:
 And the deeper portability comes from the format choices:
 
 - **PostgreSQL** is a standard, not a product. Any host runs it.
-- **Next.js** runs on any Node host. Only deployment settings change.
+- **Next.js** runs as a plain Node.js server, on your computer or on any server, with the same two commands.
 - **Prisma** targets standard SQL. Every provider supports it.
 - **R2, when you need it,** speaks Amazon's storage language, so it is interchangeable.
 
-**The one genuine vendor tie is Vercel**, because Next.js is optimised for it. The risk is low and the reason is worth restating: you would be moving hosting, not rewriting an application.
+**There is now no hosting vendor tie at all.** That was the one weakness in the earlier version of this stack, and hosting locally removes it entirely. The only external dependency left is Neon for the database, and that is ordinary PostgreSQL you can point anywhere.
 
 ---
 
@@ -516,15 +564,15 @@ So nothing is a surprise. All figures from 2 October 2026.
 
 | Trigger | What changes | Monthly cost |
 |---|---|---|
-| **First tester pays you, or you advertise** | Vercel Hobby → Pro. Mandatory under their terms. | **$20** |
-| **Your database passes 1 GB** | Neon Free → Launch, pay per use. Realistically months away. | ~$0–10 |
+| **Nothing, ever, from hosting** | You run the app yourself. There is no plan to upgrade to. | **$0** |
+| **Your database passes 0.5 GB** | Neon Free → Launch, pay per use. Realistically months away. | ~$0–10 |
 | **Real users with real data** | Longer backups on Neon. Worth it. | ~$10 |
 | **You add file attachments** | Cloudflare R2. Free tier is 10 GB. | $0 |
 | **You add email** | Resend, 3,000 emails free per month. | $0 |
 | **You outgrow 50,000 users** | Still free — your own auth has no per-user fee | $0 |
 | **You need push notifications when the app is closed** | Job scheduler plus push service | $0–20 |
 
-**The honest near-term answer: $20 per month, triggered by earning your first penny.** Everything else is likely to stay at zero well past the prototype.
+**The honest near-term answer: $0, and nothing in hosting can ever change that.** There is no plan to upgrade to, because there is no provider. The earliest you are likely to pay anything is the database, and probably not even then.
 
 ### The one that would hurt
 
@@ -544,13 +592,15 @@ Docker is a way of packaging an app and everything it needs into one box, so it 
 2. **Nothing is stored in application memory.** Every fact lives in the database, so a new container starts with all the data intact.
 3. **No files on the local disk.** When you add file storage, it goes to object storage, not the app's own disk. A container that can be deleted and recreated without losing anything is the whole point of Docker.
 
+**The best news is that local hosting makes Docker easier, not harder.** Next.js has a setting called `output: "standalone"` that bundles everything the app needs into one small folder. A Dockerfile for a Next.js app in that mode is roughly ten fixed lines that never change. I will enable that setting on Day 1 — it costs nothing, changes nothing about how the app behaves, and means adding Docker later is copying down instructions rather than restructuring code.
+
 **How we structure for it without doing it.** From Day 1 there will be a `Dockerfile.example` and a note explaining what it would do. Not an active Dockerfile — just the reasoning, written down while it is fresh, so that whoever adds it later does not have to re-derive it.
 
 ### Hosting portability
 
-Moving off Vercel later means changing build settings and pointing a domain somewhere else. **No application code changes.** Next.js is not tied to Vercel at runtime; the coupling is in deployment convenience, not in the code.
+**You are already portable, which is why this decision is easy.** Moving to a rented server later means copying your project folder to that machine and running the same two commands. No code changes, no framework changes, no vendor to negotiate with.
 
-If you later want to leave Vercel and avoid the $20, the realistic options are Cloudflare Pages and Render. Both are fine. Neither requires code changes.
+Roughly $5 a month for a small Linux server, whenever you actually need one — and not before.
 
 ---
 
@@ -560,7 +610,7 @@ Nothing here costs money, and none of it is hard to reverse. I have made a recom
 
 | # | Decision | My recommendation | Why | Cost if wrong |
 |---|---|---|---|---|
-| 1 | Neon vs Supabase | **Neon** | No idle pausing, 4× the free storage, free backups | A day to switch |
+| 1 | Neon vs Supabase | **Neon** | No idle pausing, free backups, 100 projects vs 2 | A day to switch |
 | 2 | Auth approach | **Build it in, store users in your database** | The one expensive thing to reverse later. Better Auth library, free | Hours now, weeks later |
 | 3 | Prisma version | **Pin version 7** | Version 8 removed commands your AI will try to use | An afternoon of confusing errors |
 | 4 | File storage | **Add nothing now. R2 when needed.** | No files to store yet, and R2 wants a card | Free to fix |
@@ -568,6 +618,7 @@ Nothing here costs money, and none of it is hard to reverse. I have made a recom
 | 6 | Email | **None now. Resend later, free.** | Nothing to send during the prototype | Free to fix |
 | 7 | Docker | **No, but structure for it** | No problem to solve yet | Free to fix |
 | 8 | Auth library | **Better Auth, not Auth.js** | Auth.js is in security-patch-only maintenance | A migration |
+| 9 | Hosting | **Local, with a free Tunnel for testers** — *settled* | Removes the commercial-use limit and every account | Nothing to undo |
 
 **Nothing on this list requires a payment method, and I have not enabled billing on anything.**
 
@@ -590,7 +641,10 @@ All pricing verified 2 October 2026 against each vendor's own documentation.
 |---|---|
 | Neon | [Free plan limits and quotas](https://neon.com/faqs/free-plan-limits-and-quotas), [Plans](https://neon.com/docs/introduction/plans) |
 | Supabase | [Pricing](https://supabase.com/pricing), [Billing FAQ](https://supabase.com/docs/guides/platform/billing-faq), [Free project pausing](https://supabase.com/docs/guides/platform/free-project-pausing) |
-| Vercel | [Hobby plan](https://vercel.com/docs/plans/hobby), [Limits](https://vercel.com/docs/limits), [Fair use guidelines](https://vercel.com/docs/limits/fair-use-guidelines), [Analytics limits](https://vercel.com/docs/analytics/limits-and-pricing) |
+| Next.js | [Deploying](https://nextjs.org/docs/app/getting-started/deploying), [Self-hosting](https://github.com/vercel/next.js/blob/canary/docs/01-app/02-guides/self-hosting.mdx), [`next start` options](https://nextjs.org/docs/pages/api-reference/cli/next-start), [`output: standalone`](https://nextjs.org/docs/pages/api-reference/config/next-config-js/output) |
+| Node.js | [Download and install](https://nodejs.org/en/download) |
+| Cloudflare Tunnel | [Quick Tunnels](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/) |
+| Vercel (considered, not used) | [Hobby plan](https://vercel.com/docs/plans/hobby), [Fair use guidelines](https://vercel.com/docs/limits/fair-use-guidelines) |
 | Prisma | [Pricing](https://www.prisma.io/pricing), [Prisma 8 production readiness](https://www.prisma.io/blog/is-prisma-8-ready-for-long-lived-production-apps), [ORM release status](https://www.prisma.io/docs/prisma-orm/release-status), [Licence](https://github.com/prisma/prisma/blob/main/LICENSE) |
 | Cloudflare R2 | [Pricing](https://developers.cloudflare.com/r2/pricing/) |
 | Resend | [Pricing](https://resend.com/pricing), [Account quotas](https://www.resend.com/docs/knowledge-base/account-quotas-and-limits) |
@@ -598,4 +652,4 @@ All pricing verified 2 October 2026 against each vendor's own documentation.
 | Plausible | [Subscription plans](https://plausible.io/docs/subscription-plans) |
 | date-fns | [Licence](https://github.com/date-fns/date-fns/blob/main/LICENSE.md) |
 
-**Two numbers are worth watching.** Neon has just raised free storage from 0.5 GB to 1 GB. Clerk recently changed its billing unit and raised its free tier. Both illustrate why this document is dated: re-check before each phase rather than trusting it in six months.
+**Two numbers are worth watching.** Neon's free storage allowance is mid-change, announced as moving from 0.5 GB to 1 GB while the plan tables still say 0.5 GB. Clerk recently changed its billing unit and raised its free tier. Both illustrate why this document is dated: re-check before each phase rather than trusting it in six months.

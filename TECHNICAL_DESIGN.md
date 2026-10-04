@@ -12,7 +12,7 @@
 
 Section 1 explains the tools. Sections 2 to 5 explain how the data is shaped and why that shape is hard to regret. Section 6 is your build schedule. Section 7 is the two decisions you need to make.
 
-One thing to know before you start: **this prototype is a foundation, not a sketch.** Every dropped feature — goals, capture, focus mode, journal, routines, onboarding, calendar, insights, offline — has a named place to land later. Section 5 lists them all.
+One thing to know before you start: **this prototype is a foundation, not a sketch.** Every dropped feature — goals, capture, focus mode, routines, onboarding, calendar, insights, offline — has a named place to land later. Section 5 lists them all. The journal is the one exception: a **minimum** version ships on Day 9, and only its prompts, search and history views are deferred.
 
 ---
 
@@ -29,7 +29,7 @@ The answer is a **web app that runs in a browser.**
 | Database | **PostgreSQL** (hosted on Neon, free tier) | A spreadsheet that behaves like a proper database: it will not let you save a task pointing at a goal that does not exist. Free tier is generous and does not need a credit card. |
 | The layer between code and database | **Prisma** | You describe your tables in one readable file, in plain English-like lines. Prisma turns that description into a real database and gives you simple functions to read and write. You never write raw database commands by hand. |
 | Styling | **Tailwind CSS** | Short class names instead of long stylesheet rules. It matters here because the day view is a dense timeline, and this is the fastest reliable way to lay that out. |
-| Where it runs | **Vercel** (free tier) | Puts your app on the internet at a real web address so other people can open it. Free until you have real users. |
+| Where it runs | **Your own computer** (Node.js) | The app runs as an ordinary program on your machine. No account, no card, no terms of service, and no cost that can ever change. Testers reach it over your Wi-Fi, or through a free Cloudflare Tunnel link. |
 | Time handling | **date-fns + date-fns-tz** | Handles time zones and daylight saving for you, so 9am stays 9am even when the clocks change. |
 
 ### 1.1 The most important trade-off, stated honestly
@@ -143,6 +143,13 @@ This is **Rule C**, stored as facts rather than sentences. One row per task cons
 
 **The screen builds the sentence.** So "Placed at 09:00 because your energy is high and it's the hardest task" is assembled from those fields at the moment it is displayed. Change the wording of the app and the sentence changes. Change the logic and every explanation still stays accurate.
 
+#### `JournalEntry` — what the person thought about the day
+- The date it belongs to, an optional link to that day's `DayPlan`, an optional mood, and the free-form text.
+- **Scope:** this is the *minimum* journal, added after review. The PRD's guided prompts (J3), coach follow-ups (J7), search (J5), week and month views (J6) and export (J8) are all deferred. It exists to answer one question during testing: does anyone actually write in this?
+- **No AI and no prompts**, deliberately. Both J3 and J7 depend on "the coach", which is not in the prototype, so they cannot be built cheaply here regardless of preference.
+- **Why it is a new table rather than a field on `DayPlan`:** a person may write on a day with no plan, and may write more than once. One-to-many, so a separate table.
+- **Rule enforced:** an entry can only ever point at a `DayPlan` through `dayPlanId`, exactly as a `PlanItem` does. It never copies task text into itself, so a task renamed later cannot leave a stale copy inside a journal entry.
+
 #### 2.3 The schema, written out
 
 Your AI assistant will type something close to this. Included here so you can see what it is doing.
@@ -159,6 +166,7 @@ enum BindingConstraint { ENERGY_MATCH DEADLINE WORKING_HOURS
                          BLOCK_COLLISION PRIORITY MANUAL_OVERRIDE UNSCHEDULED }
 enum Outcome     { PLACED REJECTED }
 enum PlanState   { DRAFT ACCEPTED DISCARDED }
+enum Mood        { GREAT GOOD OK FLAT ROUGH }   // the minimum journal's only new enum. Five points, not four, so there is a true middle.
 
 model User {
   id           String   @id @default(cuid())
@@ -171,6 +179,7 @@ model User {
   plans        DayPlan[]
   workingHours WorkingHour[]
   energyLevels EnergyEntry[]
+  journalEntries JournalEntry[]   // added with the minimum journal, Day 9
   createdAt    DateTime @default(now())
 }
 
@@ -269,6 +278,7 @@ model DayPlan {
   regenerateCount Int   @default(0)
   items       PlanItem[]
   reasons     PlacementReason[]
+  journalEntries JournalEntry[]   // added with the minimum journal, Day 9
   createdAt   DateTime  @default(now())
   @@unique([userId, planDate])
 }
@@ -300,7 +310,34 @@ model PlacementReason {               // RULE C: facts only, never a finished se
   createdAt         DateTime  @default(now())
   @@index([dayPlanId, outcome])
 }
+
+model JournalEntry {                 // added after review: the minimum journal, Day 9
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  date              DateTime  @db.Date                  // J1: every entry belongs to a date
+  dayPlanId         String?                             // J2: the day's real work, by reference
+  dayPlan           DayPlan?  @relation(fields: [dayPlanId], references: [id])
+  mood              Mood?
+  body              String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  @@index([userId, date])
+}
 ```
+
+**Why `JournalEntry` is as small as it is.** It has five fields and no AI, no prompts, and no attachments, because those are what make the full journal a six-to-eight day project. The two requirements it *does* satisfy are the two that matter for testing whether reflection lands at all: **J1**, every entry is attached to a date, and **J2**, it points at that day's actual plan rather than floating free.
+
+**Why `dayPlanId` is optional and not required.** Some days will have no plan, and a person may still want to write something. Requiring the link would force them to invent a plan first. Optional also means a `DayPlan` can be discarded later without stranding entries.
+
+**What this table deliberately leaves out.** No `promptId`, no coach transcript, no gratitude field, no images, no search index. `Mood` is a small fixed set tapped once, not free text, because a five-tap row gets used and a typing box does not. Each of those omissions maps to a PRD requirement that is deferred, and every one is a column or a screen added later — none of them change this table's shape.
+
+**Why the mood scale is worded the way it is.** Two decisions inside that enum, both of which are easy to get wrong:
+
+- **Five points, not four.** An even number of options has no true middle, so half the people answering are pushed toward a positive or negative answer they do not feel. `FLAT` in the middle is the honest answer and needs somewhere to sit.
+- **No failure words.** `STRUGGLING`, `BAD`, and `TERRIBLE` would each break the PRD's tone rules, which ban red, "you failed", and any count of missed days. `ROUGH` says the day was hard without grading the person. This is also why the mood scale is a single-colour ramp in the design system rather than green-to-red: **mood is not performance.** A rough day is not a failed day, and the interface must never imply that it was.
+
+**On storage.** Per the revised Decision 6 in the implementation plan, `body` is stored as ordinary readable text and is **not** encrypted client-side in the prototype. Testers are told this plainly. Client-side encryption ships before any real user, as opposed to a tester, writes an entry.
 
 ### 2.4 How times are stored, and why
 
@@ -462,7 +499,7 @@ The column that matters is the last one. **Eight of the nine require no change t
 | **Goals and projects** | `Goal` and `Project` tables, already present and empty. New screens under `src/app/goals/` and `src/app/projects/`. Add a goal picker to the task form. | **Nothing existing.** New screens, new tables' first data. Rule A already left the columns in place. |
 | **Quick capture and inbox** | `Task.state` already includes `INBOX`. A capture screen creates tasks with `state = INBOX`. An inbox screen is a list filtered on that one value. The scheduler skips anything not `READY`. | **Nothing existing.** One filter condition in the scheduler, written now. |
 | **Focus mode** | New screen. The day's plan already knows which block is next. For a timer, a browser app is enough. For **blocking other apps**, native is required — this is the one feature that genuinely needs a different platform. | **Nothing existing** for the timer. The native app for true app-blocking. |
-| **Evening review and journal** | New tables (`JournalEntry`), new screens. `DayPlan.state` already records `ACCEPTED`, so "did you accept the plan?" is already answerable. | **Nothing existing.** New tables only. |
+| **Evening review and journal** | `JournalEntry` **and a minimum journal ship on Day 9** — see Section 2.2. The remaining work is prompts (J3), coach follow-ups (J7), search (J5), week/month views (J6) and export (J8). `DayPlan.state` already records `ACCEPTED`, so "did you accept the plan?" is already answerable. | **Nothing existing.** The minimum table is built now, so the additions are columns and screens on top of it. |
 | **Routines** | `Task.recurrenceRule` already exists in standard `RRULE` text. When a day is planned, one function expands a recurring task into that day's occurrence. | **Nothing existing** in the schema. One new function, `expandRecurrence`. |
 | **Onboarding** | New screens that write to `User`, `WorkingHour`, and `EnergyEntry` — all three tables already exist. | **Nothing existing.** Pure screen work, which is the cheapest kind. |
 | **Calendar sync** | `Block.source` and `Block.externalId` already exist. A new service writes synced events as ordinary `Block` rows with `source = CALENDAR`. | **Nothing in the scheduler.** This is the direct payoff of Rule B — the scheduler already treats synced and typed time identically, so sync touches one direction only. |
@@ -477,7 +514,7 @@ Adding these is not all equal cost. Roughly, in order of easiest to hardest:
 2. **Goals and projects** — tables that already exist, plus screens
 3. **Quick capture and inbox** — one new screen, one field already there
 4. **Routines** — one new function
-5. **Evening review and journal** — new tables, new screens
+5. **Evening review and journal** — *partly done on Day 9.* The minimum table and screen ship early; prompts, search and views remain
 6. **Calendar sync** — a real external dependency, OAuth and edge cases
 7. **Progress and insights** — needs real usage data before it means anything
 8. **Offline support** — the largest, because it changes how storage works underneath
@@ -627,32 +664,45 @@ Each day ends with a test you can do yourself in a browser, in a few minutes. **
 **Build**
 - Drag or nudge a block on the day view, setting `isPinned`
 - A "what did I break?" check: if a move overlaps a meeting, say so plainly rather than allowing it
+- Empty states: no tasks, no blocks, nothing scheduled, nothing unscheduled *(moved here from Day 9, so the Day 9 journal has room)*
 
 **Test at the end of the day**
 1. Move a block onto a meeting. The app refuses and says why.
 2. Move a block to a genuinely free slot. It stays.
 3. Re-plan. It stays.
 4. Unpin it. Re-plan. It may move again.
+5. Open a brand-new empty account. Every screen explains itself and offers one action. No blank panels.
 
-**Why this test matters:** step 1 protects the core invariant. Overlapping time is the one thing this product must never produce.
+**Why this test matters:** step 1 protects the core invariant. Overlapping time is the one thing this product must never produce. Step 5 protects a different thing: a first-run user who sees four empty panels concludes the app is broken.
 
 ---
 
-### Day 9 — Trust, polish, and the awkward cases
+### Day 9 — The evening review, and the awkward cases
 
 **Build**
-- Deploy to Vercel, so real people can use it
+- **`JournalEntry` and the evening review.** Read `DayPlan`, `PlanItem`, and `Task` for today and show what actually happened: what was planned, what got done, what did not fit. One free-form text box and a five-tap mood row. Save.
+- A read-only list of past entries, newest first. No search, no prompts, no editing UI beyond fixing today's entry.
+- Run the app as a real production build on your computer: `npm run build`, then `npm start`
+- Open a free Cloudflare Tunnel link so testers can reach it from anywhere
 - The daylight-saving guard from Section 2.4: clamp, never crash
-- Empty states: no tasks, no blocks, nothing scheduled, nothing unscheduled
 - `tests/time.test.ts` and `tests/plan-day.test.ts`
 
 **Test at the end of the day**
 1. Set the tester's time zone to one where the clocks change on a given date. Nothing breaks or crashes.
-2. Deploy, open the link on a phone. It works.
-3. A brand-new user with no data sees something helpful, not a blank screen.
-4. Run the test suite. All green.
+2. Plan a day, complete two tasks, leave one unscheduled. Open the evening review. It names the real work, not a generic prompt.
+3. Write an entry and pick a mood. Close the browser. Reopen. Both are still there.
+4. Save again with different text. The entry updates, and does not become a second entry.
+5. Pick a date with no plan. An entry can still be written, and it does not reference a plan.
+6. Send the tunnel link to someone. Open it on a phone, on mobile data, not your Wi-Fi. It works.
+7. Run the test suite. All green.
 
-**Why this test matters:** day 9 is where prototypes usually fail — real phones, real time zones, real empty states. Testing these with testers on Friday is avoidable embarrassment.
+**Why this test matters:** day 9 is where prototypes usually fail — real phones, real time zones. Testing these with testers tomorrow is avoidable embarrassment.
+
+**Why the journal is on Day 9 specifically, and not later.** Day 10 is the tester session. Anything not built by the end of Day 9 does not get tested by a real person, and PRD risk 8 says plainly that *"journaling is abandoned in week two."* The question this build answers is not whether journaling is well-built — it is **whether anyone writes in it at all.** A simple version that people actually use beats a complete version that ships after the testers have gone.
+
+**What this deliberately leaves out, and why that is correct.** No guided prompts (J3) and no coach follow-ups (J7) — both need the AI coach, which is not in this prototype. No search (J5), week or month views (J6), or export (J8). Each is a screen or a column added on top of `JournalEntry`, and none of them change the table's shape. Adding them later is work, not repair.
+
+**Note on running it for real.** While we test, the app is only alive while your computer is on. That is fine for a handful of testers. The stack audit, Part 1 item 7, covers when that stops being true and what it costs to fix.
 
 ---
 
@@ -747,14 +797,25 @@ Honest list, so nothing here is a surprise.
 
 ## 9. Sign-off
 
-Before starting, confirm these five. They are one afternoon's work and they prevent a rebuild.
+Five items were put to you; four are confirmed and one is still open. They are one afternoon's work and they prevent a rebuild.
 
 | Item | Recommendation | Confirmed |
 |---|---|---|
-| Stack | Browser app: Next.js, TypeScript, Prisma, PostgreSQL, Vercel | |
-| Offline deferred | Accept the tradeoff; `src/data/` keeps the door open | |
-| Decision 1 | Score measures goals advanced, not tasks completed | |
-| Decision 2 | Declared energy curve now, observed later, disclosed when added | |
-| Test threshold | Under 30% of blocks moved by hand | |
+| Stack | Browser app: Next.js, TypeScript, Prisma, PostgreSQL, hosted on your computer | **Yes** — local hosting accepted over Vercel, 4 Oct 2026 |
+| Decision 1 | Score measures goals advanced, not tasks completed | **Yes** — 4 Oct 2026 |
+| Decision 2 | Declared energy curve now, observed later, disclosed when added | **Yes** — 4 Oct 2026 |
+| Offline deferred | Accept the tradeoff; `src/data/` keeps the door open | *Open* — implied by choosing local hosting with a remote database, but never confirmed in so many words |
+| Test threshold | Under 30% of blocks moved by hand | *Open* — never discussed |
 
-**Immediate next action:** confirm the five items above, then build Day 1. Day 1 is: the project runs, the database exists, and the setup screen saves your settings after a browser restart.
+### Journal decisions, added after review
+
+| Item | Decision | Confirmed |
+|---|---|---|
+| Journal scope | Minimum journal on Day 9; full journal deferred | **Yes** — 4 Oct 2026 |
+| Journal storage | Plain readable text in Neon, no client-side encryption in the prototype | **Yes** — 4 Oct 2026 |
+| Encryption trigger | Ships before any real user, as opposed to a tester, writes an entry | **Yes** — 4 Oct 2026 |
+| Mood scale | Five points, single-colour ramp, no failure words | **Yes** — `GREAT GOOD OK FLAT ROUGH`, 4 Oct 2026 |
+
+**Known watch item, no change made.** `Outcome` is `PLACED / REJECTED`. `REJECTED` is the same class of word as `STRUGGLING` was, and the PRD's tone rules ban "you failed" language. It was reviewed and deliberately left alone, because the subject is a *proposed plan* being turned down rather than the person — the same distinction the mood scale relies on. Worth re-reading once real screens exist, since a button reading "Reject" is harsher in the hand than it is in a schema.
+
+**Immediate next action:** answer the two open items above, then build Day 1. Day 1 is: the project runs, the database exists, and the setup screen saves your settings after a browser restart.

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FocusFlow — Design System v0.1</title>
+<style>
+/* ============================================================
+   FocusFlow Design System — preview only.
+   Values here are the proposal. Nothing is committed to Tailwind
+   until this direction is agreed.
+
+   Naming mirrors Tailwind so adoption is a theme extension,
+   not a rewrite.
+   ============================================================ */
+
+:root{
+  /* --- Neutrals: surfaces + text --- */
+  --surface-page:#F6F8FA;
+  --surface-card:#FFFFFF;
+  --surface-sunken:#EDF1F5;
+  --surface-inverse:#16202B;
+  --border:#D5DDE5;
+  --border-strong:#B6C2CE;
+
+  --text-primary:#16202B;
+  --text-secondary:#55636F;
+  --text-tertiary:#6B7885;
+  --text-on-dark:#FFFFFF;
+  --text-on-dark-dim:#B9C6D2;
+
+  /* --- Brand --- */
+  --brand-900:#12283F;
+  --brand-700:#1A3A5C;
+  --brand-600:#2D5F8A;
+  --brand-300:#8FB3D0;
+  --brand-100:#E3EDF6;
+
+  /* --- Task states (enum TaskState) --- */
+  --st-inbox-ink:#47566B;   --st-inbox-tint:#EDF0F4;   --st-inbox-line:#C3CDD8;
+  --st-ready-ink:#1F4E79;   --st-ready-tint:#E1EDF8;   --st-ready-line:#A9CBE6;
+  --st-sched-ink:#463A8C;   --st-sched-tint:#EAE7F8;   --st-sched-line:#BDB4E6;
+  --st-done-ink:#1B6B3A;    --st-done-tint:#E3F3E9;    --st-done-line:#A6D6B8;
+  --st-drop-ink:#8A3324;    --st-drop-tint:#F9EAE6;    --st-drop-line:#E4B7AC;
+
+  /* --- Energy (enum EnergyLevel) --- */
+  --en-high-ink:#0F6B5C;    --en-high-tint:#DFF2EE;    --en-high-line:#9BD3C8;
+  --en-med-ink:#8A5A0B;     --en-med-tint:#FBF0DA;     --en-med-line:#E3C489;
+  --en-low-ink:#35507A;     --en-low-tint:#E6ECF4;     --en-low-line:#AFC2D8;
+
+  /* --- Block kinds (enum BlockKind) --- */
+  --bk-meeting-ink:#3F4A5A; --bk-meeting-tint:#EDEFF3; --bk-meeting-line:#C6CDD6;
+  --bk-personal-ink:#6B4E9E;--bk-personal-tint:#EFEBF7;--bk-personal-line:#C9BCE4;
+  --bk-break-ink:#215C50;   --bk-break-tint:#E4F2EF;   --bk-break-line:#A5D2C8;
+
+  /* --- Attention --- */
+  --warn-ink:#8A5A0B;       --warn-tint:#FBF0DA;       --warn-line:#E3C489;
+
+  /* --- Spacing scale, 4px base --- */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s10:40px;
+
+  /* --- Radius --- */
+  --r-sm:6px; --r-md:10px; --r-lg:14px; --r-full:999px;
+
+  /* --- Elevation --- */
+  --e0:0 0 0 1px rgba(22,32,43,.06);
+  --e1:0 1px 2px rgba(22,32,43,.06), 0 2px 8px rgba(22,32,43,.05);
+  --e2:0 4px 12px rgba(22,32,43,.10), 0 12px 32px rgba(22,32,43,.08);
+
+  /* --- Type --- */
+  --font: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--surface-page); color:var(--text-primary);
+  font-family:var(--font); font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1240px; margin:0 auto; padding:var(--s8) var(--s6) var(--s10);}
+
+/* ---------- document furniture ---------- */
+header.masthead{
+  background:var(--brand-700); color:var(--text-on-dark);
+  padding:var(--s8) var(--s6);
+}
+header.masthead .inner{max-width:1240px; margin:0 auto;}
+header.masthead h1{font-size:26px; line-height:1.25; margin:0 0 var(--s2); font-weight:650; letter-spacing:-.01em;}
+header.masthead p{margin:0; color:var(--text-on-dark-dim); font-size:15px; max-width:70ch;}
+.badges{margin-top:var(--s4); display:flex; gap:var(--s2); flex-wrap:wrap;}
+.badge{
+  font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase;
+  padding:5px 10px; border-radius:var(--r-full);
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.24);
+}
+
+section{margin-top:var(--s10);}
+h2.sec{
+  font-size:20px; margin:0 0 var(--s2); font-weight:650; letter-spacing:-.01em;
+  padding-bottom:var(--s2); border-bottom:2px solid var(--brand-300);
+}
+.sec-intro{color:var(--text-secondary); margin:0 0 var(--s5); max-width:78ch; font-size:15px;}
+h3{font-size:15px; margin:var(--s6) 0 var(--s3); font-weight:650;}
+h3:first-of-type{margin-top:0;}
+
+.card{background:var(--surface-card); border:1px solid var(--border); border-radius:var(--r-lg); padding:var(--s5);}
+.grid{display:grid; gap:var(--s4);}
+.g2{grid-template-columns:repeat(2,1fr);}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g4{grid-template-columns:repeat(4,1fr);}
+.g5{grid-template-columns:repeat(5,1fr);}
+@media (max-width:900px){ .g2,.g3,.g4,.g5{grid-template-columns:1fr;} }
+
+.note{
+  background:var(--brand-100); border-left:3px solid var(--brand-600);
+  padding:var(--s3) var(--s4); border-radius:var(--r-sm);
+  font-size:14px; color:var(--brand-900); margin:var(--s4) 0;
+}
+.warnnote{
+  background:var(--warn-tint); border-left:3px solid var(--warn-line);
+  padding:var(--s3) var(--s4); border-radius:var(--r-sm);
+  font-size:14px; color:var(--warn-ink); margin:var(--s4) 0;
+}
+
+/* ---------- swatches ---------- */
+.sw{border:1px solid var(--border); border-radius:var(--r-md); overflow:hidden; background:var(--surface-card);}
+.sw-chip{height:68px; border-bottom:1px solid var(--border);}
+.sw-meta{padding:var(--s3);}
+.sw-name{font-size:13px; font-weight:650; margin-bottom:2px;}
+.sw-val{font-size:12px; color:var(--text-tertiary); font-family:Consolas,monospace;}
+.cr{font-size:12px; font-weight:650; padding:2px 6px; border-radius:var(--r-full); display:inline-block; margin-top:6px;}
+.cr-aa{background:var(--st-done-tint); color:var(--st-done-ink); border:1px solid var(--st-done-line);}
+.cr-lg{background:var(--st-inbox-tint); color:var(--st-inbox-ink); border:1px solid var(--st-inbox-line);}
+
+/* ---------- type specimen ---------- */
+.spec{border-bottom:1px solid var(--border); padding:var(--s3) 0; display:flex; gap:var(--s4); align-items:baseline;}
+.spec:last-child{border-bottom:none;}
+.spec-meta{width:190px; flex:none; font-size:12px; color:var(--text-tertiary); font-family:Consolas,monospace;}
+.spec-sample{flex:1; min-width:0;}
+
+/* ---------- chips ---------- */
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:var(--r-full);
+  font-size:12.5px; font-weight:650; line-height:1.4;
+  border:1px solid; white-space:nowrap;
+}
+.chip .gl{font-size:12px; line-height:1;}
+.chip-row{display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center;}
+
+.c-inbox  {color:var(--st-inbox-ink);  background:var(--st-inbox-tint);  border-color:var(--st-inbox-line);}
+.c-ready  {color:var(--st-ready-ink);  background:var(--st-ready-tint);  border-color:var(--st-ready-line);}
+.c-sched  {color:var(--st-sched-ink);  background:var(--st-sched-tint);  border-color:var(--st-sched-line);}
+.c-done   {color:var(--st-done-ink);   background:var(--st-done-tint);   border-color:var(--st-done-line);}
+.c-drop   {color:var(--st-drop-ink);   background:var(--st-drop-tint);   border-color:var(--st-drop-line);}
+.c-high   {color:var(--en-high-ink);   background:var(--en-high-tint);   border-color:var(--en-high-line);}
+.c-med    {color:var(--en-med-ink);    background:var(--en-med-tint);    border-color:var(--en-med-line);}
+.c-low    {color:var(--en-low-ink);    background:var(--en-low-tint);    border-color:var(--en-low-line);}
+.c-meet   {color:var(--bk-meeting-ink);background:var(--bk-meeting-tint);border-color:var(--bk-meeting-line);}
+.c-pers   {color:var(--bk-personal-ink);background:var(--bk-personal-tint);border-color:var(--bk-personal-line);}
+.c-break  {color:var(--bk-break-ink);  background:var(--bk-break-tint);  border-color:var(--bk-break-line);}
+
+.chip-plain{
+  color:var(--text-secondary); background:var(--surface-sunken); border-color:var(--border);
+  font-weight:600;
+}
+.chip-warn{color:var(--warn-ink); background:var(--warn-tint); border-color:var(--warn-line);}
+
+/* ---------- buttons ---------- */
+.btn{
+  font-family:inherit; font-size:14px; font-weight:650; line-height:1;
+  padding:12px 18px; border-radius:var(--r-md); border:1px solid transparent;
+  cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+  min-height:44px; /* WCAG 2.5.5 / platform minimum touch target */
+}
+.btn-primary{background:var(--brand-700); color:#fff; border-color:var(--brand-700);}
+.btn-primary:hover{background:var(--brand-900);}
+.btn-secondary{background:var(--surface-card); color:var(--brand-700); border-color:var(--border-strong);}
+.btn-secondary:hover{background:var(--surface-sunken);}
+.btn-ghost{background:transparent; color:var(--brand-600); border-color:transparent; padding:12px 10px;}
+.btn-danger{background:var(--surface-card); color:var(--st-drop-ink); border-color:var(--st-drop-line);}
+.btn[disabled]{background:var(--surface-sunken); color:var(--text-tertiary); border-color:var(--border); cursor:not-allowed;}
+.btn-row{display:flex; gap:var(--s3); flex-wrap:wrap; align-items:center;}
+
+/* ---------- form controls ---------- */
+.field{margin-bottom:var(--s4);}
+.field label{display:block; font-size:13px; font-weight:650; margin-bottom:6px; color:var(--text-primary);}
+.field .hint{font-size:12.5px; color:var(--text-tertiary); margin-top:5px;}
+.input, .select{
+  font-family:inherit; font-size:16px; color:var(--text-primary);
+  padding:11px 12px; min-height:44px; width:100%;
+  border:1px solid var(--border-strong); border-radius:var(--r-md);
+  background:var(--surface-card);
+}
+.input::placeholder{color:var(--text-tertiary);}
+.input:focus, .select:focus{
+  outline:3px solid var(--brand-300); outline-offset:0; border-color:var(--brand-600);
+}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:var(--s3);}
+
+/* ---------- phone frame: the day view ---------- */
+.phone-stage{
+  background:var(--surface-sunken); border:1px solid var(--border); border-radius:var(--r-lg);
+  padding:var(--s6); display:flex; justify-content:center;
+}
+.phone{
+  width:390px; background:var(--surface-page); border:1px solid var(--border-strong);
+  border-radius:28px; overflow:hidden; box-shadow:var(--e2);
+}
+.phone-status{
+  background:var(--surface-card); border-bottom:1px solid var(--border);
+  padding:var(--s3) var(--s4); display:flex; justify-content:space-between;
+  font-size:12px; color:var(--text-tertiary); font-weight:600;
+}
+.phone-head{background:var(--surface-card); padding:var(--s4); border-bottom:1px solid var(--border);}
+.phone-head .d1{font-size:12px; font-weight:650; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary);}
+.phone-head .d2{font-size:20px; font-weight:650; letter-spacing:-.01em; margin-top:2px;}
+.phone-head .d3{display:flex; gap:var(--s2); margin-top:var(--s3); flex-wrap:wrap;}
+
+.energy-strip{
+  display:flex; gap:2px; padding:var(--s3) var(--s4);
+  background:var(--surface-card); border-bottom:1px solid var(--border);
+  align-items:flex-end;
+}
+.eng{flex:1; text-align:center;}
+.eng .bar{height:34px; border-radius:var(--r-sm); display:flex; align-items:flex-end; justify-content:center; padding-bottom:4px; font-size:10px; font-weight:700;}
+.eng .hr{font-size:10px; color:var(--text-tertiary); margin-top:4px; font-variant-numeric:tabular-nums;}
+.bar-high{background:var(--en-high-tint); color:var(--en-high-ink); border:1px solid var(--en-high-line);}
+.bar-med {background:var(--en-med-tint);  color:var(--en-med-ink);  border:1px solid var(--en-med-line);}
+.bar-low {background:var(--en-low-tint);  color:var(--en-low-ink);  border:1px solid var(--en-low-line);}
+
+.tl{padding:var(--s3) var(--s4) var(--s4);}
+.tl-row{display:flex; gap:var(--s3);}
+.tl-hour{
+  width:46px; flex:none; text-align:right; font-size:12px; font-weight:650;
+  color:var(--text-tertiary); padding-top:2px; font-variant-numeric:tabular-nums;
+}
+.tl-lane{flex:1; border-left:2px solid var(--border); padding:0 0 0 var(--s3); min-height:44px; position:relative;}
+.blk{
+  border-radius:var(--r-md); padding:8px 10px; margin-bottom:6px; border:1px solid;
+  font-size:13px;
+}
+.blk .t{font-weight:650; line-height:1.3;}
+.blk .m{font-size:11.5px; margin-top:3px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+.blk-task  {background:var(--st-sched-tint); border-color:var(--st-sched-line); color:var(--st-sched-ink); border-left:3px solid var(--st-sched-ink);}
+.blk-task-done{background:var(--st-done-tint); border-color:var(--st-done-line); color:var(--st-done-ink); border-left:3px solid var(--st-done-ink);}
+.blk-meet {background:var(--bk-meeting-tint); border-color:var(--bk-meeting-line); color:var(--bk-meeting-ink); border-left:3px solid var(--bk-meeting-ink);}
+.blk-pers {background:var(--bk-personal-tint); border-color:var(--bk-personal-line); color:var(--bk-personal-ink); border-left:3px solid var(--bk-personal-ink); border-left-style:double; border-left-width:4px;}
+.blk-break{background:var(--bk-break-tint); border-color:var(--bk-break-line); color:var(--bk-break-ink); border-left:3px dashed var(--bk-break-ink);}
+
+.unsched{margin:var(--s3) var(--s4) var(--s4); background:var(--surface-card); border:1px solid var(--border); border-radius:var(--r-md); padding:var(--s3);}
+.unsched h4{margin:0 0 var(--s2); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); font-weight:650;}
+.ur{display:flex; gap:var(--s2); padding:9px 0; border-top:1px solid var(--border); align-items:flex-start;}
+.ur:first-of-type{border-top:none;}
+.ur .ut{flex:1; font-size:13.5px; font-weight:600; line-height:1.35;}
+.ur .uw{font-size:12px; color:var(--text-tertiary); margin-top:3px;}
+
+/* ---------- why-card ---------- */
+.why{
+  background:var(--surface-card); border:1px solid var(--border); border-left:3px solid var(--brand-600);
+  border-radius:var(--r-md); padding:var(--s4);
+}
+.why h4{margin:0 0 var(--s3); font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--brand-700); font-weight:650;}
+.why .line{font-size:14.5px; line-height:1.55; margin-bottom:var(--s3);}
+.why .line b{font-weight:650;}
+.facts{display:flex; flex-wrap:wrap; gap:6px; padding-top:var(--s3); border-top:1px dashed var(--border);}
+
+/* ---------- empty state ---------- */
+.empty{text-align:center; padding:var(--s8) var(--s5);}
+.empty .ico{font-size:32px; color:var(--text-tertiary); margin-bottom:var(--s3);}
+.empty h4{margin:0 0 var(--s2); font-size:16px; font-weight:650;}
+.empty p{margin:0 auto var(--s4); font-size:14px; color:var(--text-secondary); max-width:44ch;}
+
+/* ---------- a11y demo: greyscale ---------- */
+.greyscale{filter:grayscale(1);}
+
+/* ---------- tables ---------- */
+table.spec-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+.spec-table th{
+  text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--text-tertiary); font-weight:650; padding:0 var(--s3) var(--s2); border-bottom:1px solid var(--border-strong);
+}
+.spec-table td{padding:11px var(--s3); border-bottom:1px solid var(--border); vertical-align:top;}
+.spec-table code{font-family:Consolas,monospace; font-size:12.5px; color:var(--brand-700);}
+
+footer{margin-top:var(--s10); padding-top:var(--s5); border-top:1px solid var(--border); color:var(--text-tertiary); font-size:13px;}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="inner">
+    <h1>FocusFlow Design System — v0.1 proposal</h1>
+    <p>A visual direction for the screens, built against the constraints already fixed in the PRD and technical design: mobile-first, one phone screen with no sideways scrolling, a dense day timeline, and WCAG AA. Every value here is derived from an enum in the schema rather than invented, so the interface cannot drift away from the data.</p>
+    <div class="badges">
+      <span class="badge">Preview — not yet Tailwind</span>
+      <span class="badge">WCAG AA target</span>
+      <span class="badge">Colour never alone</span>
+      <span class="badge">390px first</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ============ 1. PRINCIPLES ============ -->
+<section>
+  <h2 class="sec">1. Four rules the whole system obeys</h2>
+  <p class="sec-intro">These decide arguments later. When two options look equally nice, the rule wins.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">Colour never carries meaning alone</h3>
+      <p style="font-size:14px;color:var(--text-secondary);margin:0">Every state has a shape, a word, or a glyph as well as a colour. Someone who cannot distinguish the colours still reads the screen correctly. Required by the PRD, and it is also just better UI.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">16px body text, 44px touch targets</h3>
+      <p style="font-size:14px;color:var(--text-secondary);margin:0">Body text never drops below 16px on mobile. Anything tappable is at least 44px tall. Times and numbers use tabular figures so digits line up down a timeline.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Fixed things look fixed</h3>
+      <p style="font-size:14px;color:var(--text-secondary);margin:0">A meeting has a solid heavy edge and a lock glyph. A break has a dashed edge. You should be able to tell what can be moved by looking at the shape before reading a single word.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Quiet by default, loud only when it helps</h3>
+      <p style="font-size:14px;color:var(--text-secondary);margin:0">Most of the day view is calm greys and navy. Colour is spent on the two things that need a decision: where a task landed, and what did not fit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. COLOUR ============ -->
+<section>
+  <h2 class="sec">2. Colour</h2>
+  <p class="sec-intro">Each state has three parts: an <strong>ink</strong> for text and key lines, a <strong>tint</strong> for backgrounds, and a <strong>line</strong> for borders. Contrast ratios below are measured against their own tint, not against white, because that is the background they actually sit on.</p>
+
+  <h3>Task states — <code>enum TaskState</code></h3>
+  <div class="grid g4">
+    <div class="sw"><div class="sw-chip" style="background:var(--st-inbox-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Inbox</div><div class="sw-val">#47566B / #EDF0F4</div><span class="cr cr-aa">AA 6.5:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--st-ready-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Ready</div><div class="sw-val">#1F4E79 / #E1EDF8</div><span class="cr cr-aa">AA 7.3:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--st-sched-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Scheduled</div><div class="sw-val">#463A8C / #EAE7F8</div><span class="cr cr-aa">AA 7.7:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--st-done-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Done</div><div class="sw-val">#1B6B3A / #E3F3E9</div><span class="cr cr-aa">AA 5.7:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--st-drop-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Dropped</div><div class="sw-val">#8A3324 / #F9EAE6</div><span class="cr cr-aa">AA 7.0:1</span></div></div>
+  </div>
+
+  <h3>Energy — <code>enum EnergyLevel</code></h3>
+  <div class="grid g3">
+    <div class="sw"><div class="sw-chip" style="background:var(--en-high-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">High</div><div class="sw-val">#0F6B5C / #DFF2EE</div><span class="cr cr-aa">AA 5.5:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--en-med-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Medium</div><div class="sw-val">#8A5A0B / #FBF0DA</div><span class="cr cr-aa">AA 5.2:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--en-low-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Low</div><div class="sw-val">#35507A / #E6ECF4</div><span class="cr cr-aa">AA 6.9:1</span></div></div>
+  </div>
+
+  <h3>Fixed blocks — <code>enum BlockKind</code></h3>
+  <div class="grid g3">
+    <div class="sw"><div class="sw-chip" style="background:var(--bk-meeting-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Meeting</div><div class="sw-val">#3F4A5A / #EDEFF3</div><span class="cr cr-aa">AA 7.8:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--bk-personal-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Personal</div><div class="sw-val">#6B4E9E / #EFEBF7</div><span class="cr cr-aa">AA 5.6:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--bk-break-tint)"></div>
+      <div class="sw-meta"><div class="sw-name">Break</div><div class="sw-val">#215C50 / #E4F2EF</div><span class="cr cr-aa">AA 6.7:1</span></div></div>
+  </div>
+
+  <h3>Mood — <code>enum Mood</code></h3>
+  <div class="grid g5">
+    <div class="sw"><div class="sw-chip" style="background:#D6E4F1"></div>
+      <div class="sw-meta"><div class="sw-name">Great</div><div class="sw-val">#14304D / #D6E4F1</div><span class="cr cr-aa">AA 10.4:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:#E1EDF8"></div>
+      <div class="sw-meta"><div class="sw-name">Good</div><div class="sw-val">#1F4E79 / #E1EDF8</div><span class="cr cr-aa">AA 7.3:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:#E6ECF4"></div>
+      <div class="sw-meta"><div class="sw-name">Ok</div><div class="sw-val">#35507A / #E6ECF4</div><span class="cr cr-aa">AA 6.9:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:#EDF0F4"></div>
+      <div class="sw-meta"><div class="sw-name">Flat</div><div class="sw-val">#47566B / #EDF0F4</div><span class="cr cr-aa">AA 6.5:1</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:#F1F3F6"></div>
+      <div class="sw-meta"><div class="sw-name">Rough</div><div class="sw-val">#5C6675 / #F1F3F6</div><span class="cr cr-aa">AA 5.2:1</span></div></div>
+  </div>
+  <div class="note">
+    <strong>This scale is deliberately one colour, on purpose.</strong> It runs dark to light by <em>intensity</em>, not green-to-red by goodness. A rough day is not a failed day, and the PRD's tone rules ban red, "you failed", and any count of missed days — a red mood chip would break all three at once. Five points rather than four so there is a true middle: an even scale pushes people toward an answer they do not feel. `ROUGH` is the wording that survives that rule.
+  </div>
+
+  <h3>Neutrals and brand</h3>
+  <div class="grid g4">
+    <div class="sw"><div class="sw-chip" style="background:var(--surface-page)"></div>
+      <div class="sw-meta"><div class="sw-name">Page</div><div class="sw-val">#F6F8FA</div></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--surface-card)"></div>
+      <div class="sw-meta"><div class="sw-name">Card</div><div class="sw-val">#FFFFFF</div></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--surface-sunken)"></div>
+      <div class="sw-meta"><div class="sw-name">Sunken</div><div class="sw-val">#EDF1F5</div></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--border)"></div>
+      <div class="sw-meta"><div class="sw-name">Border</div><div class="sw-val">#D5DDE5</div></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--brand-700)"></div>
+      <div class="sw-meta"><div class="sw-name">Brand 700</div><div class="sw-val">#1A3A5C</div><span class="cr cr-lg">large text</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--brand-600)"></div>
+      <div class="sw-meta"><div class="sw-name">Brand 600</div><div class="sw-val">#2D5F8A</div><span class="cr cr-lg">large text</span></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--brand-100)"></div>
+      <div class="sw-meta"><div class="sw-name">Brand 100</div><div class="sw-val">#E3EDF6</div></div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--surface-inverse)"></div>
+      <div class="sw-meta"><div class="sw-name">Ink</div><div class="sw-val">#16202B</div><span class="cr cr-lg">on white 16.5:1</span></div></div>
+  </div>
+
+  <div class="note">
+    <strong>Text colours are checked, decorative fills are not.</strong> Body and label text meets AA at 4.5:1 or better. Large headings and the brand navy clear the 3:1 bar for large text. Fills used purely as backgrounds — tints, bars, the energy strip — are decoration and are not held to a text ratio.
+  </div>
+</section>
+
+<!-- ============ 3. TYPOGRAPHY ============ -->
+<section>
+  <h2 class="sec">3. Typography</h2>
+  <p class="sec-intro">One system font, no downloads, so nothing waits on a network. Times and counts use tabular figures so digits align vertically — essential when a column of times has to be scanned.</p>
+  <div class="card">
+    <div class="spec"><div class="spec-meta">display · 24/30 · 650</div><div class="spec-sample" style="font-size:24px;line-height:1.25;font-weight:650;letter-spacing:-.01em">Today at a glance</div></div>
+    <div class="spec"><div class="spec-meta">title · 20/26 · 650</div><div class="spec-sample" style="font-size:20px;line-height:1.3;font-weight:650;letter-spacing:-.01em">Wednesday, 14 October</div></div>
+    <div class="spec"><div class="spec-meta">heading · 17/24 · 650</div><div class="spec-sample" style="font-size:17px;line-height:1.4;font-weight:650">Deep work</div></div>
+    <div class="spec"><div class="spec-meta">body · 16/24 · 400</div><div class="spec-sample" style="font-size:16px;line-height:1.5">Build the Q3 presentation outline.</div></div>
+    <div class="spec"><div class="spec-meta">body strong · 16/24 · 650</div><div class="spec-sample" style="font-size:16px;line-height:1.5;font-weight:650">Build the Q3 presentation outline.</div></div>
+    <div class="spec"><div class="spec-meta">label · 13/18 · 650 · tracked</div><div class="spec-sample" style="font-size:13px;line-height:1.4;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--text-tertiary)">Unscheduled today</div></div>
+    <div class="spec"><div class="spec-meta">caption · 13/18 · 400</div><div class="spec-sample" style="font-size:13px;line-height:1.4;color:var(--text-secondary)">Moved because a meeting landed at 15:00.</div></div>
+    <div class="spec"><div class="spec-meta">chip · 12.5/18 · 650</div><div class="spec-sample"><span class="chip c-sched"><span class="gl">◷</span> Scheduled</span></div></div>
+    <div class="spec"><div class="spec-meta">time · tabular figures</div><div class="spec-sample" style="font-variant-numeric:tabular-nums;font-size:14px;font-weight:650;color:var(--text-secondary)">09:00 · 09:30 · 10:00 · 11:30 · 14:00</div></div>
+  </div>
+</section>
+
+<!-- ============ 4. SPACE, RADIUS, ELEVATION ============ -->
+<section>
+  <h2 class="sec">4. Space, radius, elevation</h2>
+  <p class="sec-intro">A 4px base scale. If a gap is not on this list, it is a mistake.</p>
+  <div class="grid g3">
+    <div class="card">
+      <h3 style="margin-top:0">Spacing</h3>
+      <div class="chip-row">
+        <span class="chip chip-plain">4</span><span class="chip chip-plain">8</span><span class="chip chip-plain">12</span>
+        <span class="chip chip-plain">16</span><span class="chip chip-plain">20</span><span class="chip chip-plain">24</span>
+        <span class="chip chip-plain">32</span><span class="chip chip-plain">40</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-tertiary);margin:var(--s3) 0 0">16 is the default gap. 12 inside a component. 24 between sections.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Radius</h3>
+      <div class="chip-row">
+        <span class="chip chip-plain" style="border-radius:6px">6 sm</span>
+        <span class="chip chip-plain" style="border-radius:10px">10 md</span>
+        <span class="chip chip-plain" style="border-radius:14px">14 lg</span>
+        <span class="chip chip-plain" style="border-radius:999px">full</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-tertiary);margin:var(--s3) 0 0">Chips are pills. Cards and inputs are 10. Sheets are 14.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Elevation</h3>
+      <div class="chip-row">
+        <span class="chip chip-plain" style="box-shadow:var(--e0)">0 flat</span>
+        <span class="chip chip-plain" style="box-shadow:var(--e1)">1 card</span>
+        <span class="chip chip-plain" style="box-shadow:var(--e2)">2 sheet</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-tertiary);margin:var(--s3) 0 0">Three levels, no more. Shadows mean "this floats above the page".</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. STATE CHIPS ============ -->
+<section>
+  <h2 class="sec">5. How state is shown</h2>
+  <p class="sec-intro">A chip is the smallest complete statement in the system: a glyph, a word, and a colour that agree with each other. The word is what makes it readable without colour.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Task states</h3>
+    <div class="chip-row">
+      <span class="chip c-inbox"><span class="gl">○</span> Inbox</span>
+      <span class="chip c-ready"><span class="gl">◔</span> Ready</span>
+      <span class="chip c-sched"><span class="gl">◷</span> Scheduled</span>
+      <span class="chip c-done"><span class="gl">✓</span> Done</span>
+      <span class="chip c-drop"><span class="gl">⊘</span> Dropped</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Energy levels</h3>
+    <div class="chip-row">
+      <span class="chip c-high"><span class="gl">▲▲</span> High energy</span>
+      <span class="chip c-med"><span class="gl">▲</span> Medium energy</span>
+      <span class="chip c-low"><span class="gl">▼</span> Low energy</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Fixed blocks</h3>
+    <div class="chip-row">
+      <span class="chip c-meet"><span class="gl">🔒</span> Meeting · fixed</span>
+      <span class="chip c-pers"><span class="gl">◈</span> Personal</span>
+      <span class="chip c-break"><span class="gl">⏸</span> Break</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Why a task is where it is — <code>enum BindingConstraint</code></h3>
+    <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 var(--s3)">These are the seven codes <code style="font-family:Consolas,monospace;font-size:12.5px;color:var(--brand-700)">PlacementReason</code> can hold. Each gets a plain-English label, because the stored value is a code and the person needs a sentence.</p>
+    <div class="chip-row">
+      <span class="chip chip-plain"><span class="gl">⚡</span> Energy match</span>
+      <span class="chip chip-plain"><span class="gl">⏳</span> Deadline</span>
+      <span class="chip chip-plain"><span class="gl">◷</span> Working hours</span>
+      <span class="chip chip-plain"><span class="gl">⊗</span> Clashes with a block</span>
+      <span class="chip chip-plain"><span class="gl">↑</span> Top priority</span>
+      <span class="chip chip-plain"><span class="gl">✋</span> You moved it</span>
+      <span class="chip chip-warn"><span class="gl">⚠</span> Did not fit</span>
+    </div>
+  </div>
+
+  <div class="warnnote">
+    <strong>Only one of these is allowed to feel urgent.</strong> "Did not fit" is amber because it is the one state the user must act on. If everything were amber, nothing would be.
+  </div>
+</section>
+
+<!-- ============ 6. THE DAY VIEW ============ -->
+<section>
+  <h2 class="sec">6. The day view — the screen the product is judged on</h2>
+  <p class="sec-intro">Drawn at 390px, the width of a normal phone. This is the real target: if it survives here, it survives anywhere. The energy strip sits above the timeline because it is the reasoning behind the plan, not a detail buried at the bottom.</p>
+
+  <div class="phone-stage">
+    <div class="phone">
+      <div class="phone-status"><span>09:41</span><span>FocusFlow</span><span>▮▮▮</span></div>
+
+      <div class="phone-head">
+        <div class="d1">Wednesday</div>
+        <div class="d2">14 October</div>
+        <div class="d3">
+          <span class="chip c-sched"><span class="gl">◷</span> 4 scheduled</span>
+          <span class="chip c-meet"><span class="gl">🔒</span> 2 fixed</span>
+          <span class="chip chip-plain"><span class="gl">⚠</span> 2 did not fit</span>
+        </div>
+      </div>
+
+      <div class="energy-strip">
+        <div class="eng">
+          <div class="bar bar-low" style="height:16px">▼</div><div class="hr">08</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-high" style="height:34px">▲▲</div><div class="hr">09</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-high" style="height:34px">▲▲</div><div class="hr">10</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-med" style="height:24px">▲</div><div class="hr">11</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-low" style="height:16px">▼</div><div class="hr">12</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-med" style="height:24px">▲</div><div class="hr">13</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-med" style="height:24px">▲</div><div class="hr">14</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-low" style="height:16px">▼</div><div class="hr">15</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-low" style="height:16px">▼</div><div class="hr">16</div>
+        </div>
+        <div class="eng">
+          <div class="bar bar-low" style="height:16px">▼</div><div class="hr">17</div>
+        </div>
+      </div>
+
+      <div class="tl">
+        <div class="tl-row"><div class="tl-hour">09:00</div><div class="tl-lane">
+          <div class="blk blk-task">
+            <div class="t">Build Q3 deck outline</div>
+            <div class="m"><span class="chip c-high" style="padding:2px 7px;font-size:11px"><span class="gl">▲▲</span> High</span><span class="chip c-sched" style="padding:2px 7px;font-size:11px"><span class="gl">⚡</span> Energy match</span></div>
+          </div>
+        </div></div>
+
+        <div class="tl-row"><div class="tl-hour">10:00</div><div class="tl-lane">
+          <div class="blk blk-meet">
+            <div class="t">🔒 Design review</div>
+            <div class="m"><span class="chip c-meet" style="padding:2px 7px;font-size:11px"><span class="gl">🔒</span> Fixed</span><span style="color:var(--text-tertiary)">60 min · you typed this</span></div>
+          </div>
+        </div></div>
+
+        <div class="tl-row"><div class="tl-hour">11:00</div><div class="tl-lane">
+          <div class="blk blk-task">
+            <div class="t">Reply to supplier invoices</div>
+            <div class="m"><span class="chip c-med" style="padding:2px 7px;font-size:11px"><span class="gl">▲</span> Medium</span><span class="chip c-sched" style="padding:2px 7px;font-size:11px"><span class="gl">↑</span> Top priority</span></div>
+          </div>
+        </div></div>
+
+        <div class="tl-row"><div class="tl-hour">12:30</div><div class="tl-lane">
+          <div class="blk blk-pers">
+            <div class="t">◈ Lunch</div>
+          </div>
+        </div></div>
+
+        <div class="tl-row"><div class="tl-hour">14:00</div><div class="tl-lane">
+          <div class="blk blk-meet">
+            <div class="t">🔒 Team sync</div>
+            <div class="m"><span style="color:var(--text-tertiary)">60 min</span></div>
+          </div>
+        </div></div>
+
+        <div class="tl-row"><div class="tl-hour">15:00</div><div class="tl-lane">
+          <div class="blk blk-task-done">
+            <div class="t">✓ Update project board</div>
+            <div class="m"><span style="color:var(--text-tertiary)">Done at 15:20</span></div>
+          </div>
+          <div class="blk blk-break">
+            <div class="t">⏸ Break — 15 min, your energy is low</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="unsched">
+        <h4>Did not fit today · 2</h4>
+        <div class="ur">
+          <div class="ut">Rewrite the pricing page
+            <div class="uw">Needs 90 min. No gap left that long.</div>
+          </div>
+          <span class="chip chip-warn" style="flex:none"><span class="gl">⚠</span> No room</span>
+        </div>
+        <div class="ur">
+          <div class="ut">Book the venue
+            <div class="uw">Deadline Friday. Would need a low-energy hour.</div>
+          </div>
+          <span class="chip chip-warn" style="flex:none"><span class="gl">⚠</span> Deadline clash</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:var(--s5)">
+    <div class="card">
+      <h3 style="margin-top:0">Reading the shapes</h3>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0">Solid heavy edge = a task you can drag. Lock glyph and plain edge = fixed. Double edge = your own personal time. Dashed = a break the app suggested.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Times on the left</h3>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0">Hours run down the margin, never repeated inside a block. One glance down the column tells you the shape of the day, and blocks never have to print their own start time.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Failures go last</h3>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0">"Did not fit" sits below the timeline, not inside it. The day you achieved stays clean; the things needing a decision are collected in one place at the end.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. WHY CARD ============ -->
+<section>
+  <h2 class="sec">7. Explaining the plan — the part that makes this product different</h2>
+  <p class="sec-intro">The schema stores facts, not sentences: an energy level, a constraint code, a list of what it competed against. This card is where those facts become one readable line. It is generated from the fields, never typed by hand.</p>
+
+  <div class="grid g2">
+    <div class="why">
+      <h4>Why is this here?</h4>
+      <div class="line">Placed at <b>09:00</b> because your energy is <b>high</b> and it is the <b>hardest</b> task you have.</div>
+      <div class="facts">
+        <span class="chip c-high" style="padding:3px 9px;font-size:11.5px"><span class="gl">▲▲</span> high</span>
+        <span class="chip c-sched" style="padding:3px 9px;font-size:11.5px"><span class="gl">⚡</span> energy_match</span>
+        <span class="chip chip-plain" style="padding:3px 9px;font-size:11.5px"><span class="gl">↑</span> difficulty hard</span>
+      </div>
+    </div>
+    <div class="why">
+      <h4>Why did that move?</h4>
+      <div class="line">Moved from <b>11:00</b> to <b>15:30</b> because <b>Design review</b> was added at 10:00 and would have overlapped.</div>
+      <div class="facts">
+        <span class="chip c-sched" style="padding:3px 9px;font-size:11.5px"><span class="gl">⊗</span> block_collision</span>
+        <span class="chip chip-plain" style="padding:3px 9px;font-size:11.5px"><span class="gl">🔒</span> Design review</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Why the sentence is assembled, not stored.</strong> Storing "Placed at 09:00 because your energy is high" freezes today's wording. When the product grows, those same stored facts answer questions nobody has asked yet — and you cannot query a sentence.
+  </div>
+</section>
+
+<!-- ============ 8. CONTROLS ============ -->
+<section>
+  <h2 class="sec">8. Controls and states</h2>
+
+  <h3>Buttons — every one at least 44px tall</h3>
+  <div class="card">
+    <div class="btn-row">
+      <button class="btn btn-primary">Re-plan my day</button>
+      <button class="btn btn-secondary">Add a task</button>
+      <button class="btn btn-ghost">Why this time?</button>
+      <button class="btn btn-danger">Drop task</button>
+      <button class="btn" disabled>Re-plan my day</button>
+    </div>
+  </div>
+
+  <h3>Inputs</h3>
+  <div class="grid g2">
+    <div class="card">
+      <div class="field">
+        <label for="t1">What needs doing?</label>
+        <input class="input" id="t1" placeholder="e.g. Rewrite the pricing page">
+        <div class="hint">Saved to your inbox. You can schedule it later.</div>
+      </div>
+      <div class="two">
+        <div class="field" style="margin:0">
+          <label for="t2">How long?</label>
+          <select class="select" id="t2"><option>60 minutes</option><option>90 minutes</option></select>
+        </div>
+        <div class="field" style="margin:0">
+          <label for="t3">How hard?</label>
+          <select class="select" id="t3"><option>Medium</option><option>Hard</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Focus ring</h3>
+      <p style="font-size:13.5px;color:var(--text-secondary);margin:0 0 var(--s3)">A 3px brand-300 ring, drawn outside the border. It must be visible on every background in the system, so it never relies on a colour change alone.</p>
+      <input class="input" value="Focused field — this is the ring" aria-label="Focus ring demonstration">
+      <div class="btn-row" style="margin-top:var(--s3)">
+        <span class="chip chip-plain">focus-visible only</span>
+        <span class="chip chip-plain">2px offset</span>
+        <span class="chip chip-plain">never removed</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Empty states — required by Day 8, easy to forget</h3>
+  <p class="sec-intro" style="margin-bottom:var(--s4)">Four blanks the app can genuinely hit on day one. Each says what is missing <em>and</em> gives the one action that fixes it. A blank screen with no button is a dead end.</p>
+  <div class="grid g4">
+    <div class="card">
+      <div class="empty" style="padding:var(--s5) var(--s3)">
+        <div class="ico">○</div>
+        <h4>No tasks yet</h4>
+        <p>Add your first task and the scheduler will find it a home.</p>
+        <button class="btn btn-primary">Add a task</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="empty" style="padding:var(--s5) var(--s3)">
+        <div class="ico">◷</div>
+        <h4>Nothing planned</h4>
+        <p>Your day is empty. Re-plan to place whatever you have waiting.</p>
+        <button class="btn btn-primary">Re-plan my day</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="empty" style="padding:var(--s5) var(--s3)">
+        <div class="ico">✓</div>
+        <h4>All done</h4>
+        <p>Every task placed today is finished. Nothing is waiting on you.</p>
+        <button class="btn btn-secondary">See tomorrow</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="empty" style="padding:var(--s5) var(--s3)">
+        <div class="ico">⚡</div>
+        <h4>No energy curve yet</h4>
+        <p>Draw your curve once and scheduling gets noticeably better.</p>
+        <button class="btn btn-secondary">Draw my curve</button>
+      </div>
+    </div>
+  </div>
+  <div class="note">
+    <strong>Note the button on every one.</strong> The technical design originally listed empty states as Day 9 work. They have since been moved forward to Day 8, because by the last build day they are the easiest thing to skip — and a first-run tester who meets four blank panels concludes the app is broken.
+  </div>
+</section>
+
+<!-- ============ 9. DECLARED VS OBSERVED ============ -->
+<section>
+  <h2 class="sec">9. Declared versus observed energy</h2>
+  <p class="sec-intro">This section exists because you accepted the second Phase 0 recommendation: the prototype uses a curve the person drew themselves, and observed data arrives later. The design has to make that visible from the start, so nobody is later surprised by what the app started inferring.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="chip-row" style="margin-bottom:var(--s3)">
+        <span class="chip c-med"><span class="gl">✎</span> Declared — you drew this</span>
+      </div>
+      <p style="font-size:14px;color:var(--text-secondary);margin:0">The energy strip on the day view carries this label whenever the curve came from setup. The app is using your judgement, not a measurement.</p>
+    </div>
+    <div class="card" style="border-style:dashed;opacity:.92">
+      <div class="chip-row" style="margin-bottom:var(--s3)">
+        <span class="chip c-inbox"><span class="gl">◎</span> Observed — from your check-ins</span>
+        <span class="chip chip-plain">future</span>
+      </div>
+      <p style="font-size:14px;color:var(--text-secondary);margin:0">When one-tap energy logging ships, this label replaces the declared one, and the design already has a place for it. Nothing about the layout changes.</p>
+    </div>
+  </div>
+
+  <div class="warnnote">
+    <strong>The rule this enforces.</strong> The app may never present an inferred energy level as if the person told it. The source is always on screen. The schema already carries <code style="font-family:Consolas,monospace;font-size:12.5px">EnergySource { DECLARED OBSERVED }</code> — this is where that column becomes visible.
+  </div>
+</section>
+
+<!-- ============ 10. ACCESSIBILITY PROOF ============ -->
+<section>
+  <h2 class="sec">10. Proof, not promises: the same screen without colour</h2>
+  <p class="sec-intro">The PRD requires that meaning never depends on colour alone. Here is the test: the same chips rendered in greyscale. Every one is still readable, because the word and glyph carry the meaning.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3 style="margin-top:0">In colour</h3>
+      <div class="chip-row">
+        <span class="chip c-inbox"><span class="gl">○</span> Inbox</span>
+        <span class="chip c-ready"><span class="gl">◔</span> Ready</span>
+        <span class="chip c-sched"><span class="gl">◷</span> Scheduled</span>
+        <span class="chip c-done"><span class="gl">✓</span> Done</span>
+        <span class="chip c-drop"><span class="gl">⊘</span> Dropped</span>
+        <span class="chip c-high"><span class="gl">▲▲</span> High energy</span>
+        <span class="chip c-med"><span class="gl">▲</span> Medium</span>
+        <span class="chip c-low"><span class="gl">▼</span> Low</span>
+        <span class="chip chip-warn"><span class="gl">⚠</span> Did not fit</span>
+      </div>
+    </div>
+    <div class="card greyscale">
+      <h3 style="margin-top:0">Greyscale</h3>
+      <div class="chip-row">
+        <span class="chip c-inbox"><span class="gl">○</span> Inbox</span>
+        <span class="chip c-ready"><span class="gl">◔</span> Ready</span>
+        <span class="chip c-sched"><span class="gl">◷</span> Scheduled</span>
+        <span class="chip c-done"><span class="gl">✓</span> Done</span>
+        <span class="chip c-drop"><span class="gl">⊘</span> Dropped</span>
+        <span class="chip c-high"><span class="gl">▲▲</span> High energy</span>
+        <span class="chip c-med"><span class="gl">▲</span> Medium</span>
+        <span class="chip c-low"><span class="gl">▼</span> Low</span>
+        <span class="chip chip-warn"><span class="gl">⚠</span> Did not fit</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>What still has to be built, not just decided</h3>
+  <div class="card">
+    <table class="spec-table">
+      <thead><tr><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Text contrast AA</td><td><span class="chip c-done"><span class="gl">✓</span> Met</span></td><td>Ratios shown on every swatch above.</td></tr>
+        <tr><td>Meaning not by colour alone</td><td><span class="chip c-done"><span class="gl">✓</span> Met</span></td><td>Greyscale test, section 10.</td></tr>
+        <tr><td>Keyboard focus visible</td><td><span class="chip c-med"><span class="gl">▲</span> By construction</span></td><td>Ring defined. Must be verified in the real app.</td></tr>
+        <tr><td>Screen reader labels</td><td><span class="chip c-inbox"><span class="gl">○</span> Day 1 task</span></td><td>Glyphs here are decorative. Real labels get written with the components.</td></tr>
+        <tr><td>Adjustable text size</td><td><span class="chip c-inbox"><span class="gl">○</span> Untested</span></td><td>Needs a real check at 200% zoom. Layouts are fixed-height in places.</td></tr>
+        <tr><td>Touch targets 44px</td><td><span class="chip c-done"><span class="gl">✓</span> Met</span></td><td>Enforced in the button and input rules.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 11. OPEN QUESTIONS ============ -->
+<section>
+  <h2 class="sec">11. What I need you to decide about this</h2>
+  <p class="sec-intro">These are judgement calls about taste and scope, not technical ones. Each is cheap to change now and expensive later.</p>
+  <div class="card">
+    <table class="spec-table">
+      <thead><tr><th>#</th><th>Question</th><th>My recommendation</th><th>If you disagree</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Navy and calm, or a warmer palette?</td><td>Navy. It reads as a tool rather than a toy, and it survives long work.</td><td>All tokens change in one file.</td></tr>
+        <tr><td>2</td><td>Show the energy strip above the day view?</td><td>Yes. It is the reasoning behind the plan; hiding it hides the product's whole idea.</td><td>Collapse it to a one-line summary.</td></tr>
+        <tr><td>3</td><td>Blocks coloured by task state, or all one colour?</td><td>By state, so done work is visibly done while scrolling.</td><td>Simpler, but loses the at-a-glance sense of progress.</td></tr>
+        <tr><td>4</td><td>Dark mode in the prototype?</td><td>No. One well-executed light theme beats two mediocre ones.</td><td>Tokens are already structured for it; it is a second token file, not a rewrite.</td></tr>
+        <tr><td>5</td><td>Does "did not fit" live below the timeline?</td><td>Yes. Keeps the achieved day clean and gathers decisions in one place.</td><td>Inline amber rows, at the cost of a busier timeline.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  FocusFlow Design System v0.1 — preview. Every colour maps to an enum in <code>schema.prisma</code>; every constraint chip maps to <code>BindingConstraint</code>. Contrast ratios are measured, not estimated. Nothing here is committed to code until the direction is agreed.
+</footer>
+
+</div>
+</body>
+</html>

@@ -158,7 +158,18 @@ When someone drags a block to a different time, the rest of the day has to be re
 
 This is why the plan insists the scheduler lives in one place, separate from the screens that use it.
 
-#### Day 8 — Replanning
+#### Day 9 — The evening review, and making it not fall over
+
+The unglamorous day that prevents bad days later, plus the one feature added after review.
+
+- **The minimum journal.** `JournalEntry` plus an evening review that reads the day's real `DayPlan`, `PlanItem`, and `Task` rows and shows what actually happened. One free-form text box, a five-tap mood row, and a read-only list of past entries. No prompts, no coach, no search — those need the AI coach, which is not in this prototype. See Section 2.2 of the technical design for why this table is five fields wide.
+- **Timezones and daylight saving.** Do not skip this. Almost every scheduler bug you will ever chase comes back to time handling. Store the actual timezone, convert deliberately, never store a bare time like "09:30" without saying what timezone it is in.
+- What happens if the app closes mid-save
+- The words on every screen, checked against the PRD's tone rules
+
+**Why the journal lands here and not in Phase 7.** Day 10 is the tester session, so anything not finished by the end of Day 9 is never tested by a real person. PRD risk 8 says outright that *"journaling is abandoned in week two."* The question a prototype can answer is not whether journaling is well built — it is whether anyone writes in it at all.
+
+#### Day 8 — Replanning, and the empty screens
 
 When the day is not finished, the app proposes a new one.
 
@@ -171,14 +182,7 @@ Three rules:
 
 Read the PRD's tone section before writing these words. This screen carries the emotional weight of the entire product.
 
-#### Day 9 — Making it not fall over
-
-The unglamorous day that prevents bad days later.
-
-- **Timezones and daylight saving.** Do not skip this. Almost every scheduler bug you will ever chase comes back to time handling. Store the actual timezone, convert deliberately, never store a bare time like "09:30" without saying what timezone it is in.
-- Empty states — what the screen shows when there is nothing to show
-- What happens if the app closes mid-save
-- The words on every screen, checked against the PRD's tone rules
+Also on this day: **empty states** — what each screen shows when there is nothing to show. Moved here from Day 9 to make room for the journal. A first-run user who meets four blank panels concludes the app is broken, and this is the cheapest possible fix.
 
 #### Day 10 — Get it in front of someone
 
@@ -723,15 +727,21 @@ A solver also makes the reasoning requirement (S7) fall out naturally: the answe
 
 **Consequence accepted:** The data model carries reasoning metadata from the start. Cheap now, expensive later.
 
-### 6.7 Decision 6 — Journal Entries Are Local-First and Encrypted at Rest
+### 6.7 Decision 6 — Journal Entries Live in the Database, Not Encrypted Yet
 
-**Decision:** Journal content is stored encrypted on the device. It syncs only as the user directs.
+**Status: REVISED.** The original decision was *local-first and encrypted at rest on the device.* That decision was written against a native app with a local SQLite store. The stack has since changed to a browser app with PostgreSQL on Neon, so the original decision could not be honoured without first building a key-management system — which is a larger project than the journal itself. Revised 3 October 2026.
 
-**Reason:** Requirement Q7 makes journal content private unless explicitly shared. PRD Section 14 principle 2 states journal content is never surfaced to other users and never used for any purpose. Design the storage to make that structurally true rather than merely policy.
+**Decision:** Journal entries are stored as ordinary rows in the application database. Content is not encrypted client-side in the prototype.
 
-**Consequence accepted:** Content is not searchable server-side, which makes search a client-side concern and limits performance on very large histories. Acceptable — most users will have hundreds, not tens of thousands, of entries.
+**Reason:** Requirement Q7 — journal content stays private to the user — is still satisfied in the sense that matters here: no other user can read another person's entries, and nothing is ever surfaced to anyone else or used for any purpose. But it is no longer true that the provider cannot read it, and the document should say so rather than imply a protection that does not exist.
 
-**Forecloses:** Server-side full-text search over journal history. Requirement J5 still passes, but implementation is client-side.
+**Why not encrypt now, honestly:** encryption needs a key, and the prototype has no password to derive one from — authentication is a passwordless link, so there is no secret on the device. Generating and storing a key instead creates a worse failure than no encryption: **a lost key makes entries permanently unrecoverable.** For a journal, that is worse than readable text on a database you control access to. Half-built encryption is a worse outcome than none.
+
+**The trigger, so this is not forgotten:** client-side encryption ships **before any real user, as opposed to a tester, writes a journal entry.** Until then, the prototype's testers are told plainly where their entries are stored.
+
+**Consequence accepted:** full-text search over journal history becomes straightforward rather than a client-side concern. Requirement J5 is easier, not harder.
+
+**What this gives up:** the stronger privacy guarantee in PRD Q7 and Section 14 principle 2 is deferred, not met. If the prototype graduates, this decision must be revisited before launch, and it is one of the first things a security review would examine.
 
 ### 6.8 Decision 7 — AI Processing Is Explicit and Disclosed
 
@@ -784,7 +794,7 @@ A solver also makes the reasoning requirement (S7) fall out naturally: the answe
 | 3 | AI bounded, not a planner | AI-driven scheduling | Never. Trust requirement |
 | 4 | Constraint solver | Rapid heuristic tuning | Scheduling quality proves adequate |
 | 5 | Reasoning as data | Post-hoc explanations | Never. Four requirements depend on it |
-| 6 | Encrypted local journal | Server-side journal search | Journal history exceeds thousands of entries |
+| 6 | Journal in the database, **not encrypted yet** (revised) | Client-side encryption of entry text | **Before any real user writes an entry** — not a tester |
 | 7 | Explicit AI disclosure | Bulk training on user data | Never. Trust requirement |
 | 8 | Structural privacy | Cheap social features | Social scope revisited |
 | 9 | Per-service degradation | Unified failure handling | Never. Q14 requirement |
@@ -1053,7 +1063,7 @@ Pause without losing history (R6).
 
 Guided prompts referencing the actual day (J3). Free-form writing always available with no prompt required (J4) — prompting must never feel compulsory.
 
-Search by date, mood, goal, and text (J5), client-side per Decision 6.
+Search by date, mood, goal, and text (J5). **This was specified as client-side work under the original Decision 6, which required an encrypted journal. That decision has been revised — see Section 6.7 — so search is ordinary database work instead.** Worth revisiting if client-side encryption is reinstated, because the answer changes back.
 
 Week and month grouping (J6).
 
@@ -1436,7 +1446,7 @@ Alternative: Flutter. Comparable outcomes, different tooling. If Dart is more co
 
 ### 18.2 Storage
 
-**Recommendation:** SQLite locally, with an encrypted journal table per Decision 6.
+**Recommendation:** SQLite locally. **Note:** this recommendation predates the revised Decision 6 and assumed an encrypted journal table. Under the current prototype stack the database is PostgreSQL on Neon rather than local SQLite, and the journal is not encrypted client-side. This section describes the original native-app architecture and has not been re-derived for the current stack.
 
 Reasons: relational integrity across goals, projects, and tasks; query performance over the large joins the insight feed needs; offline-first is the local database's home ground.
 
@@ -1446,7 +1456,7 @@ Alternative: a local-first sync framework. Faster to build, less control over co
 
 **Recommendation:** Operation-log sync with last-write-wins per field, plus explicit conflict detection on structured blocks.
 
-Reasons: field-level last-write-wins handles the common case of editing different attributes on two devices; detecting and surfacing conflicts on schedule blocks respects requirement P8's promise that manual overrides persist; an operation log allows the encrypted journal to sync only as the user directs per Decision 7.
+Reasons: field-level last-write-wins handles the common case of editing different attributes on two devices; detecting and surfacing conflicts on schedule blocks respects requirement P8's promise that manual overrides persist. *(The original reason here cited "the encrypted journal syncing only as the user directs" and referenced Decision 7. It should have said Decision 6, and under the revised Decision 6 the journal is an ordinary row that syncs like any other.)*
 
 ### 18.4 Scheduling
 

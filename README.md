@@ -118,7 +118,7 @@ Three decisions on day one make everything else cheap to add later instead of a 
 2. Meetings are stored the same way as blocks, with a label saying where they came from
 3. Reasoning is saved as separate facts, not as finished sentences
 
-Then: days 2–4 scheduler, days 5–6 day view, day 7 moving things, day 8 replanning, day 9 not falling over, day 10 testing.
+Then: days 2–4 scheduler, days 5–6 day view, day 7 moving things, day 8 replanning and empty states, day 9 the minimum journal plus not falling over, day 10 testing.
 
 The prototype cannot tell you whether people will keep using this. It tells you whether the core idea lands. Those are different questions and it is worth keeping them apart.
 
@@ -160,15 +160,15 @@ The plan also records three requirement discrepancies between PRD v1 and v2, wit
 |---|---|---|---|
 | Language | TypeScript | Unlimited | No — open source |
 | Framework | Next.js | Unlimited | No — open source |
-| Database | PostgreSQL on Neon | 1 GB, 100 projects | Only if you upgrade |
+| Database | PostgreSQL on Neon | 0.5 GB, 100 projects | Only if you upgrade |
 | Data access | Prisma (pinned to v7) | Unlimited | No — Apache 2.0 |
 | Styling | Tailwind CSS | Unlimited | No — MIT |
-| Hosting | Vercel | 100 GB/mo, 1M calls | Only if you upgrade |
+| Hosting | **Your computer** (Node.js) | Unlimited | No — no account, no service |
 | Dates | date-fns + date-fns-tz | Unlimited | No — MIT |
 | Login | Built in, users in your own database | Unlimited | No — Better Auth, MIT |
 | Files, email, notifications, analytics | **Not added yet** | — | Nothing to charge |
 
-**The first bill you will ever see is $20/month on Vercel**, and it is triggered by earning money rather than by having users. Vercel's free plan is non-commercial by their terms, so the moment FocusFlow takes payment it must move to Pro.
+**Hosting costs nothing and never will, because there is no hosting company.** The app runs on your own computer as an ordinary Node.js program. Testers open it over your Wi-Fi or through a free Cloudflare Tunnel link. The earlier draft's warning — that Vercel's free plan is non-commercial by their terms, so earning money would force a $20/month upgrade — no longer applies.
 
 Two findings worth knowing before Day 1:
 
@@ -179,7 +179,7 @@ Two findings worth knowing before Day 1:
 
 The design document answers "what do we actually build, and what happens to everything we cut?" before a single line of code exists.
 
-**Stack:** a browser app — Next.js, TypeScript, Prisma, PostgreSQL, Vercel. No app store, no install, no build step, and testable by sending someone a link.
+**Stack:** a browser app — Next.js, TypeScript, Prisma, PostgreSQL, running on your computer. No app store, no install, and testable by sending someone a link.
 
 **Ten tables,** of which `Goal` and `Project` are deliberately built now and left empty, because `Task` carries an optional `goalId` and `projectId` from day one. Switching goals on later is then new screens rather than a data migration.
 
