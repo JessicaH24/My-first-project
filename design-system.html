@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -51,6 +51,15 @@
   --bk-meeting-ink:#3F4A5A; --bk-meeting-tint:#EDEFF3; --bk-meeting-line:#C6CDD6;
   --bk-personal-ink:#6B4E9E;--bk-personal-tint:#EFEBF7;--bk-personal-line:#C9BCE4;
   --bk-break-ink:#215C50;   --bk-break-tint:#E4F2EF;   --bk-break-line:#A5D2C8;
+
+  /* --- Mood (enum Mood) --- */
+  /* Deliberately one hue, dark-to-light by intensity. NOT green-to-red:
+     a rough day is not a failed day, and the PRD bans red + failure words. */
+  --md-great-ink:#14304D;   --md-great-tint:#D6E4F1;   --md-great-line:#A9C3DC;
+  --md-good-ink:#1F4E79;    --md-good-tint:#E1EDF8;    --md-good-line:#A9CBE6;
+  --md-ok-ink:#35507A;      --md-ok-tint:#E6ECF4;      --md-ok-line:#AFC2D8;
+  --md-flat-ink:#47566B;    --md-flat-tint:#EDF0F4;    --md-flat-line:#C3CDD8;
+  --md-rough-ink:#5C6675;   --md-rough-tint:#F1F3F6;   --md-rough-line:#CDD4DC;
 
   /* --- Attention --- */
   --warn-ink:#8A5A0B;       --warn-tint:#FBF0DA;       --warn-line:#E3C489;
@@ -158,6 +167,11 @@ h3:first-of-type{margin-top:0;}
 .c-meet   {color:var(--bk-meeting-ink);background:var(--bk-meeting-tint);border-color:var(--bk-meeting-line);}
 .c-pers   {color:var(--bk-personal-ink);background:var(--bk-personal-tint);border-color:var(--bk-personal-line);}
 .c-break  {color:var(--bk-break-ink);  background:var(--bk-break-tint);  border-color:var(--bk-break-line);}
+.c-great  {color:var(--md-great-ink);  background:var(--md-great-tint);  border-color:var(--md-great-line);}
+.c-good   {color:var(--md-good-ink);   background:var(--md-good-tint);   border-color:var(--md-good-line);}
+.c-ok     {color:var(--md-ok-ink);     background:var(--md-ok-tint);     border-color:var(--md-ok-line);}
+.c-flat   {color:var(--md-flat-ink);   background:var(--md-flat-tint);   border-color:var(--md-flat-line);}
+.c-rough  {color:var(--md-rough-ink);  background:var(--md-rough-tint);  border-color:var(--md-rough-line);}
 
 .chip-plain{
   color:var(--text-secondary); background:var(--surface-sunken); border-color:var(--border);
@@ -269,6 +283,62 @@ h3:first-of-type{margin-top:0;}
 .empty .ico{font-size:32px; color:var(--text-tertiary); margin-bottom:var(--s3);}
 .empty h4{margin:0 0 var(--s2); font-size:16px; font-weight:650;}
 .empty p{margin:0 auto var(--s4); font-size:14px; color:var(--text-secondary); max-width:44ch;}
+
+/* ---------- evening review + journal ---------- */
+.recap{background:var(--surface-card); border:1px solid var(--border); border-radius:var(--r-md); padding:var(--s3) var(--s4); margin:0 var(--s4) var(--s4);}
+.recap h4{margin:0 0 var(--s3); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-tertiary); font-weight:650;}
+.recap-row{display:flex; align-items:baseline; gap:var(--s2); padding:7px 0; border-top:1px solid var(--border); font-size:13.5px;}
+.recap-row:first-of-type{border-top:none;}
+.recap-row .n{font-weight:650; font-variant-numeric:tabular-nums; min-width:18px;}
+.recap-row .w{color:var(--text-secondary); flex:1;}
+
+.mood-label{font-size:13px; font-weight:650; margin:0 0 2px;}
+.mood-row{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:var(--s2);}
+.mood-opt{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  min-height:56px; padding:6px 2px; border-radius:var(--r-md);
+  border:1px solid var(--border-strong); background:var(--surface-card);
+  font-family:inherit; font-size:12px; font-weight:650; color:var(--text-secondary);
+  cursor:pointer; text-align:center; line-height:1.2;
+}
+.mood-opt .dots{font-size:11px; letter-spacing:1px; line-height:1; color:var(--text-tertiary);}
+.mood-opt:hover{background:var(--surface-sunken);}
+.mood-opt[aria-pressed="true"]{box-shadow:0 0 0 2px var(--brand-700); font-size:12.5px;}
+.mood-opt[aria-pressed="true"] .dots{color:inherit;}
+.mood-opt:focus-visible{outline:3px solid var(--brand-300); outline-offset:1px;}
+/* Re-declared so the palette wins on source order against .mood-opt above. */
+.mood-opt.c-great{color:var(--md-great-ink); background:var(--md-great-tint); border-color:var(--md-great-line);}
+.mood-opt.c-good {color:var(--md-good-ink);  background:var(--md-good-tint);  border-color:var(--md-good-line);}
+.mood-opt.c-ok   {color:var(--md-ok-ink);    background:var(--md-ok-tint);    border-color:var(--md-ok-line);}
+.mood-opt.c-flat {color:var(--md-flat-ink);  background:var(--md-flat-tint);  border-color:var(--md-flat-line);}
+.mood-opt.c-rough{color:var(--md-rough-ink); background:var(--md-rough-tint); border-color:var(--md-rough-line);}
+
+.entry{padding:0 var(--s4) var(--s4);}
+.entry textarea{
+  font-family:inherit; font-size:16px; line-height:1.6; color:var(--text-primary);
+  width:100%; min-height:132px; resize:vertical; display:block;
+  padding:var(--s3); border:1px solid var(--border-strong); border-radius:var(--r-md);
+  background:var(--surface-card);
+}
+.entry textarea::placeholder{color:var(--text-tertiary);}
+.entry textarea:focus{outline:3px solid var(--brand-300); outline-offset:0; border-color:var(--brand-600);}
+.entry-meta{display:flex; justify-content:space-between; align-items:center; gap:var(--s2); margin-top:var(--s2); flex-wrap:wrap;}
+.entry-saved{font-size:12px; color:var(--text-tertiary); font-variant-numeric:tabular-nums;}
+.privacy{
+  display:flex; gap:var(--s2); align-items:flex-start; margin:0 var(--s4) var(--s4);
+  background:var(--surface-sunken); border:1px solid var(--border);
+  border-radius:var(--r-md); padding:var(--s3); font-size:12.5px; color:var(--text-secondary); line-height:1.45;
+}
+.privacy .gl{flex:none; font-size:13px; color:var(--text-tertiary); margin-top:1px;}
+
+.hist{border-top:1px solid var(--border);}
+.hist-row{display:flex; gap:var(--s3); padding:var(--s3) var(--s4); border-bottom:1px solid var(--border); align-items:flex-start;}
+.hist-row:last-child{border-bottom:none;}
+.hist-date{font-size:12px; font-weight:650; color:var(--text-tertiary); width:74px; flex:none; font-variant-numeric:tabular-nums; padding-top:2px;}
+.hist-body{flex:1; min-width:0;}
+.hist-body p{margin:0; font-size:13.5px; line-height:1.5; color:var(--text-primary);}
+.hist-body .meta{display:flex; gap:var(--s2); margin-top:6px; flex-wrap:wrap; align-items:center;}
+.hist-readonly{font-size:11px; color:var(--text-tertiary); letter-spacing:.03em; text-transform:uppercase; font-weight:650;}
 
 /* ---------- a11y demo: greyscale ---------- */
 .greyscale{filter:grayscale(1);}
@@ -762,9 +832,160 @@ footer{margin-top:var(--s10); padding-top:var(--s5); border-top:1px solid var(--
   </div>
 </section>
 
-<!-- ============ 9. DECLARED VS OBSERVED ============ -->
+<!-- ============ 9. EVENING REVIEW + JOURNAL ============ -->
 <section>
-  <h2 class="sec">9. Declared versus observed energy</h2>
+  <h2 class="sec">9. The evening review and the minimum journal</h2>
+  <p class="sec-intro">Day 9 work, and the first screen in the product that asks someone to type rather than tap. It reads the day's real <code>DayPlan</code>, <code>PlanItem</code> and <code>Task</code> rows and shows what actually happened, then gets out of the way. There is <strong>one entry per calendar day</strong>: re-opening it edits the same row rather than leaving a second, competing entry.</p>
+
+  <h3>9.1 The screen at 390px</h3>
+  <div class="phone-stage">
+    <div class="phone">
+      <div class="phone-status"><span>18:42</span><span>FocusFlow</span><span>▮▮▮</span></div>
+
+      <div class="phone-head">
+        <div class="d1">Wednesday</div>
+        <div class="d2">14 October</div>
+        <div class="d3"><span class="chip chip-plain"><span class="gl">✎</span> Evening review</span></div>
+      </div>
+
+      <div class="recap">
+        <h4>What happened today</h4>
+        <div class="recap-row"><span class="n">3</span><span class="w">tasks completed</span><span class="chip c-done" style="padding:2px 7px;font-size:11px"><span class="gl">✓</span> Done</span></div>
+        <div class="recap-row"><span class="n">2</span><span class="w">moved to tomorrow</span><span class="chip chip-plain" style="padding:2px 7px;font-size:11px"><span class="gl">→</span> Moved</span></div>
+        <div class="recap-row"><span class="n">4</span><span class="w">blocks on the timeline</span><span class="chip c-sched" style="padding:2px 7px;font-size:11px"><span class="gl">◷</span> Scheduled</span></div>
+      </div>
+
+      <div style="padding:0 var(--s4) var(--s4)">
+        <p class="mood-label">How was today?</p>
+        <p class="entry-saved" style="margin:0">Optional — skip it and just write if you would rather.</p>
+        <div class="mood-row">
+          <button class="mood-opt" type="button"><span class="dots">●●●●●</span>Great</button>
+          <button class="mood-opt" type="button"><span class="dots">●●●●</span>Good</button>
+          <button class="mood-opt c-ok" type="button" aria-pressed="true"><span class="dots">●●●</span>Ok</button>
+          <button class="mood-opt" type="button"><span class="dots">●●</span>Flat</button>
+          <button class="mood-opt" type="button"><span class="dots">●</span>Rough</button>
+        </div>
+      </div>
+
+      <div class="entry">
+        <label class="mood-label" for="jbody">Anything worth remembering?</label>
+        <textarea id="jbody" placeholder="One thing that went well, one that got in the way…">Design review landed. The supplier call ran long and ate the afternoon, but the deck outline is done.</textarea>
+        <div class="entry-meta">
+          <span class="entry-saved">Saved 18:42 · edited twice today</span>
+          <button class="btn btn-primary" type="button">Save</button>
+        </div>
+      </div>
+
+      <div class="privacy">
+        <span class="gl">🔒</span>
+        <span>Prototype storage: this text is saved <strong>unencrypted</strong> in the FocusFlow database, so the team can read tester feedback. Client-side encryption ships before any real person writes here.</span>
+      </div>
+
+      <div class="hist">
+        <div class="hist-row">
+          <div class="hist-date">Tue 13 Oct</div>
+          <div class="hist-body">
+            <p>Slow start, good afternoon. Finished the pricing model I'd been avoiding.</p>
+            <div class="meta"><span class="chip c-good" style="padding:2px 7px;font-size:11px"><span class="dots">●●●●</span> Good</span><span class="hist-readonly">Read-only</span></div>
+          </div>
+        </div>
+        <div class="hist-row">
+          <div class="hist-date">Mon 12 Oct</div>
+          <div class="hist-body">
+            <p>Too many meetings. Deep work happened anyway, 07:00–09:00.</p>
+            <div class="meta"><span class="chip c-flat" style="padding:2px 7px;font-size:11px"><span class="dots">●●</span> Flat</span><span class="hist-readonly">Read-only</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Why the recap sits above the writing box.</strong> Someone reflecting on their day needs the facts in front of them before they can answer honestly. Showing an empty text box first invites a one-word entry that says more about the prompt than the day — which is the exact failure PRD risk 8 warns about.
+  </div>
+
+  <h3>9.2 The mood row on its own</h3>
+  <p class="sec-intro" style="margin-bottom:var(--s4)">Five taps, each at least 56px tall against the 44px platform minimum. The dots carry the ordering so the scale still reads in greyscale, and the selected option gets a 2px brand ring plus heavier type rather than relying on a fill change.</p>
+  <div class="phone-stage">
+    <div class="phone">
+      <div style="padding:var(--s5) var(--s4)">
+        <p class="mood-label">How was today?</p>
+        <p class="entry-saved" style="margin:0">Optional — skip it and just write if you would rather.</p>
+        <div class="mood-row">
+          <button class="mood-opt" type="button"><span class="dots">●●●●●</span>Great</button>
+          <button class="mood-opt" type="button"><span class="dots">●●●●</span>Good</button>
+          <button class="mood-opt c-ok" type="button" aria-pressed="true"><span class="dots">●●●</span>Ok</button>
+          <button class="mood-opt" type="button"><span class="dots">●●</span>Flat</button>
+          <button class="mood-opt" type="button"><span class="dots">●</span>Rough</button>
+        </div>
+        <p class="entry-saved" style="margin-top:var(--s3)">56px tall · 5 across 390px · 6px gap</p>
+      </div>
+    </div>
+  </div>
+  <div class="warnnote">
+    <strong>Not a slider, and not five stars.</strong> A slider hides the options behind a drag and makes an accidental brush of the thumb look like a deliberate answer. Stars imply a rating of the day, which is the judgement this product refuses to make.
+  </div>
+
+  <h3>9.3 Before the first entry exists</h3>
+  <div class="grid g2">
+    <div class="card">
+      <div class="empty" style="padding:var(--s6) var(--s4)">
+        <div class="ico">✎</div>
+        <h4>No entries yet</h4>
+        <p>Your evening review appears here once you write one. Nothing is written for you.</p>
+        <button class="btn btn-secondary" type="button">Write tonight's</button>
+      </div>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 var(--s3);font-size:15px">Save behaviour worth stating</h4>
+      <ul style="margin:0;padding-left:20px;font-size:14px;color:var(--text-secondary);line-height:1.7">
+        <li>One row per day, enforced by <code style="font-family:Consolas,monospace;font-size:12.5px">@@unique([userId, date])</code>.</li>
+        <li>Saving again updates that row. It never creates a second entry for the same day.</li>
+        <li>Closing the app mid-write loses nothing already saved.</li>
+        <li>Mood may be left empty; <code style="font-family:Consolas,monospace;font-size:12.5px">body</code> may not.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>9.4 Words this screen must not use</h3>
+  <p class="sec-intro" style="margin-bottom:var(--s4)">The evening review is the highest-risk screen in the product for tone, because it is the one that reports on a person's day. The PRD's tone rules apply here with nothing softened.</p>
+  <table class="spec-table">
+    <thead><tr><th style="width:34%">Never</th><th style="width:33%">Instead</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>"You failed 2 tasks"</td><td>"2 moved to tomorrow"</td><td>A task moving is the scheduler working, not a person losing.</td></tr>
+      <tr><td>"Missed 3 days"</td><td>Nothing — no streak, no count</td><td>PRD bans counts of missed days outright.</td></tr>
+      <tr><td>Red anywhere on this screen</td><td>Neutral ink and tints only</td><td>Nothing here is an error state. A rough day is not a failed day.</td></tr>
+      <tr><td>"Rate your day"</td><td>"How was today?"</td><td>Asking for a rating invites grading. Asking how it went invites remembering.</td></tr>
+      <tr><td>"Your journal streak: 4 days 🔥"</td><td>Nothing</td><td>Streak mechanics are exactly what makes people quit a journal in week two.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.5 What this screen deliberately leaves out</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="margin:0 0 var(--s3);font-size:15px">Deferred, with the reason</h4>
+      <table class="spec-table">
+        <tbody>
+          <tr><td>Guided prompts <code>J3</code></td><td>Needs the AI coach, which is not in this prototype.</td></tr>
+          <tr><td>Coach follow-ups <code>J7</code></td><td>Same reason, and interrogation needs real answers to probe.</td></tr>
+          <tr><td>Search <code>J5</code></td><td>One entry a day is findable by scrolling. Search earns its keep at volume.</td></tr>
+          <tr><td>Week / month views <code>J6</code></td><td>Needs enough entries to show a pattern, which a 10-day test will not have.</td></tr>
+          <tr><td>Export <code>J8</code></td><td>Nothing to export yet, and it is a trust feature that must not be rushed.</td></tr>
+          <tr><td>Gratitude, images</td><td>Extra columns on the one table this prototype is trying to keep at five fields.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h4 style="margin:0 0 var(--s3);font-size:15px">Storage, stated at the point of writing</h4>
+      <p style="margin:0 0 var(--s3);font-size:14px;color:var(--text-secondary);line-height:1.6">The privacy note under the text box is not decoration. Decision 6 was revised so the prototype stores journal text as ordinary readable rows in Neon rather than encrypting it on the device, because there is no password to derive a key from yet.</p>
+      <p style="margin:0;font-size:14px;color:var(--text-secondary);line-height:1.6">Testers are told plainly, in the screen itself, and client-side encryption is required before any real user writes an entry. That is the trigger, not a nice-to-have for later.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10. DECLARED VS OBSERVED ============ -->
+<section>
+  <h2 class="sec">10. Declared versus observed energy</h2>
   <p class="sec-intro">This section exists because you accepted the second Phase 0 recommendation: the prototype uses a curve the person drew themselves, and observed data arrives later. The design has to make that visible from the start, so nobody is later surprised by what the app started inferring.</p>
 
   <div class="grid g2">
@@ -788,9 +1009,9 @@ footer{margin-top:var(--s10); padding-top:var(--s5); border-top:1px solid var(--
   </div>
 </section>
 
-<!-- ============ 10. ACCESSIBILITY PROOF ============ -->
+<!-- ============ 11. ACCESSIBILITY PROOF ============ -->
 <section>
-  <h2 class="sec">10. Proof, not promises: the same screen without colour</h2>
+  <h2 class="sec">11. Proof, not promises: the same screen without colour</h2>
   <p class="sec-intro">The PRD requires that meaning never depends on colour alone. Here is the test: the same chips rendered in greyscale. Every one is still readable, because the word and glyph carry the meaning.</p>
 
   <div class="grid g2">
@@ -840,9 +1061,9 @@ footer{margin-top:var(--s10); padding-top:var(--s5); border-top:1px solid var(--
   </div>
 </section>
 
-<!-- ============ 11. OPEN QUESTIONS ============ -->
+<!-- ============ 12. OPEN QUESTIONS ============ -->
 <section>
-  <h2 class="sec">11. What I need you to decide about this</h2>
+  <h2 class="sec">12. What I need you to decide about this</h2>
   <p class="sec-intro">These are judgement calls about taste and scope, not technical ones. Each is cheap to change now and expensive later.</p>
   <div class="card">
     <table class="spec-table">
@@ -865,3 +1086,5 @@ footer{margin-top:var(--s10); padding-top:var(--s5); border-top:1px solid var(--
 </div>
 </body>
 </html>
+
+
