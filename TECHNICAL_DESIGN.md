@@ -147,7 +147,7 @@ This is **Rule C**, stored as facts rather than sentences. One row per task cons
 - The date it belongs to, an optional link to that day's `DayPlan`, an optional mood, and the free-form text.
 - **Scope:** this is the *minimum* journal, added after review. The PRD's guided prompts (J3), coach follow-ups (J7), search (J5), week and month views (J6) and export (J8) are all deferred. It exists to answer one question during testing: does anyone actually write in this?
 - **No AI and no prompts**, deliberately. Both J3 and J7 depend on "the coach", which is not in the prototype, so they cannot be built cheaply here regardless of preference.
-- **Why it is a new table rather than a field on `DayPlan`:** a person may write on a day with no plan, and may write more than once. One-to-many, so a separate table.
+- **Why it is a new table rather than a field on `DayPlan`:** a person may write on a day with no plan at all, which a field on `DayPlan` could not allow. It is still **one entry per calendar day**, enforced by `@@unique([userId, date])`, because the evening review is a single moment in that day and re-opening it should edit what was written rather than leave a second, competing entry. Saving again updates the row; it does not create another one. If a same-day journal ever becomes a genuine requirement, dropping that one constraint is all it takes.
 - **Rule enforced:** an entry can only ever point at a `DayPlan` through `dayPlanId`, exactly as a `PlanItem` does. It never copies task text into itself, so a task renamed later cannot leave a stale copy inside a journal entry.
 
 #### 2.3 The schema, written out
@@ -322,7 +322,7 @@ model JournalEntry {                 // added after review: the minimum journal,
   body              String
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  @@index([userId, date])
+  @@unique([userId, date])   // one entry per day; re-saving edits it. See 2.2.
 }
 ```
 
