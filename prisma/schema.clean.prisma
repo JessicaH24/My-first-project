@@ -1,0 +1,167 @@
+﻿enum TaskState   { INBOX READY SCHEDULED DONE DROPPED }
+enum Difficulty  { EASY MEDIUM HARD }
+enum BlockSource { MANUAL CALENDAR SYSTEM }
+enum BlockKind   { MEETING PERSONAL BREAK }
+enum EnergyLevel { HIGH MEDIUM LOW }
+enum EnergySource{ DECLARED OBSERVED }
+enum BindingConstraint { ENERGY_MATCH DEADLINE WORKING_HOURS BLOCK_COLLISION PRIORITY MANUAL_OVERRIDE UNSCHEDULED }
+enum Outcome     { PLACED REJECTED }
+enum PlanState   { DRAFT ACCEPTED DISCARDED }
+enum Mood        { GREAT GOOD OK FLAT ROUGH }   // the minimum journal's only new enum. Five points, not four, so there is a true middle.
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  timezone     String   @default("Europe/London")   // IANA name, e.g. "Europe/London"
+  goals        Goal[]
+  projects     Project[]
+  tasks        Task[]
+  blocks       Block[]
+  plans        DayPlan[]
+  workingHours WorkingHour[]
+  energyLevels EnergyEntry[]
+  journalEntries JournalEntry[]   // added with the minimum journal, Day 9
+  createdAt    DateTime @default(now())
+}
+
+model Goal {                          // empty on day one, columns final
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  title      String
+  why        String?
+  targetDate DateTime?
+  state      String    @default("ACTIVE")
+  projects   Project[]
+  tasks      Task[]
+}
+
+model Project {                       // empty on day one, columns final
+  id      String  @id @default(cuid())
+  userId  String
+  user    User    @relation(fields: [userId], references: [id])
+  goalId  String                            // required: a project always has a goal
+  goal    Goal   @relation(fields: [goalId], references: [id])
+  title   String
+  state   String  @default("ACTIVE")
+  tasks   Task[]
+}
+
+model Task {
+  id              String     @id @default(cuid())
+  userId          String
+  user            User       @relation(fields: [userId], references: [id])
+  title           String
+  notes           String?
+  goalId          String?                            // RULE A: optional, empty now
+  goal            Goal?      @relation(fields: [goalId], references: [id])
+  projectId       String?                            // RULE A: optional, empty now
+  project         Project?   @relation(fields: [projectId], references: [id])
+  estimatedMinutes Int
+  difficulty      Difficulty @default(MEDIUM)
+  priority        Int        @default(3)              // 1 highest, 4 lowest
+  state           TaskState  @default(READY)         // inbox support, Rule-state
+  recurrenceRule  String?                            // routines, e.g. "FREQ=WEEKLY;BYDAY=MO"
+  deadline        DateTime?
+  actualMinutes   Int?                               // filled in later, for calibration
+  isPinned        Boolean    @default(false)         // manual moves survive re-planning
+  planItems       PlanItem[]
+  reasons         PlacementReason[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  completedAt     DateTime?
+}
+
+model Block {                        // RULE B: no taskId column exists, ever
+  id              String     @id @default(cuid())
+  userId          String
+  user            User       @relation(fields: [userId], references: [id])
+  title           String
+  kind            BlockKind  @default(MEETING)
+  source          BlockSource @default(MANUAL)
+  startsAt        DateTime                          // always UTC, always a real instant
+  endsAt          DateTime
+  isMovable       Boolean    @default(false)
+  externalId      String?                           // calendar sync, day 1 column
+  calendarProvider String?
+  notes           String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  @@index([userId, startsAt])
+}
+
+model WorkingHour {                  // a weekly pattern, in the user's own timezone
+  id             String @id @default(cuid())
+  userId         String
+  user           User   @relation(fields: [userId], references: [id])
+  dayOfWeek      Int                    // 0 = Sunday .. 6 = Saturday
+  startsMinute   Int                    // minutes from local midnight
+  endsMinute     Int
+  @@unique([userId, dayOfWeek, startsMinute])
+}
+
+model EnergyEntry {
+  id      String       @id @default(cuid())
+  userId  String
+  user    User         @relation(fields: [userId], references: [id])
+  hour    Int                        // 0-23, in the user's own timezone
+  level   EnergyLevel
+  source  EnergySource @default(DECLARED)   // OBSERVED arrives later, no restructure
+  @@unique([userId, hour, source])
+}
+
+model DayPlan {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  planDate    DateTime                     // the calendar date, local to the user
+  state       PlanState  @default(DRAFT)
+  regenerateCount Int   @default(0)
+  items       PlanItem[]
+  reasons     PlacementReason[]
+  journalEntries JournalEntry[]   // added with the minimum journal, Day 9
+  createdAt   DateTime  @default(now())
+  @@unique([userId, planDate])
+}
+
+model PlanItem {
+  id        String   @id @default(cuid())
+  dayPlanId String
+  dayPlan   DayPlan  @relation(fields: [dayPlanId], references: [id])
+  taskId    String                          // required: only tasks get placed
+  task      Task    @relation(fields: [taskId], references: [id])
+  startsAt  DateTime
+  endsAt    DateTime
+  isPinned  Boolean  @default(false)
+}
+
+model PlacementReason {               // RULE C: facts only, never a finished sentence
+  id                String    @id @default(cuid())
+  dayPlanId         String
+  dayPlan           DayPlan   @relation(fields: [dayPlanId], references: [id])
+  taskId            String
+  task              Task      @relation(fields: [taskId], references: [id])
+  outcome           Outcome
+  startsAt          DateTime?
+  endsAt            DateTime?
+  energyAtStart     EnergyLevel?          // "the energy level at that hour"
+  competingTaskIds  Json                   // "what the task competed against"
+enum BindingConstraint { ENERGY_MATCH DEADLINE WORKING_HOURS BLOCK_COLLISION PRIORITY MANUAL_OVERRIDE UNSCHEDULED }
+  rejectionReason   String?
+  createdAt         DateTime  @default(now())
+  @@index([dayPlanId, outcome])
+}
+
+model JournalEntry {                 // added after review: the minimum journal, Day 9
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  date              DateTime  @db.Date                  // J1: every entry belongs to a date
+  dayPlanId         String?                             // J2: the day's real work, by reference
+  dayPlan           DayPlan?  @relation(fields: [dayPlanId], references: [id])
+  mood              Mood?
+  body              String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  @@unique([userId, date])   // one entry per day; re-saving edits it. See 2.2.
+}

@@ -1,0 +1,33 @@
+﻿generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskState   { INBOX READY SCHEDULED DONE DROPPED }
+enum Difficulty  { EASY MEDIUM HARD }
+enum BlockSource { MANUAL CALENDAR SYSTEM }
+enum BlockKind   { MEETING PERSONAL BREAK }
+enum EnergyLevel { HIGH MEDIUM LOW }
+enum EnergySource{ DECLARED OBSERVED }
+enum BindingConstraint { ENERGY_MATCH DEADLINE WORKING_HOURS BLOCK_COLLISION PRIORITY MANUAL_OVERRIDE UNSCHEDULED }
+enum Outcome     { PLACED REJECTED }
+enum PlanState   { DRAFT ACCEPTED DISCARDED }
+enum Mood        { GREAT GOOD OK FLAT ROUGH }
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  timezone     String         @default("Europe/London")
+  goals        Goal[]
+  projects     Project[]
+  tasks        Task[]
+  blocks       Block[]
+  plans        DayPlan[]
+  workingHours WorkingHour[]
+  energyLevels EnergyEntry[]
+  journalEntries JournalEntry[]
+  createdAt    DateTime       @default(now())
+}
